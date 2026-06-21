@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6761579691551288635}
   - component: {fileID: 2617603157166847889}
   - component: {fileID: -6627272415453999353}
+  - component: {fileID: 5795618541231528460}
   m_Layer: 0
   m_Name: Bunker
   m_TagString: Untagged
@@ -103,7 +104,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f04639b596814fbc9820ab3ab669746, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 400
-  deathAnimTime: 0.8
+  deathAnimTime: 0.2
+  delayDestroyWithoutAnimator: 0
+--- !u!114 &5795618541231528460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4599616862578025363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab122e0eb014a48598c635849902b85e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DamageStages
+  health: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  stages:
+  - {fileID: 21300000, guid: 8f5e5994aa1be479a987a36a17778090, type: 3}
+  - {fileID: 21300000, guid: b073ca13713df47dab80e3beb82b23a0, type: 3}
+  - {fileID: 21300000, guid: 88afab709e2d7468e84398f4b66d327b, type: 3}
+  showFinalStageBeforeDestroy: 1

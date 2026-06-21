@@ -12,22 +12,65 @@ public class DamageStages : MonoBehaviour
     public Health health;
     public SpriteRenderer spriteRenderer;
     public Sprite[] stages;   // [0] = nguyên vẹn, phần tử cuối = hư nặng nhất
+    public bool showFinalStageBeforeDestroy = true;
 
     private int currentStage = -1;
 
     void Awake()
     {
+        ResolveReferences();
+
+        if (health != null && showFinalStageBeforeDestroy)
+            health.delayDestroyWithoutAnimator = true;
+    }
+
+    void OnEnable()
+    {
+        ResolveReferences();
+
+        if (health == null) return;
+        health.Changed += UpdateStage;
+        health.Died += HandleDied;
+    }
+
+    void Start()
+    {
+        UpdateStage(health);
+    }
+
+    void OnDisable()
+    {
+        if (health == null) return;
+        health.Changed -= UpdateStage;
+        health.Died -= HandleDied;
+    }
+
+    void ResolveReferences()
+    {
         if (health == null) health = GetComponent<Health>();
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    void UpdateStage(Health source)
     {
-        if (health == null || spriteRenderer == null || stages == null || stages.Length == 0) return;
+        if (source == null || spriteRenderer == null || stages == null || stages.Length == 0) return;
 
         // Máu 1..0  ->  chỉ số 0..len-1. Chia đều ngưỡng theo số stage.
-        float f = health.Normalized;                       // 1 = đầy, 0 = chết
+        float f = source.Normalized;                       // 1 = đầy, 0 = chết
         int idx = Mathf.Clamp(Mathf.FloorToInt((1f - f) * stages.Length), 0, stages.Length - 1);
+        SetStage(idx);
+    }
+
+    void HandleDied(Health source)
+    {
+        if (stages == null || stages.Length == 0) return;
+        SetStage(stages.Length - 1);
+    }
+
+    void SetStage(int idx)
+    {
+        if (spriteRenderer == null || stages == null || stages.Length == 0) return;
+        idx = Mathf.Clamp(idx, 0, stages.Length - 1);
 
         if (idx != currentStage)
         {

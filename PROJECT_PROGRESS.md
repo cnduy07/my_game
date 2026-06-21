@@ -89,6 +89,14 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **DamageStages.cs (mới):** đổi sprite theo % máu (Wall-nut nứt dần), generic cho mọi object KHÔNG rig (bunker…). `Health.Normalized` trả 0..1. KHÔNG dùng cho object có Sprite Skin. Đừng để Animator cũng tráo Sprite trên cùng object (xung đột).
 - **Death code ĐÃ LÀM:** `Health` giờ phát trigger `Die` → tắt EnemyMover/Shooter (ngừng di chuyển/bắn, tự gỡ khỏi All) → chờ `deathAnimTime` rồi Destroy. Không có CharacterAnimator thì huỷ ngay như cũ. Field `deathAnimTime` chỉnh khớp độ dài clip Death.
 
+### Bugfix animation/prefab — 2026-06-21
+- **Triệu chứng:** Enemy runtime chỉ đứng `idle`, không chuyển `walk`; khi chết không thấy rõ `death`.
+- **Nguyên nhân:** `CharacterAnimator` gọi Animator params `Walking`/`Attack`/`Die`, nhưng `Enemy.controller` đang dùng lowercase `walking`/`attack`/`die`. Animator parameter phân biệt hoa/thường nên transition không nhận tín hiệu.
+- **Fix:** Chuẩn hoá `Enemy.controller` sang `Walking`, `Attack`, `Die`. `Enemy` và `ArmorEnemy` đều dùng chung controller này nên cùng được sửa.
+- **Fix thêm:** `Unit.prefab` có Animator/SpriteSkin và `Unit.controller`, nhưng thiếu `CharacterAnimator`; đã thêm bridge để `Shooter`/`Health` trigger attack/death được.
+- **Bunker:** dùng `DamageStages` theo phần trăm máu với 3 stage `bunker_1` → `bunker_2` → `bunker_3`; death effect nên tách thành VFX động, không dùng sprite nổ tĩnh.
+- **Cần verify trong Unity:** Play Mode, enemy spawn từ wave phải `idle → walk`; khi HP về 0 phải vào `death` trước khi Destroy; turret attack/death trigger phải chạy nếu prefab có controller đúng.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).
