@@ -44,6 +44,8 @@ public class LevelDefinition : ScriptableObject
         gameBalance.startDelay = balance.startDelay;
         gameBalance.timeBetweenSpawns = balance.timeBetweenSpawns;
         gameBalance.timeBetweenWaves = balance.timeBetweenWaves;
+        gameBalance.balanceSpawnRows = balance.balanceSpawnRows;
+        gameBalance.maxSameRowStreak = balance.maxSameRowStreak;
         gameBalance.overchargeEnergyCost = balance.overchargeEnergyCost;
         gameBalance.overchargeDuration = balance.overchargeDuration;
         gameBalance.overchargeFireRateMultiplier = balance.overchargeFireRateMultiplier;
@@ -65,6 +67,8 @@ public class LevelBalanceSettings
     public float startDelay = 8f;
     public float timeBetweenSpawns = 2f;
     public float timeBetweenWaves = 12f;
+    public bool balanceSpawnRows = true;
+    public int maxSameRowStreak = 2;
 
     public int overchargeEnergyCost = 50;
     public float overchargeDuration = 6f;

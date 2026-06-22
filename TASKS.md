@@ -159,6 +159,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `EnemyMover` expose enemy count/pressure theo row;
   - OC row buttons hien threat count/fill de quyet dinh lane nao can Overcharge;
   - AI QA warning neu `OverchargeSystem` thieu grid reference.
+- Spawn fairness pass:
+  - `EnemySpawner` co balanced row spawning mac dinh;
+  - `GameBalance` va `LevelDefinition` co `balanceSpawnRows`/`maxSameRowStreak`;
+  - balance report va AI QA doc/check cau hinh nay.
 
 ---
 

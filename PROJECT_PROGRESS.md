@@ -236,6 +236,10 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - row button hien enemy count khi co threat;
   - threat fill cam/do tinh theo enemy gan coreline va so luong trong lane;
   - khong thay doi combat stat/rule.
+- Them spawn fairness:
+  - enemy spawn mac dinh uu tien lane dang it enemy hon;
+  - gioi han streak cung lane bang `maxSameRowStreak`;
+  - config di qua `LevelDefinition` -> `GameBalance` -> `EnemySpawner`, khong hardcode rieng.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.

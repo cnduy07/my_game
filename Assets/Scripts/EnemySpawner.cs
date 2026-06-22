@@ -24,6 +24,8 @@ public class EnemySpawner : MonoBehaviour
     public float timeBetweenWaves = 12f;    // nghỉ giữa các đợt
     public bool useAuthoredWaves = false;
     public LevelWaveDefinition[] authoredWaves;
+    public bool balanceSpawnRows = true;
+    public int maxSameRowStreak = 2;
     public bool showDebugImGui;
 
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
@@ -35,6 +37,8 @@ public class EnemySpawner : MonoBehaviour
     LevelEnemyType[] currentWaveTypes;
     int currentWaveQueueIndex;
     float timer = 0f;
+    int lastSpawnRow = -1;
+    int sameRowStreak = 0;
     GUIStyle style;
 
     public struct EnemyTypeModifier
@@ -188,7 +192,7 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnOne()
     {
-        int row = Random.Range(0, grid.rows);
+        int row = ChooseSpawnRow();
         int col = grid.cols - 1;
         Vector3 pos = grid.CellToWorld(col, row);
         pos.z = -1f;
@@ -205,6 +209,50 @@ public class EnemySpawner : MonoBehaviour
         ApplyEnemyTypeModifiers(e, enemyType);
     }
 
+    int ChooseSpawnRow()
+    {
+        int rowCount = grid != null ? Mathf.Max(1, grid.rows) : 5;
+        int row = balanceSpawnRows ? ChooseBalancedRow(rowCount) : Random.Range(0, rowCount);
+
+        if (row == lastSpawnRow)
+            sameRowStreak++;
+        else
+        {
+            lastSpawnRow = row;
+            sameRowStreak = 1;
+        }
+
+        return row;
+    }
+
+    int ChooseBalancedRow(int rowCount)
+    {
+        int minCount = int.MaxValue;
+        for (int row = 0; row < rowCount; row++)
+            minCount = Mathf.Min(minCount, EnemyMover.CountInRow(row));
+
+        int selected = Random.Range(0, rowCount);
+        int seenCandidates = 0;
+        for (int row = 0; row < rowCount; row++)
+        {
+            if (EnemyMover.CountInRow(row) != minCount) continue;
+            if (row == lastSpawnRow && sameRowStreak >= Mathf.Max(1, maxSameRowStreak)) continue;
+
+            seenCandidates++;
+            if (Random.Range(0, seenCandidates) == 0)
+                selected = row;
+        }
+
+        if (seenCandidates > 0)
+            return selected;
+
+        for (int row = 0; row < rowCount; row++)
+            if (EnemyMover.CountInRow(row) == minCount)
+                return row;
+
+        return Random.Range(0, rowCount);
+    }
+
     public void ApplyWaveBalance(
         int newWaveCount,
         int newBaseEnemies,
@@ -212,7 +260,9 @@ public class EnemySpawner : MonoBehaviour
         int newFinalWaveMultiplier,
         float newStartDelay,
         float newTimeBetweenSpawns,
-        float newTimeBetweenWaves)
+        float newTimeBetweenWaves,
+        bool newBalanceSpawnRows,
+        int newMaxSameRowStreak)
     {
         waveCount = Mathf.Max(1, newWaveCount);
         baseEnemies = Mathf.Max(0, newBaseEnemies);
@@ -221,6 +271,8 @@ public class EnemySpawner : MonoBehaviour
         startDelay = Mathf.Max(0f, newStartDelay);
         timeBetweenSpawns = Mathf.Max(0.1f, newTimeBetweenSpawns);
         timeBetweenWaves = Mathf.Max(0f, newTimeBetweenWaves);
+        balanceSpawnRows = newBalanceSpawnRows;
+        maxSameRowStreak = Mathf.Max(1, newMaxSameRowStreak);
     }
 
     public void ApplyLevelDefinition(LevelDefinition level)

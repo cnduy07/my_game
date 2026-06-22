@@ -43,7 +43,9 @@ public static class BalanceReportGenerator
         sb.AppendLine($"  \"waveCount\": {balance.waveCount},");
         sb.AppendLine($"  \"baseEnemies\": {balance.baseEnemies},");
         sb.AppendLine($"  \"enemiesIncreasePerWave\": {balance.enemiesIncreasePerWave},");
-        sb.AppendLine($"  \"finalWaveMultiplier\": {balance.finalWaveMultiplier}");
+        sb.AppendLine($"  \"finalWaveMultiplier\": {balance.finalWaveMultiplier},");
+        sb.AppendLine($"  \"balanceSpawnRows\": {balance.balanceSpawnRows.ToString().ToLowerInvariant()},");
+        sb.AppendLine($"  \"maxSameRowStreak\": {balance.maxSameRowStreak}");
         sb.AppendLine("}");
         return sb.ToString();
     }
@@ -54,6 +56,7 @@ public static class BalanceReportGenerator
         sb.AppendLine($"- Start energy: `{balance.startEnergy}`");
         sb.AppendLine($"- Sky orb: `{balance.skyOrbValue}` every `{Format(balance.skyInterval)}s`");
         sb.AppendLine($"- Waves: `{balance.waveCount}`, base `{balance.baseEnemies}`, +`{balance.enemiesIncreasePerWave}` per wave, final x`{balance.finalWaveMultiplier}`");
+        sb.AppendLine($"- Spawn rows: `{(balance.balanceSpawnRows ? "balanced" : "random")}`, max same-row streak `{balance.maxSameRowStreak}`");
         sb.AppendLine($"- Overcharge: cost `{balance.overchargeEnergyCost}`, duration `{Format(balance.overchargeDuration)}s`, fire rate x`{Format(balance.overchargeFireRateMultiplier)}`, damage x`{Format(balance.overchargeDamageMultiplier)}`");
         sb.AppendLine();
     }

@@ -157,6 +157,7 @@ Contract:
 - `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
 - `EnemySpawner` expose `DisplayText`, `IsWaveWarning`, va `WaveIntelText` cho wave label/canh bao/intel HUD.
+- `EnemySpawner` dung balanced row spawning mac dinh qua `GameBalance.balanceSpawnRows` va `maxSameRowStreak` de giam lane clump bat cong tu random.
 - `EnemyMover.All` chi dai dien enemy dang song/co the bi target; `EnemyMover.ActiveOrDyingCount` dai dien enemy con ton tai trong scene, gom ca death animation pending. Wave clear/victory phai dung `ActiveOrDyingCount`.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.

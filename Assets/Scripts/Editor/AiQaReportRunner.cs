@@ -92,6 +92,10 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Warn("GameBalance", "Overcharge fire-rate multiplier is not above 1."));
         if (balance.skyInterval <= 0f)
             checks.Add(CheckResult.Fail("GameBalance", "Sky interval must be above 0."));
+        if (balance.balanceSpawnRows && balance.maxSameRowStreak < 1)
+            checks.Add(CheckResult.Fail("GameBalance", "Balanced row spawning requires maxSameRowStreak >= 1."));
+        if (!balance.balanceSpawnRows && balance.waveCount >= 5)
+            checks.Add(CheckResult.Warn("GameBalance", "Random row spawning can create unfair lane clumps in campaign levels."));
     }
 
     static void CheckUnitProjectileEffects(GameBalance balance, List<CheckResult> checks)

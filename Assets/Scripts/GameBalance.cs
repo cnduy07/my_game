@@ -25,6 +25,8 @@ public class GameBalance : MonoBehaviour
     public float startDelay = 8f;
     public float timeBetweenSpawns = 2f;
     public float timeBetweenWaves = 12f;
+    public bool balanceSpawnRows = true;
+    public int maxSameRowStreak = 2;
 
     [Header("Overcharge")]
     public int overchargeEnergyCost = 50;
@@ -62,6 +64,7 @@ public class GameBalance : MonoBehaviour
         startDelay = Mathf.Max(0f, startDelay);
         timeBetweenSpawns = Mathf.Max(0.1f, timeBetweenSpawns);
         timeBetweenWaves = Mathf.Max(0f, timeBetweenWaves);
+        maxSameRowStreak = Mathf.Max(1, maxSameRowStreak);
         overchargeEnergyCost = Mathf.Max(0, overchargeEnergyCost);
         overchargeDuration = Mathf.Max(0.1f, overchargeDuration);
         overchargeFireRateMultiplier = Mathf.Max(0.01f, overchargeFireRateMultiplier);
@@ -202,7 +205,9 @@ public class GameBalance : MonoBehaviour
             finalWaveMultiplier,
             startDelay,
             timeBetweenSpawns,
-            timeBetweenWaves);
+            timeBetweenWaves,
+            balanceSpawnRows,
+            maxSameRowStreak);
     }
 
     public void ApplyOverchargeSystem(OverchargeSystem overcharge)
