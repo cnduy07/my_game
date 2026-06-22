@@ -209,6 +209,7 @@ Audio sourcing note:
 Runtime hien tai:
 - HUD da chuyen sang uGUI/TextMeshPro code-generated trong `GameUiController`.
 - Day la UI runtime that de gameplay dung duoc, nhung visual art van can polish bang icon/sprite rieng.
+- Board/background da co `BoardVisualController` tao procedural sci-fi lane layout tam thoi. Day la guide layout, khong phai final environment art.
 
 Can co:
 - Seed packet icons.
@@ -220,6 +221,21 @@ Can co:
 - Main menu sau vertical slice.
 - Icon/skin cho Overcharge row buttons.
 - Pause/settings modal background + button states.
+
+## 8. Board / Background Art
+
+Runtime hien tai:
+- Camera background toi.
+- Board co lane bands, grid lines, defense rail, enemy entry zone bang code.
+- `Tile.prefab` la overlay trong suot de giu cell click target va doc grid.
+
+Can co cho visual polish that:
+- 1 background/board sprite cho level "First Contact" theo phong cach sci-fi industrial.
+- Board can doc ro 5 lane x 9 cell o man hinh dien thoai.
+- Ben trai co defense rail/rail cannon anchors.
+- Ben phai co enemy entry/gate/warning strip.
+- Vung center khong qua nhieu chi tiet de unit/enemy/projectile van doc ro.
+- Co the dung 1 anh background lon + marker/grid overlay rieng de de tune trong Unity.
 
 App Store quality minimum:
 - Bo UI skin rieng: panel 9-slice, button normal/pressed/disabled, slider handle, toggle.
@@ -237,7 +253,7 @@ Can them cho mobile release:
 
 ---
 
-## 8. Level va Progression Content
+## 9. Level va Progression Content
 
 Vertical slice chi can 1 level dep. Sau do can:
 - Level 1-3 tutorial co wave rat ngan.

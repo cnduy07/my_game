@@ -31,6 +31,7 @@ Scripts chinh:
 - `TutorialCoach`: contextual hint source cho HUD.
 - `RuntimeQualitySettings`: target FPS/sleep/vsync/multitouch cho mobile.
 - `LevelCatalog`: danh sach level de level select/progression mo rong.
+- `BoardVisualController`: runtime procedural board/background layer gan tren `GridManager`, tao lane bands/grid lines/rail/entry zone bang SpriteRenderer.
 
 ---
 
@@ -277,6 +278,11 @@ Code foundation khong du de game nhin "xịn". Chat luong visual can mot art dir
 - VFX can prefab particle that: muzzle, hit, death smoke, EMP pulse, rail beam.
 - Audio can layer ngan, ro, khong lap kho chiu.
 - Tutorial va first level phai dan nguoi choi trong 30-60 giay dau.
+
+Trang thai hien tai:
+- Runtime HUD da doi sang uGUI/TextMeshPro va bot chong cheo hon UI prototype cu.
+- Board da co `BoardVisualController` tao sci-fi lane layout bang code de bot cam giac mau phang.
+- Day van la transitional polish. Chat luong store can asset that: board/background sprite, UI skin 9-slice, icon seed, VFX prefab, animation impact.
 
 Chu project can uu tien asset:
 - 1 background/board polish cho First Contact.

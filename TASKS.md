@@ -8,12 +8,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Kiem tra production foundation pass:
-  - console khong co compile error;
-  - bullet va energy orb van spawn/despawn binh thuong;
-  - HUD hint co hien hop ly, neu gay phien thi tat `TutorialCoach.showHints`;
-  - pause/settings/OC/win/lose van chay;
-  - LevelManager van apply Level_01 dung.
+- Kiem tra board visual polish pass:
+  - Play Mode khong co compile/Console error.
+  - Board moi hien ro, khong che unit/enemy/projectile.
+  - Tile/grid con doc duoc vi tri o.
+  - HUD top/bottom/right khong chong len board theo cach gay roi.
+  - Neu nen qua toi, grid qua mo, hoac cell tint lam mat sprite thi gui screenshot de tune.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -47,6 +47,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 - Runtime HUD rebuild da duoc chu project test OK trong Unity.
 - TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
+- Production foundation pass da duoc chu project test OK trong Unity.
 - Production foundation pass:
   - TMP examples da duoc xoa;
   - pooling cho projectile/energy orb;
@@ -55,6 +56,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - runtime FPS/mobile settings;
   - `LevelCatalog.asset`;
   - AI QA mo rong.
+- Board visual polish pass:
+  - `BoardVisualController` tao board/background procedural.
+  - `Tile.prefab` da doi tint/sorting de bot cam giac mau phang prototype.
+  - Camera background da doi sang tone sci-fi toi.
 
 ---
 
@@ -95,6 +100,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Art/Content
 
+- Lam production board art cho First Contact:
+  - background/base board co chieu sau;
+  - lane/grid markers ro o kich thuoc mobile;
+  - defense rail va enemy entry gate;
+  - khong de board tranh doc voi sprite unit/enemy.
 - Hoan thien vertical slice:
   - 1 enemy basic rig dep.
   - 1 armored enemy bien the ro.

@@ -203,6 +203,18 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - AI QA kiem tra them VFX settings, TutorialCoach, RuntimeQualitySettings, LevelCatalog.
 - Gioi han con lai: cac task "game xịn App Store" can asset/UI/VFX/audio art that; code foundation khong thay the duoc visual production.
 
+### Board visual polish pass — 2026-06-22
+- Them `BoardVisualController` tren `GridManager` de tao board/backdrop runtime bang SpriteRenderer rectangles:
+  - nen scene toi hon;
+  - board base sci-fi;
+  - lane bands xen ke;
+  - grid lines;
+  - defense rail ben trai va enemy entry zone ben phai;
+  - neon frame/caps tam thoi.
+- Chinh `Tile.prefab` thanh cell tint trong suot hon va sorting order thap hon de board art doc duoc.
+- Doi camera background sang mau toi hop voi HUD moi.
+- Luu y: day la visual foundation/procedural placeholder, chua phai final App Store art. Khi co background/board sprite that, co the thay `BoardVisualController` bang prefab art hoac dung no lam guide layout.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).
