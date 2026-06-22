@@ -20,10 +20,14 @@ public static class AiQaReportRunner
         AudioManager audio = UnityEngine.Object.FindAnyObjectByType<AudioManager>(FindObjectsInactive.Include);
         LevelManager levelManager = UnityEngine.Object.FindAnyObjectByType<LevelManager>(FindObjectsInactive.Include);
         GameUiController ui = UnityEngine.Object.FindAnyObjectByType<GameUiController>(FindObjectsInactive.Include);
+        CombatVfxSettings vfxSettings = UnityEngine.Object.FindAnyObjectByType<CombatVfxSettings>(FindObjectsInactive.Include);
+        TutorialCoach tutorialCoach = UnityEngine.Object.FindAnyObjectByType<TutorialCoach>(FindObjectsInactive.Include);
+        RuntimeQualitySettings runtimeQuality = UnityEngine.Object.FindAnyObjectByType<RuntimeQualitySettings>(FindObjectsInactive.Include);
 
         CheckGameBalance(balance, checks);
         CheckLevelManager(levelManager, checks);
         CheckUi(ui, checks);
+        CheckRuntimeFoundations(vfxSettings, tutorialCoach, runtimeQuality, checks);
         CheckAudio(audio, checks);
         CheckPrefabs(balance, checks);
         CheckAnimatorContracts(balance, checks);
@@ -91,6 +95,38 @@ public static class AiQaReportRunner
         if (levelManager.currentLevel.useAuthoredWaves &&
             (levelManager.currentLevel.waves == null || levelManager.currentLevel.waves.Length == 0))
             checks.Add(CheckResult.Fail("Level", "useAuthoredWaves is true but no waves are defined."));
+
+        if (levelManager.levelCatalog == null)
+            checks.Add(CheckResult.Warn("Level", "LevelManager has no LevelCatalog assigned."));
+        else if (levelManager.levelCatalog.levels == null || levelManager.levelCatalog.levels.Length == 0)
+            checks.Add(CheckResult.Warn("Level", "LevelCatalog has no levels."));
+    }
+
+    static void CheckRuntimeFoundations(
+        CombatVfxSettings vfxSettings,
+        TutorialCoach tutorialCoach,
+        RuntimeQualitySettings runtimeQuality,
+        List<CheckResult> checks)
+    {
+        if (vfxSettings == null)
+            checks.Add(CheckResult.Warn("VFX", "No CombatVfxSettings found; code-generated fallback only."));
+        else if (!vfxSettings.useCodeGeneratedFallback &&
+                 vfxSettings.muzzleFlashPrefab == null &&
+                 vfxSettings.hitSparkPrefab == null &&
+                 vfxSettings.enemyDeathPrefab == null)
+            checks.Add(CheckResult.Fail("VFX", "CombatVfxSettings disables fallback but has no core VFX prefabs."));
+
+        if (tutorialCoach == null)
+            checks.Add(CheckResult.Warn("Tutorial", "No TutorialCoach found; onboarding hints disabled."));
+
+        if (runtimeQuality == null)
+        {
+            checks.Add(CheckResult.Warn("Runtime", "No RuntimeQualitySettings found."));
+        }
+        else if (runtimeQuality.targetFrameRate < 30)
+        {
+            checks.Add(CheckResult.Fail("Runtime", "Target frame rate should be at least 30."));
+        }
     }
 
     static void CheckAudio(AudioManager audio, List<CheckResult> checks)

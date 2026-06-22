@@ -8,6 +8,10 @@ public static class CombatVfx
 
     public static void PlayMuzzleFlash(Vector3 position)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.muzzleFlashPrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         CreateLine("MuzzleFlash", position, position + Vector3.right * 0.32f, 0.08f,
             new Color(1f, 0.95f, 0.35f, 1f), new Color(1f, 0.35f, 0.05f, 0.65f), 0.055f);
@@ -17,6 +21,10 @@ public static class CombatVfx
 
     public static void PlayHitSpark(Vector3 position)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.hitSparkPrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         for (int i = 0; i < 5; i++)
         {
@@ -30,6 +38,10 @@ public static class CombatVfx
 
     public static void PlayDeathBurst(Vector3 position)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.enemyDeathPrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         CreateParticleBurst("DeathBurst", position, 18, 0.18f,
             new ParticleSystem.MinMaxCurve(0.22f, 0.45f),
@@ -41,6 +53,10 @@ public static class CombatVfx
 
     public static void PlayStaticBreak(Vector3 position)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.staticBreakPrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         CreateParticleBurst("StaticBreakSmoke", position, 14, 0.24f,
             new ParticleSystem.MinMaxCurve(0.35f, 0.75f),
@@ -53,6 +69,10 @@ public static class CombatVfx
 
     public static void PlayBunkerBreak(Vector3 position)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.bunkerBreakPrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         PlayStaticBreak(position);
 
@@ -67,6 +87,10 @@ public static class CombatVfx
 
     public static void PlayPulse(Vector3 position, float radius, Color color)
     {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.empPulsePrefab : null, position))
+            return;
+        if (!FallbackEnabled()) return;
+
         position.z = -3f;
         float startRadius = Mathf.Max(0.01f, radius * 0.65f);
 
@@ -93,6 +117,25 @@ public static class CombatVfx
         var fade = go.AddComponent<VfxFade>();
         fade.life = 0.22f;
         fade.scaleTo = radius / startRadius;
+    }
+
+    public static void PlayRailCannonBeam(Vector3 position)
+    {
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.railCannonBeamPrefab : null, position))
+            return;
+    }
+
+    private static bool TryPlayPrefab(GameObject prefab, Vector3 position)
+    {
+        if (prefab == null) return false;
+        position.z = -3f;
+        Object.Instantiate(prefab, position, Quaternion.identity);
+        return true;
+    }
+
+    private static bool FallbackEnabled()
+    {
+        return CombatVfxSettings.Instance == null || CombatVfxSettings.Instance.useCodeGeneratedFallback;
     }
 
     private static void CreateLine(string name, Vector3 start, Vector3 end, float width, Color startColor, Color endColor, float life)

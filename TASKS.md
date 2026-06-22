@@ -8,6 +8,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
+- Kiem tra production foundation pass:
+  - console khong co compile error;
+  - bullet va energy orb van spawn/despawn binh thuong;
+  - HUD hint co hien hop ly, neu gay phien thi tat `TutorialCoach.showHints`;
+  - pause/settings/OC/win/lose van chay;
+  - LevelManager van apply Level_01 dung.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -28,6 +34,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ### Codex
 
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
+- Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
 - Ho tro tinh chinh `GameBalance`, Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
 - Tinh chinh combat feedback pass sau Play Mode: flash strength, shake amount, VFX duration/color.
@@ -40,6 +47,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 - Runtime HUD rebuild da duoc chu project test OK trong Unity.
 - TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
+- Production foundation pass:
+  - TMP examples da duoc xoa;
+  - pooling cho projectile/energy orb;
+  - VFX prefab hook qua `CombatVfxSettings`;
+  - tutorial hint hook qua `TutorialCoach`;
+  - runtime FPS/mobile settings;
+  - `LevelCatalog.asset`;
+  - AI QA mo rong.
 
 ---
 

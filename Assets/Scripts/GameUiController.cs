@@ -36,6 +36,9 @@ public class GameUiController : MonoBehaviour
     TextMeshProUGUI overchargeCostText;
     readonly List<RowButton> rowButtons = new List<RowButton>();
 
+    RectTransform tutorialPanel;
+    TextMeshProUGUI tutorialText;
+
     GameObject modalOverlay;
     TextMeshProUGUI modalTitleText;
     TextMeshProUGUI modalSubtitleText;
@@ -150,6 +153,7 @@ public class GameUiController : MonoBehaviour
         BuildTopBar(root.transform);
         BuildSeedTray(root.transform);
         BuildOverchargePanel(root.transform);
+        BuildTutorialPanel(root.transform);
         BuildModal(root.transform);
         RebuildDynamicUiIfNeeded();
         RefreshHud();
@@ -182,6 +186,17 @@ public class GameUiController : MonoBehaviour
         pauseButton.onClick.AddListener(TogglePause);
         pauseButtonText = pauseButton.GetComponentInChildren<TextMeshProUGUI>();
         SetAnchor((RectTransform)pauseButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-154f, -30f), new Vector2(-28f, 30f));
+    }
+
+    void BuildTutorialPanel(Transform parent)
+    {
+        tutorialPanel = CreatePanel("TutorialHint", parent, new Color(0.035f, 0.05f, 0.075f, 0.86f));
+        SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(30f, 152f), new Vector2(560f, 224f));
+
+        tutorialText = CreateText("Text", tutorialPanel, "", 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        tutorialText.color = new Color(0.86f, 0.96f, 1f, 1f);
+        SetAnchor(tutorialText.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 8f), new Vector2(-18f, -8f));
+        tutorialPanel.gameObject.SetActive(false);
     }
 
     void BuildSeedTray(Transform parent)
@@ -384,6 +399,20 @@ public class GameUiController : MonoBehaviour
 
         RefreshSeedCards();
         RefreshRowButtons();
+        RefreshTutorial();
+    }
+
+    void RefreshTutorial()
+    {
+        if (tutorialPanel == null || tutorialText == null) return;
+
+        TutorialCoach coach = TutorialCoach.Instance;
+        string hint = coach != null ? coach.CurrentHint : "";
+        bool show = !string.IsNullOrWhiteSpace(hint) && !isPaused &&
+                    (GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon));
+
+        tutorialPanel.gameObject.SetActive(show);
+        if (show) tutorialText.text = hint;
     }
 
     void RefreshSeedCards()

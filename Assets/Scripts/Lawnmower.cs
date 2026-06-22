@@ -47,6 +47,7 @@ public class Lawnmower : MonoBehaviour
     {
         fired = true;
         SetBeamVisible(true);
+        CombatVfx.PlayRailCannonBeam(transform.position);
 
         // Duyệt trên bản sao: TakeDamage có thể đổi danh sách All ngay trong lúc lặp.
         var list = EnemyMover.All.ToArray();

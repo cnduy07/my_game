@@ -138,6 +138,9 @@ GameObject:
   - component: {fileID: 53209494}
   - component: {fileID: 53209495}
   - component: {fileID: 53209496}
+  - component: {fileID: 53209497}
+  - component: {fileID: 53209498}
+  - component: {fileID: 53209499}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -476,6 +479,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   currentLevel: {fileID: 11400000, guid: f49c8b5fbecf4fe5ac79142d98e02fe7, type: 2}
+  levelCatalog: {fileID: 11400000, guid: dea6b9a5f4fa40b6896c13eed90d0eb7, type: 2}
   applyLevelOnAwake: 1
 --- !u!114 &53209496
 MonoBehaviour:
@@ -490,6 +494,58 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameUiController
   isPaused: 0
+--- !u!114 &53209497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1dce1b53b8c4280ae85576b9253f3e8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CombatVfxSettings
+  muzzleFlashPrefab: {fileID: 0}
+  hitSparkPrefab: {fileID: 0}
+  enemyDeathPrefab: {fileID: 0}
+  staticBreakPrefab: {fileID: 0}
+  bunkerBreakPrefab: {fileID: 0}
+  empPulsePrefab: {fileID: 0}
+  railCannonBeamPrefab: {fileID: 0}
+  useCodeGeneratedFallback: 1
+--- !u!114 &53209498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ffab93aa00b48d8a159d18d953a0a8e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialCoach
+  showHints: 1
+  energyHint: Thu nang luong, dat ArcReactor truoc de tang kinh te.
+  defenseHint: Dat Turret/SnowGun theo hang co dich.
+  overchargeHint: Dung OC de cuu hang dang bi ep.
+--- !u!114 &53209499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22ecb30a2fc942e3bda380297c7fa9ec, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RuntimeQualitySettings
+  targetFrameRate: 60
+  disableVSync: 1
+  preventScreenSleep: 1
+  allowMultiTouch: 0
 --- !u!1 &60195754
 GameObject:
   m_ObjectHideFlags: 0

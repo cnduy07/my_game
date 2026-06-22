@@ -55,7 +55,9 @@ public class EnergySystem : MonoBehaviour
     public void SpawnOrb(Vector3 pos, int value, float targetY)
     {
         if (orbPrefab == null) return;
-        GameObject o = Instantiate(orbPrefab, pos, Quaternion.identity);
+        GameObject o = ObjectPooler.Spawn(orbPrefab, pos, Quaternion.identity);
+        if (o == null) return;
+
         var orb = o.GetComponent<EnergyOrb>();
         if (orb != null) { orb.value = value; orb.targetY = targetY; }
     }

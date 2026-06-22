@@ -193,6 +193,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **Unity verify:** chu project da test cac chuc nang chinh hoat dong binh thuong: HUD hien dung, seed tray/OC/pause/settings co ban chay duoc.
 - TextMeshPro Essentials da duoc Unity import sau khi mo project. Khong can import `Examples & Extras` vao ban release.
 
+### Production foundation pass — 2026-06-22
+- Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.
+- Them `ObjectPooler` + `PooledObject`, da ap dung cho projectile va energy orb de giam Instantiate/Destroy lap lai.
+- Them `CombatVfxSettings` tren `GameSystems`: co the gan prefab VFX that cho muzzle, hit, death, static break, bunker break, EMP pulse, Rail Cannon beam; neu chua gan thi fallback code-generated van chay.
+- Them `TutorialCoach` tren `GameSystems`, HUD co the hien hint nhe neu coach enabled.
+- Them `RuntimeQualitySettings` tren `GameSystems`: target 60 FPS, tat v-sync runtime, khong sleep man hinh, tat multitouch neu khong can.
+- Them `LevelCatalog.asset` va gan vao `LevelManager`; LevelManager co API `NextLevel`, `HasNextLevel`, `SelectLevel`.
+- AI QA kiem tra them VFX settings, TutorialCoach, RuntimeQualitySettings, LevelCatalog.
+- Gioi han con lai: cac task "game xịn App Store" can asset/UI/VFX/audio art that; code foundation khong thay the duoc visual production.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

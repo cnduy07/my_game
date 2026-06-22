@@ -13,8 +13,19 @@ public class EnergyOrb : MonoBehaviour
     public float clickRadius = 0.6f;
 
     public static readonly List<EnergyOrb> All = new List<EnergyOrb>();
+    private float initialLifetime;
 
-    void OnEnable() { All.Add(this); }
+    void Awake()
+    {
+        initialLifetime = lifetime;
+    }
+
+    void OnEnable()
+    {
+        lifetime = initialLifetime;
+        All.Add(this);
+    }
+
     void OnDisable() { All.Remove(this); }
 
     void Update()
@@ -30,14 +41,14 @@ public class EnergyOrb : MonoBehaviour
         }
 
         lifetime -= Time.deltaTime;
-        if (lifetime <= 0f) Destroy(gameObject);
+        if (lifetime <= 0f) ObjectPooler.Despawn(gameObject);
     }
 
     void Collect()
     {
         if (EnergySystem.Instance != null) EnergySystem.Instance.Add(value);
         AudioManager.PlaySfx(SfxType.EnergyCollect);
-        Destroy(gameObject);
+        ObjectPooler.Despawn(gameObject);
     }
 
     // Nhặt orb gần điểm click nhất trong bán kính (chỉ xét x,y — bỏ qua z). Trả true nếu nhặt được.

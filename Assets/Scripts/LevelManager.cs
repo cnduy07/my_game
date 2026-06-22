@@ -6,6 +6,7 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance { get; private set; }
 
     public LevelDefinition currentLevel;
+    public LevelCatalog levelCatalog;
     public bool applyLevelOnAwake = true;
 
     void Awake()
@@ -40,5 +41,18 @@ public class LevelManager : MonoBehaviour
     {
         if (currentLevel == null) return;
         PlayerProgress.MarkLevelCompleted(currentLevel);
+    }
+
+    public LevelDefinition NextLevel =>
+        levelCatalog != null ? levelCatalog.GetNext(currentLevel) : null;
+
+    public bool HasNextLevel => NextLevel != null;
+
+    public bool SelectLevel(LevelDefinition level)
+    {
+        if (level == null) return false;
+        currentLevel = level;
+        ApplyCurrentLevel();
+        return true;
     }
 }

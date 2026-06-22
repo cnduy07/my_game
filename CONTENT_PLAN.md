@@ -165,6 +165,10 @@ Must-have vertical slice:
 - Energy orb collect pop.
 - EMP pulse.
 
+Implementation note:
+- `CombatVfxSettings` tren `GameSystems` da co slot prefab cho muzzle/hit/death/static break/bunker break/EMP/Rail Cannon.
+- Khi co VFX prefab that, keo vao day; fallback code-generated se duoc thay the tung phan.
+
 Nice-to-have:
 - Screen shake nhe khi EMP/lawnmower.
 - Slow frost overlay/particles.
@@ -216,6 +220,12 @@ Can co:
 - Main menu sau vertical slice.
 - Icon/skin cho Overcharge row buttons.
 - Pause/settings modal background + button states.
+
+App Store quality minimum:
+- Bo UI skin rieng: panel 9-slice, button normal/pressed/disabled, slider handle, toggle.
+- Icon seed doc duoc o kich thuoc nho.
+- Energy/OC/pause dung icon thay vi chu thuan.
+- Board/background co art direction, khong dung nen xanh + tile xam trong ban showcase.
 
 Can them cho mobile release:
 - Touch-friendly seed bar.

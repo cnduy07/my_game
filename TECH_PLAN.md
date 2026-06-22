@@ -24,8 +24,13 @@ Scripts chinh:
 - `Lawnmower`: tuyen cuu cuoi.
 - `GameBalance`: central runtime config cho unit/enemy/energy/wave/Overcharge.
 - `CombatVfx`: code-generated prototype VFX cho muzzle/hit/death/pulse.
+- `CombatVfxSettings`: optional prefab override layer cho cac VFX chinh; fallback code-generated van giu de khong block gameplay khi thieu asset.
 - `DamageFeedback`: auto flash/shake khi `Health` nhan damage.
 - `GameUiController`: runtime HUD bang uGUI/TextMeshPro; tao Canvas/EventSystem, seed tray, overcharge panel, pause/win/lose modal.
+- `ObjectPooler`: pooling nhe cho object lap lai; hien dang ap dung cho projectile va energy orb.
+- `TutorialCoach`: contextual hint source cho HUD.
+- `RuntimeQualitySettings`: target FPS/sleep/vsync/multitouch cho mobile.
+- `LevelCatalog`: danh sach level de level select/progression mo rong.
 
 ---
 
@@ -179,6 +184,7 @@ Hooks:
 - `PlacementController` khong cho dat unit vao cell dang co enemy.
 - Knockback/freeze/stun nen la effect rieng theo loai dan/vu khi sau nay, khong nam trong damage feedback mac dinh.
 - `DeathEffect` + `CombatVfx.PlayStaticBreak/PlayBunkerBreak` la VFX death tam cho object tinh.
+- Neu scene co `CombatVfxSettings`, `CombatVfx` uu tien prefab da gan. Neu prefab trong va `useCodeGeneratedFallback=true`, code-generated fallback van chay.
 
 Sau nay:
 - Doi `CombatVfx` sang spawn prefab VFX.
@@ -253,9 +259,30 @@ Mobile priority:
 - Target FPS: 60 neu co the, toi thieu on dinh 30 tren may yeu.
 
 Can audit sau:
+- Projectile va energy orb da dung `ObjectPooler`.
+- Enemy pooling chua bat vi enemy co state phuc tap: animation/death/slow/stun/caught. Khi lam, phai reset state ro rang trong `OnEnable`.
+- VFX pooling chua bat vi can chot prefab VFX truoc.
 - `EnemyMover.All` scan trong `Shooter`/`Projectile` co the ok luc nho, nhung can toi uu neu nhieu object.
 - IMGUI nen thay bang UI Toolkit/uGUI cho mobile polish.
 - VFX particle count can gioi han.
+
+---
+
+## 10.5 App Store Quality Bar
+
+Code foundation khong du de game nhin "xịn". Chat luong visual can mot art direction va asset pipeline ro:
+- Board/background phai thay mau phang bang environment art co chieu sau.
+- UI can sprite/icon/9-slice rieng, khong chi la rectangle mau.
+- Moi unit/enemy can silhouette doc o man hinh nho, animation co anticipation/impact/recover.
+- VFX can prefab particle that: muzzle, hit, death smoke, EMP pulse, rail beam.
+- Audio can layer ngan, ro, khong lap kho chiu.
+- Tutorial va first level phai dan nguoi choi trong 30-60 giay dau.
+
+Chu project can uu tien asset:
+- 1 background/board polish cho First Contact.
+- 5 seed icons + energy icon + OC icon + pause icon.
+- 4-6 VFX prefab co ban.
+- 1 UI skin bo nut/panel/slider theo sci-fi.
 
 ---
 

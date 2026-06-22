@@ -15,6 +15,18 @@ public class Projectile : MonoBehaviour
     public float slowDuration = 0f;
     public ProjectileHitEffect[] hitEffects;
 
+    Vector3 initialScale;
+
+    void Awake()
+    {
+        initialScale = transform.localScale;
+    }
+
+    void OnEnable()
+    {
+        transform.localScale = initialScale == Vector3.zero ? Vector3.one : initialScale;
+    }
+
     void Update()
     {
         transform.position += Vector3.right * speed * Time.deltaTime;
@@ -29,13 +41,13 @@ public class Projectile : MonoBehaviour
                 if (hp != null) hp.TakeDamage(damage);
                 ApplyHitEffects(e);
                 AudioManager.PlaySfx(SfxType.Hit);
-                Destroy(gameObject);
+                ObjectPooler.Despawn(gameObject);
                 return;
             }
         }
 
         if (transform.position.x > maxX)
-            Destroy(gameObject);
+            ObjectPooler.Despawn(gameObject);
     }
 
     void ApplyHitEffects(EnemyMover enemy)
