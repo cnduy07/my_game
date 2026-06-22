@@ -279,15 +279,15 @@ Hien tai:
   - Level 3: mo SnowGun + DroneEMP + Overcharge.
 
 Can lam tiep:
-- Level 1-3 can duoc tune thanh tutorial/co difficulty ramp ro rang.
+- Level 1-3 baseline da duoc tune va playtest OK; can tune lai sau khi them enemy variety moi.
 - Level 4-10 them enemy/unit/upgrade moi thay vi lap lai unlock da co.
 - Moi level co theme/tint nho hoac background variation de tranh lap.
 - Wave notes: enemy type, count, timing, huge wave.
-- Reward/unlock copy ngan gon.
+- Reward/unlock copy baseline da co cho level 1-3; level moi van can copy ngan gon.
 - Level select can icon/preview/reward state de nhin nhu game release hon.
 
 Phase content target:
-- Phase 1: level 1-3 du vui va day dung unit unlock.
+- Phase 1: level 1-3 du vui va day dung unit unlock — baseline done; con enemy variety/counter-play moi.
 - Phase 2: First Contact co board/UI/VFX/audio du dep de lam vertical slice showcase.
 - Phase 3: level 4-10 co enemy/unit combinations ro.
 - Phase 4: store-facing content gom icon, screenshots, title/logo, short description.

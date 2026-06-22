@@ -367,10 +367,10 @@ Chu project can uu tien asset:
 ## 10.6 Production Roadmap
 
 Phase 1 — Gameplay vertical slice:
-- Them enemy variety co vai tro ro: fast, shield/heavy.
-- Hoan thien projectile effects/resistance de SnowGun/EMP/OC co ly do chien thuat.
-- Tune level 1-3 sau unlock gating.
-- Them reward/unlock panel sau win.
+- DONE baseline: level 1-3, authored waves, unlock/gating, reward copy, enemy trait foundation, compact HUD.
+- Remaining: enemy variety co vai tro ro: FastEnemy, Shield/HeavyEnemy.
+- Remaining: gan projectile/control effects vao weapon/unit content that, khong chi dung architecture.
+- Remaining: tune lai level 1-3 sau khi them enemy variety moi.
 
 Phase 2 — Visual/audio production pass:
 - Production board/background cho First Contact.
@@ -448,14 +448,14 @@ Hien tai v1:
 - `GameUiController` ve HUD/pause/settings/progression bang uGUI/TextMeshPro runtime.
 - `GameSettings` luu SFX volume/reduce shake/vibration bang PlayerPrefs.
 - `PlacementController` hoi `GameUiController.PointerOverPanel` de chan click xuyen UI.
-- Co top-bar `LVL` button va level select overlay tam thoi doc tu `LevelCatalog`.
-- Day la UI functional, nhung chua phai final mobile UI skin.
+- Co top-bar Missions button va level select overlay doc tu `LevelCatalog`.
+- Compact HUD pass da giam footprint va them status boxes/outline, nhung day van la code-generated UI, chua phai final mobile UI skin.
 
 Can lam:
-- uGUI hoac UI Toolkit cho seed bar, energy, wave, pause, win/lose.
-- Safe area cho iPhone notch va Android cutout.
-- Touch target toi thieu ~44px logical.
-- Pointer/touch handling tach ro UI va world placement.
+- UI skin/icon/panel sprite rieng cho seed bar, energy, wave, pause, win/lose.
+- Test safe area tren iPhone notch va Android cutout that.
+- Touch target toi thieu ~44px logical can verify tren device.
+- Pointer/touch handling baseline da co; can stress test multi-touch/device.
 - Haptic/vibration optional khi collect energy, EMP, Rail Cannon.
 
 ---
@@ -487,11 +487,10 @@ Hien tai v1:
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Playtest lai level 1-3 sau pacing pass: wave dau da bot thung nha qua som chua.
-2. Them reward/unlock copy cho tung level.
-3. SaveData schema version da co baseline; chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
-4. Level select art/icon/preview.
-5. Tach level progression sang main menu scene neu can.
+1. Them enemy variety moi roi tune lai level 1-3.
+2. Level select art/icon/preview.
+3. Chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
+4. Tach level progression sang main menu scene khi campaign/menu flow ro hon.
 
 ---
 

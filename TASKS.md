@@ -13,52 +13,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - English la source copy chinh hien tai.
   - Vietnamese, Chinese, French them sau bang localization table.
   - Khong them Vietnamese khong dau vao runtime UI nua.
-- Kiem tra UI scale + pacing pass:
-  - Console khong con warning `TMP_Text.enableWordWrapping`.
-  - Seed cards lon hon, de bam hon, bot cam giac tach roi khoi game.
-  - Top bar/pause/mission button khong che noi dung va khong tran text.
-  - OC panel level 3 lon hon nhung khong che board qua muc.
-  - Board/cell trong world lon hon nhe sau camera framing.
-  - Seed tray co theo so seed unlock, level 1/2 khong con panel rong thua qua nhieu.
-  - Level 1 wave dau cho du thoi gian dat ArcReactor/Turret.
-  - Level 2 wave dau khong thung nha qua som khi moi mo Bunker.
-  - Level 3 kho hon nhung khong ep ngay khi bat dau.
-- Kiem tra reward/unlock copy pass:
-  - Level select hien mission briefing cho mission da unlock.
-  - Mission bi khoa hien "Complete the previous mission to unlock."
-  - Win level 1 hien reward Bunker.
-  - Win level 2 hien reward SnowGun, DroneEMP, Overcharge.
-  - Victory/Defeat modal khong hien settings SFX/reduce shake/vibration; Pause modal van hien settings.
-- Kiem tra mission unlock/gating v1:
-  - Play Mode khong co compile/Console error.
-  - Level 1 chi hien seed `ArcReactor`, `Turret`; panel OC khong hien va phim so 1-5 khong kich hoat OC.
-  - Win level 1 -> level 2: seed co them `Bunker`, OC van khoa.
-  - Win level 2 -> level 3: seed co `ArcReactor`, `Turret`, `Bunker`, `SnowGun`, `DroneEMP`; panel OC hien lai.
-  - Khi OC bi khoa, click vung ben phai board khong bi panel OC an click.
-  - Tutorial hint khong bao dung OC truoc level 3.
-  - Pause/resume/settings/level select/next level/restart van hoat dong.
-- Kiem tra Phase 1 enemy traits/resistance:
-  - Basic enemy van bi Turret/SnowGun/EMP xu ly nhu binh thuong.
-  - ArmorEnemy can nhieu phat dan thuong hon cam giac cu mot chut.
-  - SnowGun van slow ArmorEnemy nhung yeu hon BasicEnemy.
-  - DroneEMP giet/pha ArmorEnemy tot hon dan thuong.
-  - Console khong co error khi enemy spawn/take damage.
-- Play test combat feedback pass:
-  - Turret/SnowGun ban co muzzle flash.
-  - Dan trung enemy co hit spark.
-  - Bunker/unit bi danh co flash/rung nhe.
-  - DroneEMP co pulse.
-  - Rail Cannon hit enemy co spark.
-  - Console khong co error.
-- Test SnowGun sau khi rig + animator dung chung Unit controller.
-- Test lai gameplay sau khi them `GameBalance`:
-  - seed cost/cooldown hien dung;
-  - Turret/SnowGun ban dung;
-  - sua `overchargeFireRateMultiplier` tren `GameBalance` trong Play Mode phai doi toc do ban ngay;
-  - Enemy/ArmorEnemy danh bunker/unit voi am thanh attack hop ly;
-  - Overcharge buff toc do ban/damage dung cam giac.
-- Tune cac so tren `GameSystems > GameBalance` thay vi sua tung prefab neu chi la gameplay stat.
-- Ghi cam giac: Rail Cannon co du thoa man khong, audio nao can thay/giu.
+- Current validation focus:
+  - Neu UI compact pass co van de moi tren aspect ratio khac, bao lai screenshot.
+  - Khi co thiet bi that: test safe area/notch/touch target.
+  - Khi chot ten game: doi `PlayerSettings.productName` de het AI QA warning placeholder.
+  - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
 
 ### Codex
 
@@ -156,6 +115,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - seed cards nho hon va khong che qua nhieu board;
   - pause/victory/defeat buttons can doi theo state;
   - board/cell nhin lon hon sau camera zoom `3.35`.
+- Player reported latest compact HUD pass looks more reasonable and core functionality remains OK.
 
 ---
 
@@ -164,15 +124,16 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ### Production roadmap phases
 
 1. Phase 1 — Gameplay vertical slice:
-   - enemy variety: fast, shield/heavy, clear counters;
-   - projectile effects/resistance: slow, stun/EMP, pierce/splash later;
-   - tune level 1-3 after unlock gating;
-   - reward/unlock panel after win.
+   - DONE baseline: level 1-3, unlock/gating, reward copy, authored waves, enemy trait foundation.
+   - Remaining: enemy variety with clear counters: FastEnemy, Shield/HeavyEnemy.
+   - Remaining: use `ProjectileHitEffect` in actual weapon/unit content, not only architecture.
+   - Remaining: one more balance pass after new enemy variety.
 2. Phase 2 — Visual/audio production pass:
    - production board/background for First Contact;
-   - UI skin/icon set;
+   - UI skin/icon set replacing code-generated rectangles;
    - VFX prefab replacements for generated effects;
-   - animation polish for core unit/enemy set.
+   - animation polish for core unit/enemy set;
+   - audio layering / music pass.
 3. Phase 3 — Campaign content:
    - level 4-10;
    - level select polish with preview/rewards;
@@ -196,15 +157,13 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
-- Them hit flash/hit sound cho enemy va bunker.
+- Them/replace hit flash/hit sound bang prefab/audio final cho enemy va bunker.
 - Polish UI runtime moi: icon seed card, energy icon, OC row feedback, pause modal visual.
-- Them pause/resume, restart, speed control neu can.
-- Them save/load progress va settings volume/vibration.
-- Them level definition va wave authoring workflow.
-- Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
+- Them speed control neu gameplay can.
+- Save/progress/settings baseline da co; chi nang len JSON/full SaveData khi co currency/upgrades/inventory.
+- Level definition va authored wave workflow baseline da co.
 - Polish level select UI: icon/preview/reward text/unlock copy.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
-- Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 
 ### Art/Content
@@ -253,7 +212,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 - Unity batchmode compile co the khong chay neu project dang mo trong Unity Editor. Neu can verify compile, dong Unity hoac cho phep chay khi project khong mo.
 - Sprite slicing cua `bunker_2`, `bunker_3`, `bunker_4` dang co thay doi. Neu chi dung moi anh la mot stage, nen de Sprite Mode = Single.
-- Nhieu thay doi asset/prefab hien dang trong working tree; khong revert neu khong co yeu cau ro.
+- AI QA warning hien tai: `PlayerSettings.productName` van la placeholder `my_game`; can ten game chinh thuc moi sua.
 
 ---
 
