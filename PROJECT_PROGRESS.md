@@ -4,6 +4,8 @@
 Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng lượng. Địch: **robot ngoài hành tinh (alien robot invader)** tiến từ phải sang trái.
 > Lưu ý IP: tránh nêu thương hiệu thật ("Iron Man", "Plants vs Zombies"…) trong prompt/asset. Chỉ dùng làm cảm hứng, mô tả bằng từ chung chung (powered exo-armor, arc-reactor sci-fi).
 **Engine:** Unity 2D. **Lưới:** 5 hàng × 9 cột. **Quy ước:** 1 ô = 1 unit.
+**Game title:** Coreline Defense.
+**Store listing name target:** Coreline Defense: Robot Siege.
 
 ## Working protocol — 2026-06-22
 - Truoc moi feature lon, Codex phai:
@@ -21,6 +23,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Phase 2: visual/audio production — production board, UI skin/icons, VFX prefabs, animation polish, audio layering.
 - Phase 3: campaign content — level 4-10, level select polish, tutorial callouts, unlock/reward copy.
 - Phase 4: mobile/release hardening — safe area, device performance, pooling, build validation, Android/iOS dev builds, store assets.
+
+## Naming — 2026-06-22
+- Chot ten game runtime/product: **Coreline Defense**.
+- Ten App Store / Google Play listing target: **Coreline Defense: Robot Siege**.
+- Unity `PlayerSettings.productName` da doi sang `Coreline Defense`.
+- Bundle identifier target hien tai: `com.duycaonguyen.corelinedefense`.
 
 ---
 
@@ -375,6 +383,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - action buttons tu layout theo state, tranh lech hang/nut roi rac.
 - Level select popup co outline/list frame va typography gon hon.
 - Luu y: day van la runtime generated UI polish. Final release van can UI sprite/icon/font skin rieng de dat muc App Store/Google Play.
+
+### Enemy variety + campaign extension v1 — 2026-06-22
+- Them enemy archetype moi trong `LevelEnemyType`:
+  - `Fast`: mau thap hon, di nhanh hon, yeu hon khi tan cong, nhay cam hon voi slow/EMP.
+  - `Shield`: mau cao hon, cham hon, resist bullet/control, vulnerable hon voi EMP.
+- `EnemySpawner` build authored wave theo enemy type queue, map prefab tu type, sau do apply type modifiers sau `GameBalance`.
+- `fastPrefab`/`shieldPrefab` optional; hien tai co the fallback ve `Enemy`/`ArmorEnemy` de gameplay chay duoc truoc khi co art/prefab rieng.
+- Them `Level_04` ("Velocity Breach") gioi thieu Fast enemy.
+- Them `Level_05` ("Shield Column") gioi thieu Shield enemy.
+- `LevelCatalog` nay co level 1-5.
 
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.

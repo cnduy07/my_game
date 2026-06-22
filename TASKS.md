@@ -16,7 +16,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Current validation focus:
   - Neu UI compact pass co van de moi tren aspect ratio khac, bao lai screenshot.
   - Khi co thiet bi that: test safe area/notch/touch target.
-  - Khi chot ten game: doi `PlayerSettings.productName` de het AI QA warning placeholder.
+  - Test level 4-5 moi: Fast/Shield enemy modifier co cam giac khac ro khong.
   - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
 
 ### Codex
@@ -116,6 +116,17 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - pause/victory/defeat buttons can doi theo state;
   - board/cell nhin lon hon sau camera zoom `3.35`.
 - Player reported latest compact HUD pass looks more reasonable and core functionality remains OK.
+- Naming + app metadata:
+  - Chot game title `Coreline Defense`.
+  - Store listing target `Coreline Defense: Robot Siege`.
+  - `PlayerSettings.productName` doi sang `Coreline Defense`.
+  - Bundle identifier target `com.duycaonguyen.corelinedefense`.
+- Enemy variety + campaign extension v1:
+  - `LevelEnemyType` co `Fast` va `Shield`.
+  - `EnemySpawner` apply type modifiers sau khi spawn/apply balance.
+  - Level 4 `Velocity Breach` gioi thieu Fast.
+  - Level 5 `Shield Column` gioi thieu Shield.
+  - `LevelCatalog` co 5 level.
 
 ---
 
@@ -124,10 +135,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ### Production roadmap phases
 
 1. Phase 1 — Gameplay vertical slice:
-   - DONE baseline: level 1-3, unlock/gating, reward copy, authored waves, enemy trait foundation.
-   - Remaining: enemy variety with clear counters: FastEnemy, Shield/HeavyEnemy.
+   - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers.
+   - Remaining: art/prefab identity rieng cho Fast/Shield.
    - Remaining: use `ProjectileHitEffect` in actual weapon/unit content, not only architecture.
-   - Remaining: one more balance pass after new enemy variety.
+   - Remaining: one more balance pass after level 4-5 playtest.
 2. Phase 2 — Visual/audio production pass:
    - production board/background for First Contact;
    - UI skin/icon set replacing code-generated rectangles;
@@ -188,8 +199,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ## Backlog
 
-- Fast Alien.
-- Shield Alien.
+- Fast/Shield enemy prefab/art identity rieng.
+- Heavy enemy neu sau level 5 can them nhịp tank khac ArmorEnemy.
 - Projectile effects: knockback, freeze/slow variants, stun/EMP variants.
 - Boss/mini-boss.
 - Level select.
@@ -212,7 +223,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 - Unity batchmode compile co the khong chay neu project dang mo trong Unity Editor. Neu can verify compile, dong Unity hoac cho phep chay khi project khong mo.
 - Sprite slicing cua `bunker_2`, `bunker_3`, `bunker_4` dang co thay doi. Neu chi dung moi anh la mot stage, nen de Sprite Mode = Single.
-- AI QA warning hien tai: `PlayerSettings.productName` van la placeholder `my_game`; can ten game chinh thuc moi sua.
+- Asset production chua chot: can visual brief cho board/UI/icons/VFX truoc khi tao asset hang loat.
 
 ---
 

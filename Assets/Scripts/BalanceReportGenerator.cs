@@ -143,11 +143,29 @@ public static class BalanceReportGenerator
             {
                 var wave = level.waves[i];
                 if (wave == null) continue;
-                sb.AppendLine($"- Wave {i + 1}: `{wave.label}`, `{wave.TotalCount}` enemies");
+                sb.AppendLine($"- Wave {i + 1}: `{wave.label}`, `{wave.TotalCount}` enemies{BuildGroupSummary(wave)}");
             }
         }
 
         sb.AppendLine();
+    }
+
+    static string BuildGroupSummary(LevelWaveDefinition wave)
+    {
+        if (wave == null || wave.groups == null || wave.groups.Length == 0)
+            return "";
+
+        var summary = new StringBuilder(" — ");
+        bool wroteAny = false;
+        foreach (var group in wave.groups)
+        {
+            if (group == null || group.count <= 0) continue;
+            if (wroteAny) summary.Append(", ");
+            summary.Append($"{group.enemyType} x{group.count}");
+            wroteAny = true;
+        }
+
+        return wroteAny ? summary.ToString() : "";
     }
 
     static UnitBalance FindUnit(GameBalance balance, string label)

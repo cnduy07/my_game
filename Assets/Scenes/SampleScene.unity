@@ -178,6 +178,8 @@ MonoBehaviour:
   grid: {fileID: 60195756}
   enemyPrefab: {fileID: 6305580585309829948, guid: 4e174d0ae721b4d2bb2042abb5d08b24, type: 3}
   armoredPrefab: {fileID: 6305580585309829948, guid: df5ea8454f9f947a484d25f8e1c35d03, type: 3}
+  fastPrefab: {fileID: 0}
+  shieldPrefab: {fileID: 0}
   waveCount: 5
   baseEnemies: 3
   enemiesIncreasePerWave: 2

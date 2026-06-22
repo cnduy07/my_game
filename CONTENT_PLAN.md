@@ -271,15 +271,19 @@ Hien tai:
 - Level 1: First Contact.
 - Level 2: Armor Probe.
 - Level 3: Signal Siege.
-- 3 level nay dung chung scene/board, khac authored waves va balance.
+- Level 4: Velocity Breach.
+- Level 5: Shield Column.
+- 5 level nay dung chung scene/board, khac authored waves va balance.
 - Unlock rule: win level truoc de mo level tiep theo.
 - Unit/OC unlock:
   - Level 1: ArcReactor + Turret.
   - Level 2: mo Bunker.
   - Level 3: mo SnowGun + DroneEMP + Overcharge.
+  - Level 4: gioi thieu Fast enemy.
+  - Level 5: gioi thieu Shield enemy.
 
 Can lam tiep:
-- Level 1-3 baseline da duoc tune va playtest OK; can tune lai sau khi them enemy variety moi.
+- Level 1-3 baseline da duoc tune va playtest OK; level 4-5 can playtest/tune Fast/Shield.
 - Level 4-10 them enemy/unit/upgrade moi thay vi lap lai unlock da co.
 - Moi level co theme/tint nho hoac background variation de tranh lap.
 - Wave notes: enemy type, count, timing, huge wave.
@@ -287,7 +291,7 @@ Can lam tiep:
 - Level select can icon/preview/reward state de nhin nhu game release hon.
 
 Phase content target:
-- Phase 1: level 1-3 du vui va day dung unit unlock — baseline done; con enemy variety/counter-play moi.
+- Phase 1: level 1-5 du vui va day dung unit/enemy unlock — baseline code/data done; con tune Fast/Shield sau playtest.
 - Phase 2: First Contact co board/UI/VFX/audio du dep de lam vertical slice showcase.
 - Phase 3: level 4-10 co enemy/unit combinations ro.
 - Phase 4: store-facing content gom icon, screenshots, title/logo, short description.

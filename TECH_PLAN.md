@@ -260,7 +260,7 @@ Design intent:
 - SnowGun/EMP/OC co ly do chien thuat ro hon khi enemy variety tang.
 
 Next:
-- Them FastEnemy va ShieldEnemy/HeavyEnemy bang prefab/level data rieng.
+- Fast/Shield da co gameplay archetype baseline; tiep theo can prefab/art identity rieng va HeavyEnemy neu gameplay can.
 - Them resistance summary vao level select/reward copy khi player can hoc counter.
 
 ---
@@ -367,10 +367,10 @@ Chu project can uu tien asset:
 ## 10.6 Production Roadmap
 
 Phase 1 — Gameplay vertical slice:
-- DONE baseline: level 1-3, authored waves, unlock/gating, reward copy, enemy trait foundation, compact HUD.
-- Remaining: enemy variety co vai tro ro: FastEnemy, Shield/HeavyEnemy.
+- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD.
+- Remaining: Fast/Shield prefab/art identity rieng; hien tai co fallback prefab de gameplay chay.
 - Remaining: gan projectile/control effects vao weapon/unit content that, khong chi dung architecture.
-- Remaining: tune lai level 1-3 sau khi them enemy variety moi.
+- Remaining: tune lai level 1-5 sau khi playtest Fast/Shield.
 
 Phase 2 — Visual/audio production pass:
 - Production board/background cho First Contact.
@@ -472,22 +472,25 @@ Hien tai v1:
 - `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
 - `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level, completed count, last completed level id, va save schema version.
-- `Assets/Levels/Level_01.asset`, `Level_02.asset`, `Level_03.asset` la level pack dau tien.
-- `LevelCatalog.asset` dang chua 3 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
+- `Assets/Levels/Level_01.asset` den `Level_05.asset` la level pack dau tien.
+- `LevelCatalog.asset` dang chua 5 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
 - `LevelDefinition.allowedUnitLabels` filter seed packet theo label hien co trong `GameBalance.units`.
 - `LevelDefinition.overchargeUnlocked` bat/tat `OverchargeSystem` theo mission.
 - `SeedBar` giu seed list goc va tao active seed list theo level; HUD tu rebuild khi seed count doi.
 - Unlock hien tai:
   - Level 1: ArcReactor, Turret.
   - Level 2: ArcReactor, Turret, Bunker.
-  - Level 3: ArcReactor, Turret, Bunker, SnowGun, DroneEMP, Overcharge.
+  - Level 3+: ArcReactor, Turret, Bunker, SnowGun, DroneEMP, Overcharge.
+- Enemy archetype hien tai:
+  - Basic va Armored dung prefab rieng da co.
+  - Fast va Shield co `LevelEnemyType` rieng va stat modifiers trong `EnemySpawner`; `fastPrefab`/`shieldPrefab` optional, fallback ve Basic/Armored prefab neu chua co asset.
 - `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
 - `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
 - `Level_01.useAuthoredWaves` hien bat mac dinh sau playtest OK.
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Them enemy variety moi roi tune lai level 1-3.
+1. Playtest level 4-5 va tune Fast/Shield.
 2. Level select art/icon/preview.
 3. Chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
 4. Tach level progression sang main menu scene khi campaign/menu flow ro hon.

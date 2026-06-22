@@ -75,7 +75,9 @@ public class LevelBalanceSettings
 public enum LevelEnemyType
 {
     Basic,
-    Armored
+    Armored,
+    Fast,
+    Shield
 }
 
 [System.Serializable]

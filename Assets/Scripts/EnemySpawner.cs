@@ -11,6 +11,8 @@ public class EnemySpawner : MonoBehaviour
     public GridManager grid;          // kéo GridManager vào
     public GameObject enemyPrefab;    // địch cơ bản
     public GameObject armoredPrefab;  // địch giáp (tuỳ chọn; trống -> luôn dùng địch cơ bản)
+    public GameObject fastPrefab;     // tuỳ chọn; trống -> dùng enemyPrefab + stat modifier
+    public GameObject shieldPrefab;   // tuỳ chọn; trống -> dùng armoredPrefab + stat modifier
 
     [Header("Cấu hình wave")]
     public int waveCount = 5;
@@ -30,6 +32,7 @@ public class EnemySpawner : MonoBehaviour
     int currentWave = 0;
     int toSpawn = 0;
     GameObject[] currentWaveQueue;
+    LevelEnemyType[] currentWaveTypes;
     int currentWaveQueueIndex;
     float timer = 0f;
     GUIStyle style;
@@ -122,7 +125,8 @@ public class EnemySpawner : MonoBehaviour
     void BeginNextWave()
     {
         currentWave++;
-        currentWaveQueue = BuildWaveQueue(currentWave);
+        currentWaveTypes = BuildWaveTypeQueue(currentWave);
+        currentWaveQueue = BuildWaveQueue(currentWaveTypes);
         currentWaveQueueIndex = 0;
         toSpawn = currentWaveQueue != null ? currentWaveQueue.Length : 0;
         timer = 0f;
@@ -143,6 +147,7 @@ public class EnemySpawner : MonoBehaviour
         pos.z = -1f;
 
         GameObject prefab = NextEnemyPrefab();
+        LevelEnemyType enemyType = NextEnemyType();
 
         GameObject e = Instantiate(prefab, pos, Quaternion.identity);
         var mover = e.GetComponent<EnemyMover>();
@@ -150,6 +155,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (GameBalance.Instance != null)
             GameBalance.Instance.ApplyEnemy(e, prefab);
+        ApplyEnemyTypeModifiers(e, enemyType);
     }
 
     public void ApplyWaveBalance(
@@ -178,36 +184,47 @@ public class EnemySpawner : MonoBehaviour
             waveCount = authoredWaves.Length;
     }
 
-    GameObject[] BuildWaveQueue(int waveNumber)
+    GameObject[] BuildWaveQueue(LevelEnemyType[] waveTypes)
+    {
+        if (waveTypes == null)
+            return new GameObject[0];
+
+        var queue = new GameObject[waveTypes.Length];
+        for (int i = 0; i < queue.Length; i++)
+            queue[i] = PrefabFor(waveTypes[i]);
+        return queue;
+    }
+
+    LevelEnemyType[] BuildWaveTypeQueue(int waveNumber)
     {
         if (useAuthoredWaves && authoredWaves != null && waveNumber - 1 < authoredWaves.Length)
-            return BuildAuthoredWaveQueue(authoredWaves[waveNumber - 1]);
+            return BuildAuthoredWaveTypeQueue(authoredWaves[waveNumber - 1]);
 
         int count = baseEnemies + (waveNumber - 1) * enemiesIncreasePerWave;
         if (waveNumber >= waveCount) count *= finalWaveMultiplier;
 
-        var queue = new GameObject[count];
+        var queue = new LevelEnemyType[count];
         for (int i = 0; i < queue.Length; i++)
-            queue[i] = RollFormulaPrefab(waveNumber);
+            queue[i] = RollFormulaType(waveNumber);
         return queue;
     }
 
-    GameObject[] BuildAuthoredWaveQueue(LevelWaveDefinition wave)
+    LevelEnemyType[] BuildAuthoredWaveTypeQueue(LevelWaveDefinition wave)
     {
         if (wave == null || wave.TotalCount <= 0)
-            return new GameObject[0];
+            return new LevelEnemyType[0];
 
         timeBetweenSpawns = Mathf.Max(0.1f, wave.timeBetweenSpawns);
         timeBetweenWaves = Mathf.Max(0f, wave.timeBeforeNextWave);
 
-        var queue = new GameObject[wave.TotalCount];
+        var queue = new LevelEnemyType[wave.TotalCount];
         int index = 0;
         foreach (var group in wave.groups)
         {
             if (group == null) continue;
 
             for (int i = 0; i < group.count && index < queue.Length; i++)
-                queue[index++] = PrefabFor(group.enemyType);
+                queue[index++] = group.enemyType;
         }
 
         Shuffle(queue);
@@ -225,27 +242,101 @@ public class EnemySpawner : MonoBehaviour
         return RollFormulaPrefab(currentWave);
     }
 
+    LevelEnemyType NextEnemyType()
+    {
+        if (currentWaveTypes != null && currentWaveQueueIndex - 1 >= 0 && currentWaveQueueIndex - 1 < currentWaveTypes.Length)
+            return currentWaveTypes[currentWaveQueueIndex - 1];
+
+        return RollFormulaType(currentWave);
+    }
+
     GameObject RollFormulaPrefab(int waveNumber)
     {
-        float armorChance = (armoredPrefab != null)
-            ? Mathf.Clamp01((waveNumber - 1) / (float)Mathf.Max(1, waveCount - 1)) * 0.6f
-            : 0f;
-        return (armoredPrefab != null && Random.value < armorChance) ? armoredPrefab : enemyPrefab;
+        return PrefabFor(RollFormulaType(waveNumber));
+    }
+
+    LevelEnemyType RollFormulaType(int waveNumber)
+    {
+        float progress = Mathf.Clamp01((waveNumber - 1) / (float)Mathf.Max(1, waveCount - 1));
+        float roll = Random.value;
+        if (waveNumber >= 4 && roll < progress * 0.18f)
+            return LevelEnemyType.Fast;
+        if (waveNumber >= 5 && roll < progress * 0.28f)
+            return LevelEnemyType.Shield;
+        if (armoredPrefab != null && roll < progress * 0.6f)
+            return LevelEnemyType.Armored;
+        return LevelEnemyType.Basic;
     }
 
     GameObject PrefabFor(LevelEnemyType enemyType)
     {
-        return enemyType == LevelEnemyType.Armored && armoredPrefab != null ? armoredPrefab : enemyPrefab;
+        switch (enemyType)
+        {
+            case LevelEnemyType.Armored:
+                return armoredPrefab != null ? armoredPrefab : enemyPrefab;
+            case LevelEnemyType.Fast:
+                return fastPrefab != null ? fastPrefab : enemyPrefab;
+            case LevelEnemyType.Shield:
+                if (shieldPrefab != null) return shieldPrefab;
+                return armoredPrefab != null ? armoredPrefab : enemyPrefab;
+            default:
+                return enemyPrefab;
+        }
     }
 
-    void Shuffle(GameObject[] queue)
+    void Shuffle(LevelEnemyType[] queue)
     {
         for (int i = 0; i < queue.Length; i++)
         {
             int swapIndex = Random.Range(i, queue.Length);
-            GameObject temp = queue[i];
+            LevelEnemyType temp = queue[i];
             queue[i] = queue[swapIndex];
             queue[swapIndex] = temp;
+        }
+    }
+
+    void ApplyEnemyTypeModifiers(GameObject enemy, LevelEnemyType enemyType)
+    {
+        if (enemy == null) return;
+
+        var health = enemy.GetComponent<Health>();
+        var mover = enemy.GetComponent<EnemyMover>();
+        var traits = enemy.GetComponent<EnemyTraits>();
+
+        switch (enemyType)
+        {
+            case LevelEnemyType.Fast:
+                if (health != null) health.SetMaxHealth(health.maxHealth * 0.7f, true);
+                if (mover != null)
+                {
+                    mover.speed *= 1.55f;
+                    mover.attackDamage *= 0.8f;
+                }
+                if (traits != null)
+                {
+                    traits.projectileDamageMultiplier *= 1.1f;
+                    traits.empDamageMultiplier *= 1.15f;
+                    traits.slowEffectMultiplier *= 1.25f;
+                    traits.knockbackMultiplier *= 1.1f;
+                }
+                break;
+
+            case LevelEnemyType.Shield:
+                if (health != null) health.SetMaxHealth(health.maxHealth * 1.35f, true);
+                if (mover != null)
+                {
+                    mover.speed *= 0.82f;
+                    mover.attackDamage *= 1.1f;
+                }
+                if (traits != null)
+                {
+                    traits.projectileDamageMultiplier *= 0.65f;
+                    traits.empDamageMultiplier *= 1.45f;
+                    traits.slowEffectMultiplier *= 0.75f;
+                    traits.knockbackMultiplier *= 0.45f;
+                    traits.stunDurationMultiplier *= 0.65f;
+                }
+                break;
         }
     }
 
