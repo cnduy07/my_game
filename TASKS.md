@@ -8,14 +8,6 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Test runtime HUD rebuild:
-  - neu Unity hien popup TextMeshPro Essentials khi compile UI moi, bam import;
-  - top bar hien energy/level/wave/pause dung, khong chong len OC;
-  - seed tray duoi man hinh click duoc, khong dat unit xuyen xuong board;
-  - seed disabled khi thieu energy, cooldown overlay hien sau khi dat;
-  - OC panel ben phai click/phim so hoat dong va tru energy;
-  - pause/resume/restart, SFX volume, reduce shake, vibration van hoat dong;
-  - win/lose modal hien dung va restart duoc.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -39,10 +31,15 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
 - Ho tro tinh chinh `GameBalance`, Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
 - Tinh chinh combat feedback pass sau Play Mode: flash strength, shake amount, VFX duration/color.
-- Tinh chinh runtime HUD sau Play Mode: safe area, spacing, text size, seed card state, modal layout.
+- Tinh chinh runtime HUD sau Play Mode neu co feedback visual: safe area, spacing, text size, seed card state, modal layout.
 - Nang cap VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon khi co art/VFX prefab.
 - Chay/cai tien AI QA report khi Unity Editor dong hoac qua menu trong Editor.
 - Sau khi vertical slice on, danh gia co nen nang `GameBalance` len ScriptableObject/level config hay giu MonoBehaviour tren scene.
+
+### Done gan day
+
+- Runtime HUD rebuild da duoc chu project test OK trong Unity.
+- TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
 
 ---
 
