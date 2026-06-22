@@ -162,6 +162,11 @@ Layout v1:
 - Overcharge panel: ben phai, tach khoi pause/wave.
 - Modal: pause/win/lose + settings co ban.
 
+Current scale pass:
+- Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
+- TMP warning da fix bang `textWrappingMode` thay cho obsolete `enableWordWrapping`.
+- Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
+
 Can polish sau:
 - Safe area/notch cho mobile that.
 - Icon seed/unit, icon energy, icon pause/resume thay chu.
@@ -469,7 +474,7 @@ Hien tai v1:
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Tune level 1-3 sau khi unit unlock lam thay doi difficulty.
+1. Playtest lai level 1-3 sau pacing pass: wave dau da bot thung nha qua som chua.
 2. Them reward/unlock copy cho tung level.
 3. SaveData co version khi progression phuc tap hon.
 4. Level select art/icon/preview.

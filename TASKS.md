@@ -13,6 +13,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - English la source copy chinh hien tai.
   - Vietnamese, Chinese, French them sau bang localization table.
   - Khong them Vietnamese khong dau vao runtime UI nua.
+- Kiem tra UI scale + pacing pass:
+  - Console khong con warning `TMP_Text.enableWordWrapping`.
+  - Seed cards lon hon, de bam hon, bot cam giac tach roi khoi game.
+  - Top bar/pause/mission button khong che noi dung va khong tran text.
+  - OC panel level 3 lon hon nhung khong che board qua muc.
+  - Level 1 wave dau cho du thoi gian dat ArcReactor/Turret.
+  - Level 2 wave dau khong thung nha qua som khi moi mo Bunker.
+  - Level 3 kho hon nhung khong ep ngay khi bat dau.
 - Kiem tra mission unlock/gating v1:
   - Play Mode khong co compile/Console error.
   - Level 1 chi hien seed `ArcReactor`, `Turret`; panel OC khong hien va phim so 1-5 khong kich hoat OC.
@@ -101,6 +109,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Projectile/EMP/control effect ton trong trait;
   - ArmorEnemy co resistance/vulnerability khac BasicEnemy;
   - balance report va AI QA cap nhat.
+- UI scale + early pacing pass:
+  - TMP wrapping warning fixed;
+  - top bar/seed tray/OC panel scaled up;
+  - level 1-3 early waves slowed/tuned after unlock gating.
 
 ---
 

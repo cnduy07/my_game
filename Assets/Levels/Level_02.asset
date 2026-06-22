@@ -23,9 +23,9 @@ MonoBehaviour:
     baseEnemies: 4
     enemiesIncreasePerWave: 2
     finalWaveMultiplier: 2
-    startDelay: 7
-    timeBetweenSpawns: 1.9
-    timeBetweenWaves: 11
+    startDelay: 11
+    timeBetweenSpawns: 2.25
+    timeBetweenWaves: 12
     overchargeEnergyCost: 50
     overchargeDuration: 6
     overchargeFireRateMultiplier: 2.75
@@ -38,31 +38,31 @@ MonoBehaviour:
   useAuthoredWaves: 1
   waves:
   - label: Probe Line
-    timeBetweenSpawns: 1.9
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 2.6
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 0
+      count: 3
+    - enemyType: 1
+      count: 1
+  - label: Armor Pair
+    timeBetweenSpawns: 2.25
+    timeBeforeNextWave: 12
     groups:
     - enemyType: 0
       count: 4
     - enemyType: 1
-      count: 1
-  - label: Armor Pair
-    timeBetweenSpawns: 1.85
-    timeBeforeNextWave: 11
+      count: 2
+  - label: Split Push
+    timeBetweenSpawns: 2
+    timeBeforeNextWave: 12
     groups:
     - enemyType: 0
       count: 5
     - enemyType: 1
-      count: 2
-  - label: Split Push
-    timeBetweenSpawns: 1.7
-    timeBeforeNextWave: 11
-    groups:
-    - enemyType: 0
-      count: 6
-    - enemyType: 1
       count: 3
   - label: Heavy Screen
-    timeBetweenSpawns: 1.65
+    timeBetweenSpawns: 1.9
     timeBeforeNextWave: 12
     groups:
     - enemyType: 0
@@ -70,10 +70,10 @@ MonoBehaviour:
     - enemyType: 1
       count: 5
   - label: Breakthrough
-    timeBetweenSpawns: 1.45
+    timeBetweenSpawns: 1.7
     timeBeforeNextWave: 0
     groups:
     - enemyType: 0
-      count: 9
+      count: 8
     - enemyType: 1
-      count: 7
+      count: 6

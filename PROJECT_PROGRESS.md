@@ -283,6 +283,21 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - AI QA bao loi neu enemy trait multiplier am.
 - Muc tieu: tao nen counter-play cho SnowGun/EMP/OC truoc khi them enemy variant moi nhu Fast/Shield/Heavy.
 
+### UI scale + early pacing pass — 2026-06-22
+- Fix TMP warning: thay `enableWordWrapping` bang `textWrappingMode`.
+- Runtime HUD duoc scale lon hon:
+  - top bar cao hon, Energy/mission/wave text lon hon;
+  - mission/pause button lon hon;
+  - seed tray rong va cao hon, seed cards lon hon;
+  - OC panel va row buttons lon hon;
+  - tutorial hint panel lon hon.
+- Muc tieu UI: bot cam giac cac nut la overlay nho tach roi, gan hon voi game surface. Day van la code-generated UI, chua phai final UI skin.
+- Level pacing sau unlock gating:
+  - Level 1 start delay tang, wave dau it enemy hon, spawn interval cham hon.
+  - Level 2 start delay/spawn interval duoc noi de nguoi choi kip dat Bunker/economy.
+  - Level 3 van kho hon nhung wave dau cham hon de kip dung full toolkit.
+- Ly do: sau khi level 1/2 khoa bot unit va OC, authored waves cu tro nen de thuong nha qua som.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

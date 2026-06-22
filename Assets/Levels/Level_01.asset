@@ -23,9 +23,9 @@ MonoBehaviour:
     baseEnemies: 3
     enemiesIncreasePerWave: 2
     finalWaveMultiplier: 2
-    startDelay: 8
-    timeBetweenSpawns: 2
-    timeBetweenWaves: 12
+    startDelay: 13
+    timeBetweenSpawns: 2.6
+    timeBetweenWaves: 13
     overchargeEnergyCost: 50
     overchargeDuration: 6
     overchargeFireRateMultiplier: 2.5
@@ -37,40 +37,40 @@ MonoBehaviour:
   useAuthoredWaves: 1
   waves:
   - label: Opening Contact
-    timeBetweenSpawns: 2
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 3
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 0
+      count: 2
+  - label: Armor Scout
+    timeBetweenSpawns: 2.6
+    timeBeforeNextWave: 13
     groups:
     - enemyType: 0
       count: 3
-  - label: Armor Scout
-    timeBetweenSpawns: 2
-    timeBeforeNextWave: 12
+    - enemyType: 1
+      count: 1
+  - label: Pressure Test
+    timeBetweenSpawns: 2.25
+    timeBeforeNextWave: 13
     groups:
     - enemyType: 0
       count: 4
     - enemyType: 1
       count: 1
-  - label: Pressure Test
-    timeBetweenSpawns: 1.8
-    timeBeforeNextWave: 12
-    groups:
-    - enemyType: 0
-      count: 5
-    - enemyType: 1
-      count: 2
   - label: Armor Line
-    timeBetweenSpawns: 1.8
-    timeBeforeNextWave: 12
+    timeBetweenSpawns: 2.1
+    timeBeforeNextWave: 13
     groups:
     - enemyType: 0
       count: 5
     - enemyType: 1
-      count: 4
+      count: 3
   - label: Final Surge
-    timeBetweenSpawns: 1.6
+    timeBetweenSpawns: 1.9
     timeBeforeNextWave: 0
     groups:
     - enemyType: 0
-      count: 10
+      count: 8
     - enemyType: 1
-      count: 6
+      count: 4

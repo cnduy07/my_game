@@ -23,9 +23,9 @@ MonoBehaviour:
     baseEnemies: 5
     enemiesIncreasePerWave: 2
     finalWaveMultiplier: 2
-    startDelay: 6
-    timeBetweenSpawns: 1.7
-    timeBetweenWaves: 10
+    startDelay: 10
+    timeBetweenSpawns: 2
+    timeBetweenWaves: 11
     overchargeEnergyCost: 60
     overchargeDuration: 6
     overchargeFireRateMultiplier: 3
@@ -40,47 +40,47 @@ MonoBehaviour:
   useAuthoredWaves: 1
   waves:
   - label: Signal Trace
-    timeBetweenSpawns: 1.75
-    timeBeforeNextWave: 9
+    timeBetweenSpawns: 2.25
+    timeBeforeNextWave: 11
     groups:
     - enemyType: 0
-      count: 5
+      count: 4
     - enemyType: 1
       count: 1
   - label: Dual Entry
-    timeBetweenSpawns: 1.65
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 2
+    timeBeforeNextWave: 11
     groups:
     - enemyType: 0
       count: 6
     - enemyType: 1
       count: 3
   - label: Armor Surge
-    timeBetweenSpawns: 1.55
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 1.85
+    timeBeforeNextWave: 11
     groups:
     - enemyType: 0
       count: 6
     - enemyType: 1
       count: 5
   - label: Pressure Wall
-    timeBetweenSpawns: 1.45
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 1.7
+    timeBeforeNextWave: 11
     groups:
     - enemyType: 0
       count: 8
     - enemyType: 1
       count: 5
   - label: Siege Line
-    timeBetweenSpawns: 1.35
-    timeBeforeNextWave: 10
+    timeBetweenSpawns: 1.55
+    timeBeforeNextWave: 11
     groups:
     - enemyType: 0
       count: 8
     - enemyType: 1
       count: 7
   - label: Signal Collapse
-    timeBetweenSpawns: 1.25
+    timeBetweenSpawns: 1.4
     timeBeforeNextWave: 0
     groups:
     - enemyType: 0
