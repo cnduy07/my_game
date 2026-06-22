@@ -63,7 +63,8 @@ public class GameUiController : MonoBehaviour
     void DrawTopHud()
     {
         float margin = 8f;
-        pauseButtonRect = new Rect(Screen.width - 136f, margin, 128f, 38f);
+        float pauseX = Mathf.Min(Screen.width - 256f, Screen.width * 0.5f + 132f);
+        pauseButtonRect = new Rect(pauseX, margin, 112f, 36f);
         GUI.enabled = GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon);
         GUI.Box(new Rect(pauseButtonRect.x - 4f, pauseButtonRect.y - 4f, pauseButtonRect.width + 8f, pauseButtonRect.height + 8f), GUIContent.none, panelStyle);
         if (GUI.Button(pauseButtonRect, isPaused ? "RESUME" : "PAUSE"))

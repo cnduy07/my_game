@@ -6,7 +6,7 @@ public class DamageFeedback : MonoBehaviour
 {
     public Color flashColor = Color.white;
     public float flashTime = 0.08f;
-    public float shakeAmount = 0.006f;
+    public float shakeAmount = 0.018f;
     public float shakeTime = 0.14f;
     public float shakeCycles = 1.5f;
 
@@ -57,7 +57,7 @@ public class DamageFeedback : MonoBehaviour
     {
         float total = Mathf.Max(flashTime, shakeTime, 0.01f);
         float currentShakeAmount = isEnemy ? 0f : shakeAmount;
-        if (GameSettings.ReduceShake) currentShakeAmount *= 0.35f;
+        if (GameSettings.ReduceShake) currentShakeAmount *= 0.4f;
 
         if (currentShakeAmount > 0f)
         {
