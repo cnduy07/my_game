@@ -342,6 +342,14 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Muc tieu: tranh HUD bi notch/cutout che khi test iOS/Android ma khong thay doi toa do gameplay world.
 - Can test sau tren Game view aspect co notch/safe-area hoac tren device that.
 
+### Wave status clarity pass — 2026-06-22
+- `EnemySpawner.DisplayText` hien ro phase:
+  - `Deploy: Ns` truoc wave dau;
+  - `Wave X/Y` khi dang spawn;
+  - `Clear wave X/Y` khi cho diet sach enemy;
+  - `Next wave: Ns` giua cac wave.
+- HUD doi mau warning cho wave countdown khi con 3 giay, giup nguoi choi nhan biet dot sap toi.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

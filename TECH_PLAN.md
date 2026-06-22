@@ -155,7 +155,7 @@ Contract:
 - `EnergySystem` chi quan ly energy, HUD doc `EnergySystem.Instance.Energy`.
 - `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
-- `EnemySpawner` expose `DisplayText` cho wave label.
+- `EnemySpawner` expose `DisplayText` va `IsWaveWarning` cho wave label/canh bao countdown.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
 

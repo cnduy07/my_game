@@ -540,7 +540,11 @@ public class GameUiController : MonoBehaviour
             levelText.text = level != null ? level.displayName : "Level";
 
         if (waveText != null)
-            waveText.text = EnemySpawner.Instance != null ? EnemySpawner.Instance.DisplayText : "";
+        {
+            EnemySpawner spawner = EnemySpawner.Instance;
+            waveText.text = spawner != null ? spawner.DisplayText : "";
+            waveText.color = spawner != null && spawner.IsWaveWarning ? warningColor : Color.white;
+        }
 
         if (pauseButtonText != null)
             pauseButtonText.text = isPaused ? ">" : "II";

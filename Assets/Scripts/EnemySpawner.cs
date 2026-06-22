@@ -36,9 +36,27 @@ public class EnemySpawner : MonoBehaviour
 
     public int CurrentWave => currentWave;
     public int WaveCount => waveCount;
-    public string DisplayText => phase == Phase.Won
-        ? ""
-        : (phase == Phase.PreStart ? "Preparing..." : $"Wave {currentWave}/{waveCount}");
+    public bool IsWaveWarning => (phase == Phase.PreStart && RemainingPhaseTime(startDelay) <= 3f) ||
+                                 (phase == Phase.BetweenWaves && RemainingPhaseTime(timeBetweenWaves) <= 3f);
+    public string DisplayText
+    {
+        get
+        {
+            switch (phase)
+            {
+                case Phase.PreStart:
+                    return $"Deploy: {Mathf.CeilToInt(RemainingPhaseTime(startDelay))}s";
+                case Phase.Spawning:
+                    return $"Wave {currentWave}/{waveCount}";
+                case Phase.WaitingClear:
+                    return $"Clear wave {currentWave}/{waveCount}";
+                case Phase.BetweenWaves:
+                    return $"Next wave: {Mathf.CeilToInt(RemainingPhaseTime(timeBetweenWaves))}s";
+                default:
+                    return "";
+            }
+        }
+    }
 
     void Awake()
     {
@@ -110,6 +128,11 @@ public class EnemySpawner : MonoBehaviour
         timer = 0f;
         phase = toSpawn > 0 ? Phase.Spawning : Phase.WaitingClear;
         Debug.Log($"Wave {currentWave}/{waveCount} started - {toSpawn} enemies");
+    }
+
+    float RemainingPhaseTime(float duration)
+    {
+        return Mathf.Max(0f, duration - timer);
     }
 
     void SpawnOne()

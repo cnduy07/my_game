@@ -142,6 +142,9 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `SafeAreaFitter` co trong runtime HUD;
   - top bar/seed tray/OC/modal dung `SafeAreaRoot`;
   - can test tren mobile/notch aspect sau.
+- Wave status clarity pass:
+  - top-right HUD hien `Deploy`, `Wave`, `Clear wave`, `Next wave` dung state;
+  - countdown doi mau warning trong 3 giay cuoi truoc wave.
 
 ---
 
