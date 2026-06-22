@@ -277,7 +277,12 @@ Hien tai:
 - Level 3: Signal Siege.
 - Level 4: Velocity Breach.
 - Level 5: Shield Column.
-- 5 level nay dung chung scene/board, khac authored waves va balance.
+- Level 6: EMP Corridor.
+- Level 7: Velocity Net.
+- Level 8: Iron Rain.
+- Level 9: Breach Protocol.
+- Level 10: Coreline Stand.
+- 10 level nay dung chung scene/board, khac authored waves va balance.
 - Unlock rule: win level truoc de mo level tiep theo.
 - Unit/OC unlock:
   - Level 1: ArcReactor + Turret.
@@ -285,19 +290,20 @@ Hien tai:
   - Level 3: mo SnowGun + DroneEMP + Overcharge.
   - Level 4: gioi thieu Fast enemy.
   - Level 5: gioi thieu Shield enemy.
+  - Level 6-10: baseline mixed formations de test pacing truoc khi them enemy/art moi.
 
 Can lam tiep:
-- Level 1-3 baseline da duoc tune va playtest OK; level 4-5 can playtest/tune Fast/Shield.
-- Level 4-10 them enemy/unit/upgrade moi thay vi lap lai unlock da co.
+- Level 1-3 baseline da duoc tune va playtest OK; level 4-10 can playtest/tune pacing/fairness.
+- Sau playtest, quyet dinh level nao can enemy/unit/upgrade moi thay vi chi lap lai combination hien co.
 - Moi level co theme/tint nho hoac background variation de tranh lap.
 - Wave notes: enemy type, count, timing, huge wave.
-- Reward/unlock copy baseline da co cho level 1-3; level moi van can copy ngan gon.
+- Reward/unlock copy baseline da co cho level 1-10.
 - Level select can icon/preview/reward state de nhin nhu game release hon.
 
 Phase content target:
-- Phase 1: level 1-5 du vui va day dung unit/enemy unlock — baseline code/data done; con tune Fast/Shield sau playtest.
+- Phase 1: level 1-10 co data baseline va day du unit/enemy unlock — con tune sau playtest.
 - Phase 2: First Contact co board/UI/VFX/audio du dep de lam vertical slice showcase.
-- Phase 3: level 4-10 co enemy/unit combinations ro.
+- Phase 3: level 4-10 co enemy/unit combinations ro va them identity rieng neu can.
 - Phase 4: store-facing content gom icon, screenshots, title/logo, short description.
 
 ---

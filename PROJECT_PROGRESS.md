@@ -413,6 +413,18 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Legacy slow fields van ton tai de khong pha prefab cu, nhung content moi nen dung effect list.
 - AI QA check SnowGun phai co Slow ProjectileHitEffect; balance report hien projectile effects cua shooter.
 
+### Campaign pack 1 data baseline — 2026-06-23
+- Them `Level_06` den `Level_10` ScriptableObject YAML va meta.
+- `LevelCatalog` nay co level 1-10.
+- Level 6-10 dung enemy type hien co (`Basic`, `Armored`, `Fast`, `Shield`) va authored waves rieng.
+- Chu dich thiet ke:
+  - Level 6: EMP vs shield-heavy waves.
+  - Level 7: SnowGun vs fast-heavy pressure.
+  - Level 8: economy vs mixed heavy waves.
+  - Level 9: bunker/patching weak lanes vs staggered breaches.
+  - Level 10: final mixed formation baseline.
+- Chua them art/enemy moi; day la data baseline de test pacing, fairness, va campaign length.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

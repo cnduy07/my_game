@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e44bfc15a4b4a3ea64a842f4876f2f9, type: 3}
+  m_Name: Level_09
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  levelId: level_09
+  displayName: Breach Protocol
+  levelNumber: 9
+  missionBriefing: Enemy waves are staggered for lane breaches. Patch weak lanes before the final signal.
+  completionReward: 'Tactical note: bunker placement buys time against staggered breaches.'
+  balance:
+    startEnergy: 125
+    skyOrbValue: 25
+    skyInterval: 6
+    waveCount: 7
+    baseEnemies: 7
+    enemiesIncreasePerWave: 2
+    finalWaveMultiplier: 2
+    startDelay: 14
+    timeBetweenSpawns: 1.65
+    timeBetweenWaves: 12
+    overchargeEnergyCost: 65
+    overchargeDuration: 6.2
+    overchargeFireRateMultiplier: 3.4
+    overchargeDamageMultiplier: 1.48
+  allowedUnitLabels:
+  - ArcReactor
+  - Turret
+  - Bunker
+  - SnowGun
+  - DroneEMP
+  overchargeUnlocked: 1
+  useAuthoredWaves: 1
+  waves:
+  - label: Probe Pattern
+    timeBetweenSpawns: 1.8
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 0
+      count: 5
+    - enemyType: 2
+      count: 5
+    - enemyType: 3
+      count: 3
+  - label: Staggered Shield
+    timeBetweenSpawns: 1.65
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 1
+      count: 5
+    - enemyType: 2
+      count: 6
+    - enemyType: 3
+      count: 6
+  - label: Lane Drill
+    timeBetweenSpawns: 1.5
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 0
+      count: 6
+    - enemyType: 1
+      count: 6
+    - enemyType: 2
+      count: 8
+    - enemyType: 3
+      count: 5
+  - label: Breach Split
+    timeBetweenSpawns: 1.4
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 1
+      count: 7
+    - enemyType: 2
+      count: 9
+    - enemyType: 3
+      count: 8
+  - label: Low Signal
+    timeBetweenSpawns: 1.28
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 0
+      count: 8
+    - enemyType: 1
+      count: 7
+    - enemyType: 2
+      count: 10
+    - enemyType: 3
+      count: 8
+  - label: Breaker Column
+    timeBetweenSpawns: 1.18
+    timeBeforeNextWave: 12
+    groups:
+    - enemyType: 1
+      count: 9
+    - enemyType: 2
+      count: 10
+    - enemyType: 3
+      count: 10
+  - label: Breach Protocol
+    timeBetweenSpawns: 1.08
+    timeBeforeNextWave: 0
+    groups:
+    - enemyType: 0
+      count: 8
+    - enemyType: 1
+      count: 10
+    - enemyType: 2
+      count: 12
+    - enemyType: 3
+      count: 12

@@ -368,9 +368,9 @@ Chu project can uu tien asset:
 ## 10.6 Production Roadmap
 
 Phase 1 — Gameplay vertical slice:
-- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD, dev unlock all levels for testing, SnowGun projectile effect content.
+- DONE baseline: level 1-10 data pack, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD, dev unlock all levels for testing, SnowGun projectile effect content.
 - Remaining: Fast/Shield prefab/art identity rieng; hien tai co fallback prefab de gameplay chay.
-- Remaining: tune lai level 1-5 sau khi playtest Fast/Shield.
+- Remaining: tune lai level 1-10 sau playtest campaign pacing/fairness.
 
 Phase 2 — Visual/audio production pass:
 - Production board/background cho First Contact.
@@ -379,7 +379,7 @@ Phase 2 — Visual/audio production pass:
 - Animation polish cho core unit/enemy.
 
 Phase 3 — Campaign content:
-- Level 4-10.
+- DONE baseline: level 1-10 data pack.
 - Level select polish voi preview/reward/unlock copy.
 - Tutorial callouts thay hint text don gian.
 - Mo khoa enemy/unit theo campaign.
@@ -473,8 +473,8 @@ Hien tai v1:
 - `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
 - `LevelManager.unlockAllLevelsForTesting` la dev/test override; khi bat, UI va select/reload cho phep chon moi mission nhung khong danh dau completed gia.
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level, completed count, last completed level id, va save schema version.
-- `Assets/Levels/Level_01.asset` den `Level_05.asset` la level pack dau tien.
-- `LevelCatalog.asset` dang chua 5 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
+- `Assets/Levels/Level_01.asset` den `Level_10.asset` la campaign pack 1 data baseline.
+- `LevelCatalog.asset` dang chua 10 level; level unlock theo rule `levelNumber <= highestCompleted + 1` khi test override tat.
 - `LevelDefinition.allowedUnitLabels` filter seed packet theo label hien co trong `GameBalance.units`.
 - `LevelDefinition.overchargeUnlocked` bat/tat `OverchargeSystem` theo mission.
 - `SeedBar` giu seed list goc va tao active seed list theo level; HUD tu rebuild khi seed count doi.
@@ -491,7 +491,7 @@ Hien tai v1:
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Playtest level 4-5 ve pacing/fairness; stat identity Fast/Shield da duoc AI QA kiem tra bang multiplier.
+1. Playtest level 4-10 ve pacing/fairness; stat identity Fast/Shield da duoc AI QA kiem tra bang multiplier.
 2. Level select art/icon/preview.
 3. Chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
 4. Tach level progression sang main menu scene khi campaign/menu flow ro hon.

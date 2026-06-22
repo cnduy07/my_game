@@ -16,7 +16,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Current validation focus:
   - Kiem tra level select khong tran khoi mission box khi co 5+ level.
   - Khi co thiet bi that: test safe area/notch/touch target.
-  - Test level 4-5 moi ve pacing/fairness; Fast/Shield stat identity do AI QA kiem tra bang so lieu.
+  - Test level 4-10 ve pacing/fairness; enemy/stat identity do AI QA kiem tra bang so lieu.
   - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
 
 ### Codex
@@ -137,6 +137,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `Shooter` clone hit effects vao projectile khi ban de pooling khong giu state cu;
   - AI QA fail neu SnowGun mat slow projectile effect;
   - Level_05 reward YAML da quote de xu ly QA warning.
+- Campaign pack 1 data baseline:
+  - them `Level_06` den `Level_10`;
+  - `LevelCatalog` co 10 level;
+  - level 6-10 dung authored waves voi Basic/Armored/Fast/Shield;
+  - chua them enemy/art moi, day la data baseline de test campaign length.
 
 ---
 
@@ -147,7 +152,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 1. Phase 1 — Gameplay vertical slice:
    - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers, dev unlock all levels for testing, SnowGun projectile effect content.
    - Remaining: art/prefab identity rieng cho Fast/Shield.
-   - Remaining: one more balance pass after level 4-5 playtest.
+   - Remaining: one more balance pass after level 4-10 playtest.
 2. Phase 2 — Visual/audio production pass:
    - production board/background for First Contact;
    - UI skin/icon set replacing code-generated rectangles;
@@ -155,7 +160,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
    - animation polish for core unit/enemy set;
    - audio layering / music pass.
 3. Phase 3 — Campaign content:
-   - level 4-10;
+   - DONE baseline: level 1-10 data pack;
    - level select polish with preview/rewards;
    - tutorial callouts;
    - unlock/reward copy.
