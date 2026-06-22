@@ -113,6 +113,7 @@ MonoBehaviour:
   maxX: 20
   slowFactor: 1
   slowDuration: 0
+  hitEffects: []
 --- !u!95 &5558475086453151422
 Animator:
   serializedVersion: 7

@@ -405,6 +405,14 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - Shield phai health cao hon + speed thap hon + resist projectile + vulnerable EMP.
 - Balance report hien `Enemy Type Tuning` de Codex kiem soat stat identity bang so lieu, khong bat chu project do bang cam giac.
 
+### Projectile effect content pass — 2026-06-23
+- Fix QA warning Level_05 completion reward bang cach quote YAML reward co dau `:`.
+- `Shooter` co `ProjectileHitEffect[] hitEffects`; khi ban se clone effect vao projectile de pooled bullet khong giu state cu.
+- `GameBalance.UnitBalance` co `projectileHitEffects` de tune effect theo unit tu config trung tam.
+- SnowGun chuyen tu legacy `bulletSlowFactor/bulletSlowDuration` sang `ProjectileHitEffect Slow(value=0.5, duration=3)` trong scene balance va prefab.
+- Legacy slow fields van ton tai de khong pha prefab cu, nhung content moi nen dung effect list.
+- AI QA check SnowGun phai co Slow ProjectileHitEffect; balance report hien projectile effects cua shooter.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

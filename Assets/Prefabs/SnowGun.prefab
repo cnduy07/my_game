@@ -230,8 +230,12 @@ MonoBehaviour:
   fireInterval: 1.2
   bulletSpeed: 6
   bulletDamage: 25
-  bulletSlowFactor: 0.5
-  bulletSlowDuration: 3
+  bulletSlowFactor: 1
+  bulletSlowDuration: 0
+  hitEffects:
+  - type: 0
+    value: 0.5
+    duration: 3
 --- !u!114 &5251849714587976747
 MonoBehaviour:
   m_ObjectHideFlags: 0

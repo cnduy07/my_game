@@ -74,6 +74,10 @@ public static class BalanceReportGenerator
             if (!looksLikeShooter) continue;
 
             sb.AppendLine($"### {unit.label}");
+            string effects = BuildProjectileEffectSummary(unit);
+            if (!string.IsNullOrEmpty(effects))
+                sb.AppendLine($"- Effects: {effects}");
+
             foreach (var enemy in balance.enemies)
             {
                 if (enemy == null || enemy.maxHealth <= 0f) continue;
@@ -183,6 +187,27 @@ public static class BalanceReportGenerator
         }
 
         return wroteAny ? summary.ToString() : "";
+    }
+
+    static string BuildProjectileEffectSummary(UnitBalance unit)
+    {
+        if (unit == null) return "";
+
+        var summary = new StringBuilder();
+        if (unit.bulletSlowDuration > 0f && unit.bulletSlowFactor < 1f)
+            summary.Append($"legacy slow factor `{Format(unit.bulletSlowFactor)}` for `{Format(unit.bulletSlowDuration)}s`");
+
+        if (unit.projectileHitEffects != null)
+        {
+            foreach (var effect in unit.projectileHitEffects)
+            {
+                if (effect == null) continue;
+                if (summary.Length > 0) summary.Append(", ");
+                summary.Append($"{effect.type} value `{Format(effect.value)}` duration `{Format(effect.duration)}s`");
+            }
+        }
+
+        return summary.ToString();
     }
 
     static UnitBalance FindUnit(GameBalance balance, string label)

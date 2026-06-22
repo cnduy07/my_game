@@ -370,6 +370,7 @@ MonoBehaviour:
     bulletDamage: 25
     bulletSlowFactor: 1
     bulletSlowDuration: 0
+    projectileHitEffects: []
     energyAmount: 25
     energyInterval: 5
     empFuse: 1.2
@@ -386,6 +387,7 @@ MonoBehaviour:
     bulletDamage: 25
     bulletSlowFactor: 1
     bulletSlowDuration: 0
+    projectileHitEffects: []
     energyAmount: 25
     energyInterval: 5
     empFuse: 1.2
@@ -402,6 +404,7 @@ MonoBehaviour:
     bulletDamage: 25
     bulletSlowFactor: 1
     bulletSlowDuration: 0
+    projectileHitEffects: []
     energyAmount: 25
     energyInterval: 5
     empFuse: 1.2
@@ -416,8 +419,12 @@ MonoBehaviour:
     fireInterval: 1.2
     bulletSpeed: 6
     bulletDamage: 25
-    bulletSlowFactor: 0.5
-    bulletSlowDuration: 3
+    bulletSlowFactor: 1
+    bulletSlowDuration: 0
+    projectileHitEffects:
+    - type: 0
+      value: 0.5
+      duration: 3
     energyAmount: 25
     energyInterval: 5
     empFuse: 1.2
@@ -434,6 +441,7 @@ MonoBehaviour:
     bulletDamage: 25
     bulletSlowFactor: 1
     bulletSlowDuration: 0
+    projectileHitEffects: []
     energyAmount: 25
     energyInterval: 5
     empFuse: 1.2

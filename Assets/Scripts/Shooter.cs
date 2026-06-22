@@ -12,10 +12,10 @@ public class Shooter : MonoBehaviour
     public float bulletSpeed = 6f;
     public float bulletDamage = 25f;
 
-    // Để mặc định (factor=1, duration=0) cho turret thường.
-    // Súng băng: đặt factor < 1 (vd 0.5) và duration > 0 (vd 3) trên Inspector.
+    // Legacy slow fields remain for old prefabs; new content should use hitEffects.
     public float bulletSlowFactor = 1f;
     public float bulletSlowDuration = 0f;
+    public ProjectileHitEffect[] hitEffects;
 
     private float timer;
     private CharacterAnimator anim;   // null trên bản xám -> bỏ qua
@@ -67,9 +67,31 @@ public class Shooter : MonoBehaviour
             proj.damage = bulletDamage * OverchargeSystem.DamageMultiplierForRow(row);
             proj.slowFactor = bulletSlowFactor;
             proj.slowDuration = bulletSlowDuration;
+            proj.hitEffects = CloneHitEffects(hitEffects);
         }
 
         AudioManager.PlaySfx(SfxType.Shoot);
+    }
+
+    ProjectileHitEffect[] CloneHitEffects(ProjectileHitEffect[] source)
+    {
+        if (source == null || source.Length == 0) return null;
+
+        var clone = new ProjectileHitEffect[source.Length];
+        for (int i = 0; i < source.Length; i++)
+        {
+            ProjectileHitEffect effect = source[i];
+            if (effect == null) continue;
+
+            clone[i] = new ProjectileHitEffect
+            {
+                type = effect.type,
+                value = effect.value,
+                duration = effect.duration
+            };
+        }
+
+        return clone;
     }
 
     void OnDrawGizmosSelected()

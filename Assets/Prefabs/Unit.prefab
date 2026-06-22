@@ -166,6 +166,7 @@ MonoBehaviour:
   bulletDamage: 25
   bulletSlowFactor: 1
   bulletSlowDuration: 0
+  hitEffects: []
 --- !u!114 &7483656897611560730
 MonoBehaviour:
   m_ObjectHideFlags: 0

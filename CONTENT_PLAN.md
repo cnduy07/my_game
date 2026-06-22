@@ -64,7 +64,7 @@ Khuyen nghi visual:
 
 ### SnowGun
 
-Status: can rig/polish.
+Status: gameplay effect wired; can rig/visual polish.
 
 Can co:
 - Sprite/rug dung huong phai.
@@ -72,6 +72,10 @@ Can co:
 - Ice projectile.
 - Frost impact/snow slow VFX.
 - SFX bang/laser lanh.
+
+Current gameplay content:
+- SnowGun dung `ProjectileHitEffect Slow(value=0.5, duration=3)` tu `GameBalance`.
+- Visual frost projectile/impact van can asset/VFX prefab sau.
 
 ### Bunker
 

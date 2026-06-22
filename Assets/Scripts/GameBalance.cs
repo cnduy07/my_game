@@ -136,6 +136,7 @@ public class GameBalance : MonoBehaviour
             shooter.bulletDamage = balance.bulletDamage;
             shooter.bulletSlowFactor = Mathf.Clamp(balance.bulletSlowFactor, 0.01f, 1f);
             shooter.bulletSlowDuration = Mathf.Max(0f, balance.bulletSlowDuration);
+            shooter.hitEffects = CloneHitEffects(balance.projectileHitEffects);
         }
 
         var producer = unit.GetComponent<EnergyProducer>();
@@ -239,6 +240,27 @@ public class GameBalance : MonoBehaviour
         identity.sourcePrefab = sourcePrefab;
         identity.isEnemy = isEnemy;
     }
+
+    ProjectileHitEffect[] CloneHitEffects(ProjectileHitEffect[] source)
+    {
+        if (source == null || source.Length == 0) return null;
+
+        var clone = new ProjectileHitEffect[source.Length];
+        for (int i = 0; i < source.Length; i++)
+        {
+            ProjectileHitEffect effect = source[i];
+            if (effect == null) continue;
+
+            clone[i] = new ProjectileHitEffect
+            {
+                type = effect.type,
+                value = effect.value,
+                duration = effect.duration
+            };
+        }
+
+        return clone;
+    }
 }
 
 [System.Serializable]
@@ -257,6 +279,7 @@ public class UnitBalance
     public float bulletDamage = 25f;
     public float bulletSlowFactor = 1f;
     public float bulletSlowDuration = 0f;
+    public ProjectileHitEffect[] projectileHitEffects;
 
     [Header("ArcReactor")]
     public int energyAmount = 25;

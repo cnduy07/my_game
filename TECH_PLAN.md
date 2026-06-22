@@ -368,9 +368,8 @@ Chu project can uu tien asset:
 ## 10.6 Production Roadmap
 
 Phase 1 — Gameplay vertical slice:
-- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD, dev unlock all levels for testing.
+- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD, dev unlock all levels for testing, SnowGun projectile effect content.
 - Remaining: Fast/Shield prefab/art identity rieng; hien tai co fallback prefab de gameplay chay.
-- Remaining: gan projectile/control effects vao weapon/unit content that, khong chi dung architecture.
 - Remaining: tune lai level 1-5 sau khi playtest Fast/Shield.
 
 Phase 2 — Visual/audio production pass:
@@ -437,7 +436,7 @@ AI QA v1 hien co:
 - Menu: `Tools > AI QA > Run Full Check`.
 - Batchmode method: `AiQaReportRunner.RunFullCheck`.
 - Output: `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
-- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity, authored wave enemy groups, Fast/Shield tuning identity, Build Settings enabled scene, PlayerSettings metadata, va orphan/duplicate `LevelDefinition` assets.
+- Check hien tai: `GameBalance`, SnowGun projectile effect identity, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity, authored wave enemy groups, Fast/Shield tuning identity, Build Settings enabled scene, PlayerSettings metadata, va orphan/duplicate `LevelDefinition` assets.
 
 ---
 
@@ -506,6 +505,12 @@ Slow cu van duoc giu de tuong thich trong `Projectile`, nhung da co effect list 
 - `ProjectileEffectType.Slow`.
 - `ProjectileEffectType.Knockback`.
 - `ProjectileEffectType.Stun`.
+
+Current content:
+- `Shooter.hitEffects` duoc clone vao `Projectile` moi khi ban de pooled bullet khong giu state cu.
+- `UnitBalance.projectileHitEffects` la source tune trung tam trong `GameBalance`.
+- SnowGun dang dung `ProjectileHitEffect Slow(value=0.5, duration=3)` thay cho legacy slow fields.
+- Turret/Bullet default khong co hit effect.
 
 Sau nay co the mo rong them:
 - Damage.

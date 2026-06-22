@@ -132,6 +132,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `LevelManager.unlockAllLevelsForTesting` dang bat trong scene de test nhanh tat ca level;
   - Fast/Shield tuning doc tu `EnemySpawner.GetTypeModifier`;
   - AI QA fail/warn neu Fast/Shield mat identity so lieu.
+- Projectile effect content pass:
+  - SnowGun dung `ProjectileHitEffect Slow` tu `GameBalance`, khong chi legacy slow fields;
+  - `Shooter` clone hit effects vao projectile khi ban de pooling khong giu state cu;
+  - AI QA fail neu SnowGun mat slow projectile effect;
+  - Level_05 reward YAML da quote de xu ly QA warning.
 
 ---
 
@@ -140,9 +145,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ### Production roadmap phases
 
 1. Phase 1 — Gameplay vertical slice:
-   - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers, dev unlock all levels for testing.
+   - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers, dev unlock all levels for testing, SnowGun projectile effect content.
    - Remaining: art/prefab identity rieng cho Fast/Shield.
-   - Remaining: use `ProjectileHitEffect` in actual weapon/unit content, not only architecture.
    - Remaining: one more balance pass after level 4-5 playtest.
 2. Phase 2 — Visual/audio production pass:
    - production board/background for First Contact;
@@ -169,7 +173,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - DroneEMP: EMP pulse.
   - Enemy death: co the giu animation rig truoc, VFX sau.
 - Thay code-generated VFX bang prefab VFX dep hon khi visual direction on dinh.
-- Test `ProjectileHitEffect` cho knockback/stun tren mot bullet rieng khi can them weapon moi.
+- Them weapon moi de dung `ProjectileHitEffect` knockback/stun khi can mo rong counter-play.
 - Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
 - Khi test xong level pack, tat `LevelManager.unlockAllLevelsForTesting` truoc release/build review neu muon restore unlock tuan tu.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.

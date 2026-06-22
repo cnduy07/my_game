@@ -69,10 +69,60 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("GameBalance", "No unit balance entries."));
         if (balance.enemies == null || balance.enemies.Length == 0)
             checks.Add(CheckResult.Fail("GameBalance", "No enemy balance entries."));
+        CheckUnitProjectileEffects(balance, checks);
         if (balance.overchargeFireRateMultiplier <= 1f)
             checks.Add(CheckResult.Warn("GameBalance", "Overcharge fire-rate multiplier is not above 1."));
         if (balance.skyInterval <= 0f)
             checks.Add(CheckResult.Fail("GameBalance", "Sky interval must be above 0."));
+    }
+
+    static void CheckUnitProjectileEffects(GameBalance balance, List<CheckResult> checks)
+    {
+        if (balance == null || balance.units == null) return;
+
+        bool foundSnowGun = false;
+        bool snowGunHasSlow = false;
+        foreach (UnitBalance unit in balance.units)
+        {
+            if (unit == null) continue;
+
+            if (unit.projectileHitEffects != null)
+            {
+                foreach (ProjectileHitEffect effect in unit.projectileHitEffects)
+                {
+                    if (effect == null) continue;
+                    if (!Enum.IsDefined(typeof(ProjectileEffectType), effect.type))
+                        checks.Add(CheckResult.Fail("Projectile Effect", $"{unit.label} has undefined projectile effect type {effect.type}."));
+                    if (effect.type == ProjectileEffectType.Slow && (effect.value <= 0f || effect.value >= 1f || effect.duration <= 0f))
+                        checks.Add(CheckResult.Fail("Projectile Effect", $"{unit.label} slow effect must use value 0..1 and duration above 0."));
+                    if ((effect.type == ProjectileEffectType.Knockback || effect.type == ProjectileEffectType.Stun) && effect.duration < 0f)
+                        checks.Add(CheckResult.Fail("Projectile Effect", $"{unit.label} effect duration cannot be negative."));
+                }
+            }
+
+            if (!string.Equals(unit.label, "SnowGun", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            foundSnowGun = true;
+            snowGunHasSlow = HasSlowProjectileEffect(unit);
+        }
+
+        if (foundSnowGun && !snowGunHasSlow)
+            checks.Add(CheckResult.Fail("Projectile Effect", "SnowGun should define a Slow ProjectileHitEffect in GameBalance."));
+    }
+
+    static bool HasSlowProjectileEffect(UnitBalance unit)
+    {
+        if (unit == null) return false;
+
+        if (unit.projectileHitEffects != null)
+        {
+            foreach (ProjectileHitEffect effect in unit.projectileHitEffects)
+                if (effect != null && effect.type == ProjectileEffectType.Slow && effect.value > 0f && effect.value < 1f && effect.duration > 0f)
+                    return true;
+        }
+
+        return unit.bulletSlowDuration > 0f && unit.bulletSlowFactor > 0f && unit.bulletSlowFactor < 1f;
     }
 
     static void CheckLevelManager(LevelManager levelManager, GameBalance balance, List<CheckResult> checks)

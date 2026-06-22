@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Shield Column
   levelNumber: 5
   missionBriefing: Shield units resist bullets. Use EMP bursts and overcharged focus fire to break columns.
-  completionReward: Sector route opened. Campaign expansion target: levels 6-10.
+  completionReward: 'Sector route opened. Campaign expansion target: levels 6-10.'
   balance:
     startEnergy: 75
     skyOrbValue: 25
