@@ -336,6 +336,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - level asset nam ngoai `LevelCatalog` se canh bao.
 - Muc tieu: giam loi cau hinh khi bat dau build Android/iOS dev build.
 
+### Mobile safe-area HUD foundation — 2026-06-22
+- Them `SafeAreaFitter` de fit RectTransform vao `Screen.safeArea`.
+- `GameUiController` tao `SafeAreaRoot` duoi `RuntimeHUD` Canvas va dung root nay cho top bar, seed tray, OC panel, tutorial, modal, level select.
+- Muc tieu: tranh HUD bi notch/cutout che khi test iOS/Android ma khong thay doi toa do gameplay world.
+- Can test sau tren Game view aspect co notch/safe-area hoac tren device that.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

@@ -138,6 +138,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - QA report check Build Settings enabled scene;
   - QA report check productName/bundleVersion placeholder;
   - QA report check duplicate/missing catalog level assets.
+- Mobile safe-area HUD foundation:
+  - `SafeAreaFitter` co trong runtime HUD;
+  - top bar/seed tray/OC/modal dung `SafeAreaRoot`;
+  - can test tren mobile/notch aspect sau.
 
 ---
 

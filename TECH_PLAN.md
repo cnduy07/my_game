@@ -27,6 +27,7 @@ Scripts chinh:
 - `CombatVfxSettings`: optional prefab override layer cho cac VFX chinh; fallback code-generated van giu de khong block gameplay khi thieu asset.
 - `DamageFeedback`: auto flash/shake khi `Health` nhan damage.
 - `GameUiController`: runtime HUD bang uGUI/TextMeshPro; tao Canvas/EventSystem, seed tray, overcharge panel, pause/win/lose modal.
+- `SafeAreaFitter`: fit runtime UI root vao `Screen.safeArea` cho mobile notch/cutout.
 - `ObjectPooler`: pooling nhe cho object lap lai; hien dang ap dung cho projectile va energy orb.
 - `TutorialCoach`: contextual hint source cho HUD.
 - `RuntimeQualitySettings`: target FPS/sleep/vsync/multitouch cho mobile.
@@ -150,6 +151,7 @@ Quyet dinh hien tai:
 
 Contract:
 - `GameUiController` tren `GameSystems` tu tao `RuntimeHUD` Canvas va `EventSystem` neu scene chua co.
+- `RuntimeHUD` co `SafeAreaRoot` gan `SafeAreaFitter`; tat ca HUD controls chinh duoc tao duoi root nay.
 - `EnergySystem` chi quan ly energy, HUD doc `EnergySystem.Instance.Energy`.
 - `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.

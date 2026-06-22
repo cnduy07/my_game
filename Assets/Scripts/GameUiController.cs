@@ -176,12 +176,16 @@ public class GameUiController : MonoBehaviour
         scaler.referenceResolution = new Vector2(ReferenceWidth, ReferenceHeight);
         scaler.matchWidthOrHeight = 0.5f;
 
-        BuildTopBar(root.transform);
-        BuildSeedTray(root.transform);
-        BuildOverchargePanel(root.transform);
-        BuildTutorialPanel(root.transform);
-        BuildModal(root.transform);
-        BuildLevelSelectOverlay(root.transform);
+        RectTransform safeAreaRoot = new GameObject("SafeAreaRoot", typeof(RectTransform), typeof(SafeAreaFitter)).GetComponent<RectTransform>();
+        safeAreaRoot.SetParent(root.transform, false);
+        SetAnchor(safeAreaRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        BuildTopBar(safeAreaRoot);
+        BuildSeedTray(safeAreaRoot);
+        BuildOverchargePanel(safeAreaRoot);
+        BuildTutorialPanel(safeAreaRoot);
+        BuildModal(safeAreaRoot);
+        BuildLevelSelectOverlay(safeAreaRoot);
         RebuildDynamicUiIfNeeded();
         RefreshHud();
         RefreshModalState();
