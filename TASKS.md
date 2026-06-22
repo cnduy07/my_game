@@ -130,6 +130,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - level select hien briefing/lock detail;
   - victory modal hien reward;
   - AI QA canh bao level moi neu thieu copy.
+- Progress save hardening v1:
+  - `PlayerProgress` co save version;
+  - completed count khong tang lai khi replay level cu;
+  - selected/highest completed behavior giu nguyen.
 
 ---
 

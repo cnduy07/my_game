@@ -318,6 +318,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Victory modal hien reward/unlock copy; Pause modal van la noi duy nhat hien settings SFX/reduce shake/vibration de tranh modal ket qua bi roi.
 - AI QA canh bao level moi neu thieu mission briefing hoac completion reward copy.
 
+### Progress save hardening v1 — 2026-06-22
+- `PlayerProgress` van dung PlayerPrefs de giu don gian cho vertical slice, nhung da co `progress.saveVersion`.
+- Them metadata progression:
+  - `CompletedCount`;
+  - `LastCompletedLevelId`;
+  - `SaveVersion`.
+- Save cu migrate `CompletedCount` tu `HighestCompletedLevel` de giu hop ly voi campaign tuyen tinh hien tai.
+- `MarkLevelCompleted` khong tang duplicate count neu replay level da clear.
+- Muc tieu: chuan bi cho campaign/unlock/reward sau nay ma khong phai reset progress nguoi choi khi save schema lon hon.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

@@ -463,7 +463,7 @@ Khi co hon 1 level, can tach data:
 Hien tai v1:
 - `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
 - `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
-- `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level.
+- `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level, completed count, last completed level id, va save schema version.
 - `Assets/Levels/Level_01.asset`, `Level_02.asset`, `Level_03.asset` la level pack dau tien.
 - `LevelCatalog.asset` dang chua 3 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
 - `LevelDefinition.allowedUnitLabels` filter seed packet theo label hien co trong `GameBalance.units`.
@@ -481,7 +481,7 @@ Hien tai v1:
 Uu tien tiep:
 1. Playtest lai level 1-3 sau pacing pass: wave dau da bot thung nha qua som chua.
 2. Them reward/unlock copy cho tung level.
-3. SaveData co version khi progression phuc tap hon.
+3. SaveData schema version da co baseline; chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
 4. Level select art/icon/preview.
 5. Tach level progression sang main menu scene neu can.
 
