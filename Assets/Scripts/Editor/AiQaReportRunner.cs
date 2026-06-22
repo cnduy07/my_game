@@ -582,9 +582,63 @@ public static class AiQaReportRunner
         string markdown = BuildQaMarkdown(checks) + "\n\n" + BalanceReportGenerator.BuildMarkdown(balance);
         File.WriteAllText(Path.Combine(reportDir, "latest_ai_qa_report.md"), markdown);
         File.WriteAllText(Path.Combine(reportDir, "latest_balance_metrics.json"), BalanceReportGenerator.BuildJson(balance));
+        File.WriteAllText(Path.Combine(reportDir, "latest_playtest_checklist.md"), BuildPlaytestChecklist(balance));
 
         Debug.Log($"AI QA report written to {reportDir}");
         AssetDatabase.Refresh();
+    }
+
+    static string BuildPlaytestChecklist(GameBalance balance)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("# Coreline Defense Playtest Checklist");
+        sb.AppendLine();
+        sb.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sb.AppendLine();
+        sb.AppendLine("## Expected QA Baseline");
+        sb.AppendLine();
+        sb.AppendLine("- AI QA should report `0` fail.");
+        sb.AppendLine("- `LevelManager.unlockAllLevelsForTesting` warning is expected while campaign testing is open.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Campaign Map");
+        sb.AppendLine();
+        sb.AppendLine("- Open `MISSIONS` from the top HUD.");
+        sb.AppendLine("- Confirm the screen is a map with route nodes, not a scroll list.");
+        sb.AppendLine("- Click several level nodes and confirm the detail panel updates mission name, sector type, enemy mix, recommended tools, pressure score, and deploy button.");
+        sb.AppendLine("- Deploy a non-current mission and confirm the scene reloads into that mission.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Gameplay HUD");
+        sb.AppendLine();
+        sb.AppendLine("- Start a mission and confirm wave intel appears below the top bar before/during waves.");
+        sb.AppendLine("- Select each seed card and confirm the command status strip shows selected unit/cost readiness.");
+        sb.AppendLine("- Try invalid placement cases: outside grid, occupied cell, enemy cell, not enough energy, cooldown. Confirm each gives a short HUD message.");
+        sb.AppendLine("- Pause/win/lose should hide command feedback and wave intel panels.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Overcharge / Lane Pressure");
+        sb.AppendLine();
+        sb.AppendLine("- Let enemies enter at least two lanes.");
+        sb.AppendLine("- Confirm OC row buttons show enemy count/threat fill for lanes with enemies.");
+        sb.AppendLine("- Activate Overcharge on a threatened lane; confirm energy is spent, countdown appears, and fire rate increases.");
+        sb.AppendLine("- Try activating an already active row or unaffordable Overcharge; confirm feedback appears.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Spawn Fairness");
+        sb.AppendLine();
+        if (balance != null)
+            sb.AppendLine($"- Current config: spawn rows `{(balance.balanceSpawnRows ? "balanced" : "random")}`, max same-row streak `{balance.maxSameRowStreak}`.");
+        sb.AppendLine("- In early waves, watch for extreme repeated spawns in one lane. Balanced spawning should reduce unfair clumps without making waves feel scripted.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Regression Smoke");
+        sb.AppendLine();
+        sb.AppendLine("- Place ArcReactor, Turret, Bunker, SnowGun, and DroneEMP.");
+        sb.AppendLine("- Collect energy orbs.");
+        sb.AppendLine("- Confirm projectile hit VFX/SFX, bunker damage/death VFX, enemy death animation, victory delay, and Rail Cannon breach behavior still work.");
+        sb.AppendLine("- Run `Tools > AI QA > Run Full Check` after manual testing.");
+        return sb.ToString();
     }
 
     static string BuildQaMarkdown(List<CheckResult> checks)

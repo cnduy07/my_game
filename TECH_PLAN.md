@@ -36,6 +36,11 @@ Scripts chinh:
 - `LevelDefinition`: source data cho mission balance, unit/OC unlock gating, authored waves, mission briefing va completion reward copy.
 - `CampaignIntel`: shared campaign analysis helper cho enemy mix, threat label, recommended tools, pressure score va campaign map node type/position.
 
+AI QA outputs:
+- `AIReports/latest_ai_qa_report.md`: fail/warn + balance/campaign metrics.
+- `AIReports/latest_balance_metrics.json`: machine-readable balance snapshot.
+- `AIReports/latest_playtest_checklist.md`: manual Unity playtest checklist generated from current systems.
+
 ---
 
 ## 2. Animator Contract

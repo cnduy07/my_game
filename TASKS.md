@@ -163,6 +163,9 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `EnemySpawner` co balanced row spawning mac dinh;
   - `GameBalance` va `LevelDefinition` co `balanceSpawnRows`/`maxSameRowStreak`;
   - balance report va AI QA doc/check cau hinh nay.
+- AI QA playtest checklist:
+  - `AiQaReportRunner` sinh them `AIReports/latest_playtest_checklist.md`;
+  - checklist gom campaign map, HUD intel, command feedback, OC pressure, spawn fairness, regression smoke.
 
 ---
 

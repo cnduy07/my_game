@@ -240,6 +240,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - enemy spawn mac dinh uu tien lane dang it enemy hon;
   - gioi han streak cung lane bang `maxSameRowStreak`;
   - config di qua `LevelDefinition` -> `GameBalance` -> `EnemySpawner`, khong hardcode rieng.
+- AI QA runner sinh them `AIReports/latest_playtest_checklist.md` de huong dan test thu cong sau moi pass lon.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.
