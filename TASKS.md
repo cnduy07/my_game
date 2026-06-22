@@ -68,6 +68,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them level definition va wave authoring workflow.
 - Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
 - Lam level select UI tam thoi doc tu danh sach `LevelDefinition`.
+- Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
 
 ### Art/Content
 

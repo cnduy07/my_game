@@ -7,6 +7,8 @@ public class LevelDefinition : ScriptableObject
     public string displayName = "Level 1";
     public int levelNumber = 1;
     public LevelBalanceSettings balance = new LevelBalanceSettings();
+    public bool useAuthoredWaves = false;
+    public LevelWaveDefinition[] waves;
 
     public void ApplyTo(GameBalance gameBalance)
     {
@@ -48,4 +50,40 @@ public class LevelBalanceSettings
     public float overchargeDuration = 6f;
     public float overchargeFireRateMultiplier = 2.5f;
     public float overchargeDamageMultiplier = 1.25f;
+}
+
+public enum LevelEnemyType
+{
+    Basic,
+    Armored
+}
+
+[System.Serializable]
+public class LevelWaveDefinition
+{
+    public string label = "Wave";
+    public float timeBetweenSpawns = 2f;
+    public float timeBeforeNextWave = 12f;
+    public LevelSpawnGroup[] groups;
+
+    public int TotalCount
+    {
+        get
+        {
+            if (groups == null) return 0;
+
+            int total = 0;
+            foreach (var group in groups)
+                if (group != null)
+                    total += Mathf.Max(0, group.count);
+            return total;
+        }
+    }
+}
+
+[System.Serializable]
+public class LevelSpawnGroup
+{
+    public LevelEnemyType enemyType;
+    public int count = 1;
 }

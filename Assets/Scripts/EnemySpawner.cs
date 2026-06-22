@@ -20,12 +20,16 @@ public class EnemySpawner : MonoBehaviour
     public float startDelay = 8f;           // chờ trước đợt đầu để người chơi kịp bố trí
     public float timeBetweenSpawns = 2.5f;  // giãn cách sinh trong 1 đợt
     public float timeBetweenWaves = 12f;    // nghỉ giữa các đợt
+    public bool useAuthoredWaves = false;
+    public LevelWaveDefinition[] authoredWaves;
 
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
     Phase phase = Phase.PreStart;
 
     int currentWave = 0;
     int toSpawn = 0;
+    GameObject[] currentWaveQueue;
+    int currentWaveQueueIndex;
     float timer = 0f;
     GUIStyle style;
 
@@ -93,12 +97,12 @@ public class EnemySpawner : MonoBehaviour
     void BeginNextWave()
     {
         currentWave++;
-        int count = baseEnemies + (currentWave - 1) * enemiesIncreasePerWave;
-        if (currentWave >= waveCount) count *= finalWaveMultiplier;   // huge wave cuối
-        toSpawn = count;
+        currentWaveQueue = BuildWaveQueue(currentWave);
+        currentWaveQueueIndex = 0;
+        toSpawn = currentWaveQueue != null ? currentWaveQueue.Length : 0;
         timer = 0f;
-        phase = Phase.Spawning;
-        Debug.Log($"Wave {currentWave}/{waveCount} bắt đầu — {count} địch");
+        phase = toSpawn > 0 ? Phase.Spawning : Phase.WaitingClear;
+        Debug.Log($"Wave {currentWave}/{waveCount} bắt đầu — {toSpawn} địch");
     }
 
     void SpawnOne()
@@ -108,11 +112,7 @@ public class EnemySpawner : MonoBehaviour
         Vector3 pos = grid.CellToWorld(col, row);
         pos.z = -1f;
 
-        // Tỉ lệ địch giáp tăng dần theo đợt, tối đa ~60%.
-        float armorChance = (armoredPrefab != null)
-            ? Mathf.Clamp01((currentWave - 1) / (float)Mathf.Max(1, waveCount - 1)) * 0.6f
-            : 0f;
-        GameObject prefab = (armoredPrefab != null && Random.value < armorChance) ? armoredPrefab : enemyPrefab;
+        GameObject prefab = NextEnemyPrefab();
 
         GameObject e = Instantiate(prefab, pos, Quaternion.identity);
         var mover = e.GetComponent<EnemyMover>();
@@ -138,6 +138,85 @@ public class EnemySpawner : MonoBehaviour
         startDelay = Mathf.Max(0f, newStartDelay);
         timeBetweenSpawns = Mathf.Max(0.1f, newTimeBetweenSpawns);
         timeBetweenWaves = Mathf.Max(0f, newTimeBetweenWaves);
+    }
+
+    public void ApplyLevelDefinition(LevelDefinition level)
+    {
+        useAuthoredWaves = level != null && level.useAuthoredWaves && level.waves != null && level.waves.Length > 0;
+        authoredWaves = useAuthoredWaves ? level.waves : null;
+        if (useAuthoredWaves)
+            waveCount = authoredWaves.Length;
+    }
+
+    GameObject[] BuildWaveQueue(int waveNumber)
+    {
+        if (useAuthoredWaves && authoredWaves != null && waveNumber - 1 < authoredWaves.Length)
+            return BuildAuthoredWaveQueue(authoredWaves[waveNumber - 1]);
+
+        int count = baseEnemies + (waveNumber - 1) * enemiesIncreasePerWave;
+        if (waveNumber >= waveCount) count *= finalWaveMultiplier;
+
+        var queue = new GameObject[count];
+        for (int i = 0; i < queue.Length; i++)
+            queue[i] = RollFormulaPrefab(waveNumber);
+        return queue;
+    }
+
+    GameObject[] BuildAuthoredWaveQueue(LevelWaveDefinition wave)
+    {
+        if (wave == null || wave.TotalCount <= 0)
+            return new GameObject[0];
+
+        timeBetweenSpawns = Mathf.Max(0.1f, wave.timeBetweenSpawns);
+        timeBetweenWaves = Mathf.Max(0f, wave.timeBeforeNextWave);
+
+        var queue = new GameObject[wave.TotalCount];
+        int index = 0;
+        foreach (var group in wave.groups)
+        {
+            if (group == null) continue;
+
+            for (int i = 0; i < group.count && index < queue.Length; i++)
+                queue[index++] = PrefabFor(group.enemyType);
+        }
+
+        Shuffle(queue);
+        return queue;
+    }
+
+    GameObject NextEnemyPrefab()
+    {
+        if (currentWaveQueue != null && currentWaveQueueIndex < currentWaveQueue.Length)
+        {
+            GameObject prefab = currentWaveQueue[currentWaveQueueIndex++];
+            if (prefab != null) return prefab;
+        }
+
+        return RollFormulaPrefab(currentWave);
+    }
+
+    GameObject RollFormulaPrefab(int waveNumber)
+    {
+        float armorChance = (armoredPrefab != null)
+            ? Mathf.Clamp01((waveNumber - 1) / (float)Mathf.Max(1, waveCount - 1)) * 0.6f
+            : 0f;
+        return (armoredPrefab != null && Random.value < armorChance) ? armoredPrefab : enemyPrefab;
+    }
+
+    GameObject PrefabFor(LevelEnemyType enemyType)
+    {
+        return enemyType == LevelEnemyType.Armored && armoredPrefab != null ? armoredPrefab : enemyPrefab;
+    }
+
+    void Shuffle(GameObject[] queue)
+    {
+        for (int i = 0; i < queue.Length; i++)
+        {
+            int swapIndex = Random.Range(i, queue.Length);
+            GameObject temp = queue[i];
+            queue[i] = queue[swapIndex];
+            queue[swapIndex] = temp;
+        }
     }
 
     void OnGUI()

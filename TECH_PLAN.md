@@ -301,9 +301,11 @@ Hien tai v1:
 - `LevelManager` tren `GameSystems` apply `currentLevel` vao `GameBalance` luc Awake.
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`.
 - `Assets/Levels/Level_01.asset` la level data dau tien.
+- `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
+- `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
 
 Uu tien tiep:
-1. Tach wave list that thay cho formula wave hien tai.
+1. Bat `useAuthoredWaves` sau khi test nhịp wave list trong `Level_01`.
 2. Level select UI tam thoi.
 3. SaveData co version khi progression phuc tap hon.
 

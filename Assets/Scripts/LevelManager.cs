@@ -30,6 +30,10 @@ public class LevelManager : MonoBehaviour
             balance = FindAnyObjectByType<GameBalance>(FindObjectsInactive.Include);
 
         currentLevel.ApplyTo(balance);
+
+        var spawner = FindAnyObjectByType<EnemySpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
+            spawner.ApplyLevelDefinition(currentLevel);
     }
 
     public void MarkCurrentLevelCompleted()

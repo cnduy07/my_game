@@ -74,6 +74,9 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("Level", "Current level has empty levelId."));
         if (levelManager.currentLevel.levelNumber <= 0)
             checks.Add(CheckResult.Warn("Level", "Current levelNumber should be above 0."));
+        if (levelManager.currentLevel.useAuthoredWaves &&
+            (levelManager.currentLevel.waves == null || levelManager.currentLevel.waves.Length == 0))
+            checks.Add(CheckResult.Fail("Level", "useAuthoredWaves is true but no waves are defined."));
     }
 
     static void CheckAudio(AudioManager audio, List<CheckResult> checks)

@@ -166,6 +166,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Them `LevelManager` tren `GameSystems`, apply level balance vao `GameBalance` luc Awake.
 - Them `PlayerProgress` dung PlayerPrefs; `GameManager.Win()` mark current level complete.
 - AI QA v1 check them `LevelManager.currentLevel`.
+- Them authored wave data vao `LevelDefinition` va `Level_01.asset`; hien tai `useAuthoredWaves` dang tat de giu gameplay formula cu cho an toan.
 
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
