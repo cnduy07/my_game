@@ -20,11 +20,12 @@ public class GameUiController : MonoBehaviour
 
     const float ReferenceWidth = 1920f;
     const float ReferenceHeight = 1080f;
-    const float SeedCardWidth = 226f;
-    const float SeedTraySpacing = 12f;
-    const float SeedTrayHorizontalPadding = 36f;
-    const float SeedTrayMinWidth = 540f;
-    const float SeedTrayMaxWidth = 1320f;
+    const float SeedCardWidth = 188f;
+    const float SeedCardHeight = 86f;
+    const float SeedTraySpacing = 10f;
+    const float SeedTrayHorizontalPadding = 28f;
+    const float SeedTrayMinWidth = 420f;
+    const float SeedTrayMaxWidth = 1100f;
 
     Canvas canvas;
 
@@ -46,6 +47,7 @@ public class GameUiController : MonoBehaviour
     TextMeshProUGUI tutorialText;
 
     GameObject modalOverlay;
+    RectTransform modalCard;
     TextMeshProUGUI modalTitleText;
     TextMeshProUGUI modalSubtitleText;
     TextMeshProUGUI progressText;
@@ -54,6 +56,7 @@ public class GameUiController : MonoBehaviour
     Toggle reduceShakeToggle;
     Toggle vibrationToggle;
     Button resumeButton;
+    Button restartButton;
     Button modalLevelSelectButton;
     Button nextLevelButton;
     TextMeshProUGUI nextLevelButtonText;
@@ -202,25 +205,39 @@ public class GameUiController : MonoBehaviour
     void BuildTopBar(Transform parent)
     {
         RectTransform topBar = CreatePanel("TopStatusBar", parent, backgroundColor);
-        SetAnchor(topBar, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -116f), new Vector2(0f, 0f));
+        SetAnchor(topBar, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -84f), new Vector2(0f, 0f));
 
-        energyText = CreateText("EnergyText", topBar, "Energy: 0", 44, FontStyle.Bold, TextAnchor.MiddleLeft);
-        SetAnchor(energyText.rectTransform, new Vector2(0f, 0f), new Vector2(0.32f, 1f), new Vector2(34f, 0f), new Vector2(-8f, 0f));
+        RectTransform energyBox = CreatePanel("EnergyBox", topBar, new Color(0.055f, 0.075f, 0.105f, 0.96f));
+        AddFrame(energyBox, new Color(0.16f, 0.28f, 0.36f, 0.9f));
+        SetAnchor(energyBox, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, -26f), new Vector2(294f, 26f));
 
-        levelText = CreateText("LevelText", topBar, "", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(levelText.rectTransform, new Vector2(0.34f, 0f), new Vector2(0.66f, 1f), Vector2.zero, Vector2.zero);
+        energyText = CreateText("EnergyText", energyBox, "Energy: 0", 32, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(energyText.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 0f), new Vector2(-12f, 0f));
 
-        waveText = CreateText("WaveText", topBar, "", 28, FontStyle.Bold, TextAnchor.MiddleRight);
-        SetAnchor(waveText.rectTransform, new Vector2(0.67f, 0f), new Vector2(0.84f, 1f), Vector2.zero, new Vector2(-18f, 0f));
+        RectTransform levelBox = CreatePanel("LevelBox", topBar, new Color(0.05f, 0.068f, 0.095f, 0.96f));
+        AddFrame(levelBox, new Color(0.14f, 0.23f, 0.3f, 0.9f));
+        SetAnchor(levelBox, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-250f, -70f), new Vector2(250f, -16f));
 
-        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSIONS", 24, panelSoftColor, accentColor);
+        levelText = CreateText("LevelText", levelBox, "", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(levelText.rectTransform, Vector2.zero, Vector2.one, new Vector2(12f, 0f), new Vector2(-12f, 0f));
+
+        RectTransform waveBox = CreatePanel("WaveBox", topBar, new Color(0.05f, 0.068f, 0.095f, 0.96f));
+        AddFrame(waveBox, new Color(0.14f, 0.23f, 0.3f, 0.9f));
+        SetAnchor(waveBox, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-560f, -26f), new Vector2(-358f, 26f));
+
+        waveText = CreateText("WaveText", waveBox, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(waveText.rectTransform, Vector2.zero, Vector2.one, new Vector2(10f, 0f), new Vector2(-10f, 0f));
+
+        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSIONS", 19, panelSoftColor, accentColor);
         levelSelectTopButton.onClick.AddListener(OpenLevelSelect);
-        SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-336f, -36f), new Vector2(-176f, 36f));
+        AddFrame((RectTransform)levelSelectTopButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
+        SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-338f, -26f), new Vector2(-196f, 26f));
 
-        pauseButton = CreateButton("PauseButton", topBar, "II", 34, panelSoftColor, accentColor);
+        pauseButton = CreateButton("PauseButton", topBar, "II", 28, panelSoftColor, accentColor);
         pauseButton.onClick.AddListener(TogglePause);
         pauseButtonText = pauseButton.GetComponentInChildren<TextMeshProUGUI>();
-        SetAnchor((RectTransform)pauseButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-158f, -36f), new Vector2(-28f, 36f));
+        AddFrame((RectTransform)pauseButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
+        SetAnchor((RectTransform)pauseButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-166f, -26f), new Vector2(-24f, 26f));
     }
 
     void BuildTutorialPanel(Transform parent)
@@ -238,11 +255,12 @@ public class GameUiController : MonoBehaviour
     void BuildSeedTray(Transform parent)
     {
         seedTray = CreatePanel("SeedTray", parent, new Color(0.035f, 0.048f, 0.07f, 0.97f));
-        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-660f, 18f), new Vector2(660f, 166f));
+        AddFrame(seedTray, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-550f, 12f), new Vector2(550f, 122f));
 
         HorizontalLayoutGroup layout = seedTray.gameObject.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(18, 18, 16, 16);
-        layout.spacing = 12f;
+        layout.padding = new RectOffset(14, 14, 12, 12);
+        layout.spacing = SeedTraySpacing;
         layout.childAlignment = TextAnchor.MiddleCenter;
         layout.childControlWidth = true;
         layout.childControlHeight = true;
@@ -253,10 +271,11 @@ public class GameUiController : MonoBehaviour
     void BuildOverchargePanel(Transform parent)
     {
         overchargePanel = CreatePanel("OverchargePanel", parent, new Color(0.035f, 0.048f, 0.07f, 0.95f));
-        SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-224f, -230f), new Vector2(-24f, 230f));
+        AddFrame(overchargePanel, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-190f, -206f), new Vector2(-24f, 206f));
 
-        overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 26, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(overchargeCostText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(12f, -60f), new Vector2(-12f, -10f));
+        overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(overchargeCostText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -50f), new Vector2(-10f, -8f));
     }
 
     void BuildModal(Transform parent)
@@ -267,49 +286,52 @@ public class GameUiController : MonoBehaviour
         overlayImage.color = new Color(0f, 0f, 0f, 0.42f);
         SetAnchor((RectTransform)modalOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-        RectTransform card = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.075f, 0.09f, 0.12f, 0.97f));
-        SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-360f, -250f), new Vector2(360f, 250f));
+        modalCard = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.06f, 0.072f, 0.095f, 0.98f));
+        AddFrame(modalCard, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
+        SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-340f, -220f), new Vector2(340f, 220f));
 
-        modalTitleText = CreateText("ModalTitle", card, "PAUSED", 42, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -92f), new Vector2(-28f, -28f));
+        modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 36, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -76f), new Vector2(-28f, -22f));
 
-        modalSubtitleText = CreateText("ModalSubtitle", card, "", 24, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -140f), new Vector2(-28f, -96f));
+        modalSubtitleText = CreateText("ModalSubtitle", modalCard, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalSubtitleText.color = new Color(0.82f, 0.93f, 0.98f, 1f);
+        SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -116f), new Vector2(-28f, -78f));
 
-        progressText = CreateText("ProgressText", card, "", 22, FontStyle.Normal, TextAnchor.MiddleCenter);
-        SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -188f), new Vector2(-28f, -144f));
+        progressText = CreateText("ProgressText", modalCard, "", 19, FontStyle.Normal, TextAnchor.MiddleCenter);
+        progressText.color = new Color(0.86f, 0.91f, 0.95f, 1f);
+        SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -166f), new Vector2(-42f, -122f));
 
-        sfxText = CreateText("SfxText", card, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(sfxText.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(40f, 42f), new Vector2(-40f, 82f));
+        sfxText = CreateText("SfxText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(sfxText.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(40f, 34f), new Vector2(-40f, 70f));
 
-        sfxSlider = CreateSlider("SfxSlider", card);
-        SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(80f, 8f), new Vector2(-80f, 36f));
+        sfxSlider = CreateSlider("SfxSlider", modalCard);
+        SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(96f, 4f), new Vector2(-96f, 28f));
         sfxSlider.onValueChanged.AddListener(value => GameSettings.SfxVolume = value);
 
-        reduceShakeToggle = CreateToggle("ReduceShakeToggle", card, "Reduce shake");
-        SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(90f, -54f), new Vector2(-8f, -16f));
+        reduceShakeToggle = CreateToggle("ReduceShakeToggle", modalCard, "Reduce shake");
+        SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(96f, -48f), new Vector2(-10f, -12f));
         reduceShakeToggle.onValueChanged.AddListener(value => GameSettings.ReduceShake = value);
 
-        vibrationToggle = CreateToggle("VibrationToggle", card, "Vibration");
-        SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(8f, -54f), new Vector2(-90f, -16f));
+        vibrationToggle = CreateToggle("VibrationToggle", modalCard, "Vibration");
+        SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(10f, -48f), new Vector2(-96f, -12f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
-        resumeButton = CreateButton("ResumeButton", card, "RESUME", 24, accentColor, Color.white);
+        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 22, accentColor, Color.white);
         resumeButton.onClick.AddListener(TogglePause);
-        SetAnchor((RectTransform)resumeButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 38f), new Vector2(-10f, 96f));
+        AddFrame((RectTransform)resumeButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
 
-        Button restartButton = CreateButton("RestartButton", card, "RESTART", 24, panelSoftColor, Color.white);
+        restartButton = CreateButton("RestartButton", modalCard, "RESTART", 22, panelSoftColor, Color.white);
         restartButton.onClick.AddListener(RestartLevel);
-        SetAnchor((RectTransform)restartButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 38f), new Vector2(-70f, 96f));
+        AddFrame((RectTransform)restartButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", card, "MISSIONS", 22, panelSoftColor, Color.white);
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSIONS", 22, panelSoftColor, Color.white);
         modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
-        SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 110f), new Vector2(-10f, 162f));
+        AddFrame((RectTransform)modalLevelSelectButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        nextLevelButton = CreateButton("NextLevelButton", card, "NEXT", 22, accentColor, Color.white);
+        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 22, accentColor, Color.white);
         nextLevelButton.onClick.AddListener(GoToNextLevel);
         nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
-        SetAnchor((RectTransform)nextLevelButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 110f), new Vector2(-70f, 162f));
+        AddFrame((RectTransform)nextLevelButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
 
         modalBuilt = true;
         modalOverlay.SetActive(false);
@@ -324,17 +346,19 @@ public class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)levelSelectOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
+        AddFrame(card, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
         SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -310f), new Vector2(430f, 310f));
 
-        TextMeshProUGUI title = CreateText("Title", card, "SELECT MISSION", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -86f), new Vector2(-30f, -24f));
+        TextMeshProUGUI title = CreateText("Title", card, "SELECT MISSION", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -78f), new Vector2(-30f, -22f));
 
-        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Complete the previous mission to unlock the next one.", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Complete the previous mission to unlock the next one.", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
         subtitle.color = new Color(0.8f, 0.9f, 0.96f, 1f);
-        SetAnchor(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -128f), new Vector2(-42f, -88f));
+        SetAnchor(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -116f), new Vector2(-42f, -80f));
 
         levelListContainer = CreatePanel("LevelList", card, new Color(0.025f, 0.035f, 0.052f, 0.9f));
-        SetAnchor(levelListContainer, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(56f, 104f), new Vector2(-56f, -148f));
+        AddFrame(levelListContainer, new Color(0.08f, 0.16f, 0.22f, 0.9f));
+        SetAnchor(levelListContainer, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(56f, 100f), new Vector2(-56f, -134f));
 
         VerticalLayoutGroup layout = levelListContainer.gameObject.AddComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(14, 14, 14, 14);
@@ -345,9 +369,9 @@ public class GameUiController : MonoBehaviour
         layout.childForceExpandWidth = true;
         layout.childForceExpandHeight = false;
 
-        Button closeButton = CreateButton("CloseButton", card, "CLOSE", 24, panelSoftColor, Color.white);
+        Button closeButton = CreateButton("CloseButton", card, "CLOSE", 22, panelSoftColor, Color.white);
         closeButton.onClick.AddListener(CloseLevelSelect);
-        SetAnchor((RectTransform)closeButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-150f, 34f), new Vector2(150f, 88f));
+        SetAnchor((RectTransform)closeButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-140f, 32f), new Vector2(140f, 82f));
 
         levelSelectOverlay.SetActive(false);
     }
@@ -386,11 +410,12 @@ public class GameUiController : MonoBehaviour
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
+            AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.8f));
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
             layout.preferredWidth = SeedCardWidth;
-            layout.preferredHeight = 112f;
-            layout.minHeight = 112f;
+            layout.preferredHeight = SeedCardHeight;
+            layout.minHeight = SeedCardHeight;
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -407,12 +432,12 @@ public class GameUiController : MonoBehaviour
             cooldown.fillOrigin = (int)Image.OriginVertical.Bottom;
             SetAnchor(cooldown.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 26, FontStyle.Bold, TextAnchor.MiddleCenter);
-            SetAnchor(label.rectTransform, new Vector2(0f, 0.36f), new Vector2(1f, 1f), new Vector2(8f, -6f), new Vector2(-8f, -4f));
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetAnchor(label.rectTransform, new Vector2(0f, 0.35f), new Vector2(1f, 1f), new Vector2(8f, -4f), new Vector2(-8f, -2f));
 
-            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter);
             cost.color = new Color(0.88f, 0.96f, 1f, 1f);
-            SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(8f, 2f), new Vector2(-8f, 0f));
+            SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(8f, 2f), new Vector2(-8f, -2f));
 
             seedCards.Add(new SeedCard
             {
@@ -433,7 +458,7 @@ public class GameUiController : MonoBehaviour
                              Mathf.Max(0, seedCount - 1) * SeedTraySpacing +
                              SeedTrayHorizontalPadding;
         float width = Mathf.Clamp(contentWidth, SeedTrayMinWidth, SeedTrayMaxWidth);
-        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 18f), new Vector2(width * 0.5f, 166f));
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 12f), new Vector2(width * 0.5f, 122f));
     }
 
     void RebuildRowButtons(int rowCount)
@@ -443,7 +468,7 @@ public class GameUiController : MonoBehaviour
         rowButtons.Clear();
         lastRowCount = rowCount;
 
-        float top = -68f;
+        float top = -58f;
         for (int row = rowCount - 1; row >= 0; row--)
         {
             int rowIndex = row;
@@ -452,10 +477,11 @@ public class GameUiController : MonoBehaviour
             go.transform.SetParent(overchargePanel, false);
 
             RectTransform rect = (RectTransform)go.transform;
-            SetAnchor(rect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(14f, top - 60f - visualIndex * 66f), new Vector2(-14f, top - 6f - visualIndex * 66f));
+            SetAnchor(rect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(12f, top - 50f - visualIndex * 58f), new Vector2(-12f, top - 4f - visualIndex * 58f));
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
+            AddFrame(rect, new Color(0.1f, 0.2f, 0.27f, 0.8f));
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -472,7 +498,7 @@ public class GameUiController : MonoBehaviour
             fill.fillOrigin = (int)Image.OriginHorizontal.Left;
             SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 19, FontStyle.Bold, TextAnchor.MiddleCenter);
             SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
 
             rowButtons.Add(new RowButton { button = button, frame = frame, fill = fill, label = label });
@@ -504,6 +530,7 @@ public class GameUiController : MonoBehaviour
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
+            AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.8f));
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -687,9 +714,9 @@ public class GameUiController : MonoBehaviour
             modalTitleText.text = "PAUSED";
 
         if (gameOver || won)
-            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -228f), new Vector2(-28f, -144f));
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -196f), new Vector2(-42f, -122f));
         else
-            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -188f), new Vector2(-28f, -144f));
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -166f), new Vector2(-42f, -122f));
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         modalSubtitleText.text = level != null ? level.displayName : "";
@@ -732,6 +759,33 @@ public class GameUiController : MonoBehaviour
         }
         if (nextLevelButtonText != null && nextLevel != null)
             nextLevelButtonText.text = $"MISSION {nextLevel.levelNumber}";
+
+        LayoutModalButtons(gameOver, won, canPlayNext);
+    }
+
+    void LayoutModalButtons(bool gameOver, bool won, bool canPlayNext)
+    {
+        float yMin = 34f;
+        float yMax = 88f;
+
+        if (!gameOver && !won)
+        {
+            SetAnchor((RectTransform)resumeButton.transform, new Vector2(0f, 0f), new Vector2(0.333f, 0f), new Vector2(52f, yMin), new Vector2(-8f, yMax));
+            SetAnchor((RectTransform)restartButton.transform, new Vector2(0.333f, 0f), new Vector2(0.666f, 0f), new Vector2(8f, yMin), new Vector2(-8f, yMax));
+            SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.666f, 0f), new Vector2(1f, 0f), new Vector2(8f, yMin), new Vector2(-52f, yMax));
+            return;
+        }
+
+        if (canPlayNext)
+        {
+            SetAnchor((RectTransform)restartButton.transform, new Vector2(0f, 0f), new Vector2(0.333f, 0f), new Vector2(52f, yMin), new Vector2(-8f, yMax));
+            SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.333f, 0f), new Vector2(0.666f, 0f), new Vector2(8f, yMin), new Vector2(-8f, yMax));
+            SetAnchor((RectTransform)nextLevelButton.transform, new Vector2(0.666f, 0f), new Vector2(1f, 0f), new Vector2(8f, yMin), new Vector2(-52f, yMax));
+            return;
+        }
+
+        SetAnchor((RectTransform)restartButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(72f, yMin), new Vector2(-10f, yMax));
+        SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, yMin), new Vector2(-72f, yMax));
     }
 
     void OpenLevelSelect()
@@ -802,6 +856,24 @@ public class GameUiController : MonoBehaviour
         return image;
     }
 
+    void AddFrame(RectTransform rect, Color color)
+    {
+        AddFrame(rect, color, new Vector2(1.5f, -1.5f));
+    }
+
+    void AddFrame(RectTransform rect, Color color, Vector2 distance)
+    {
+        if (rect == null) return;
+
+        var outline = rect.gameObject.GetComponent<Outline>();
+        if (outline == null)
+            outline = rect.gameObject.AddComponent<Outline>();
+
+        outline.effectColor = color;
+        outline.effectDistance = distance;
+        outline.useGraphicAlpha = true;
+    }
+
     TextMeshProUGUI CreateText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor alignment)
     {
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
@@ -824,6 +896,7 @@ public class GameUiController : MonoBehaviour
         go.transform.SetParent(parent, false);
         Image image = go.GetComponent<Image>();
         image.color = normal;
+        AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.85f));
 
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.ColorTint;

@@ -360,6 +360,22 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - `EnemySpawner` chi goi `GameManager.Win()` khi `ActiveOrDyingCount == 0`, tuc la enemy da destroy xong sau death flow/VFX delay.
 - AI QA canh bao neu `TutorialCoach.hintDisplayDuration <= 0`.
 
+### Compact HUD + modal layout pass — 2026-06-22
+- Giam footprint runtime HUD de mo rong cam giac ban choi:
+  - top status bar `116px` -> `84px`;
+  - seed tray `148px` -> `110px`;
+  - seed card `226x112` -> `188x86`;
+  - camera orthographic size `3.6` -> `3.35`.
+- Energy, mission name, wave status duoc dua vao status box co outline nhe; Energy font giam de bot ap dao.
+- Seed command deck nho hon, co frame cho tung card, van giu touch target du lon.
+- Overcharge panel gon hon va row buttons nho hon.
+- Pause/Victory/Defeat modal compact hon:
+  - card nho hon, co outline;
+  - settings chi o Pause;
+  - action buttons tu layout theo state, tranh lech hang/nut roi rac.
+- Level select popup co outline/list frame va typography gon hon.
+- Luu y: day van la runtime generated UI polish. Final release van can UI sprite/icon/font skin rieng de dat muc App Store/Google Play.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

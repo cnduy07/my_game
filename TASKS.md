@@ -150,6 +150,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Tutorial hint tu an sau `hintDisplayDuration`.
   - Victory chi hien sau khi enemy death object bien mat het, khong hien ngay luc HP ve 0.
   - AI QA warning neu tutorial duration cau hinh khong hop le.
+- Compact HUD + modal layout pass:
+  - top bar/energy font nho hon nhung van de doc;
+  - mission/wave nam trong status box co outline;
+  - seed cards nho hon va khong che qua nhieu board;
+  - pause/victory/defeat buttons can doi theo state;
+  - board/cell nhin lon hon sau camera zoom `3.35`.
 
 ---
 
