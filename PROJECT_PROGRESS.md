@@ -350,6 +350,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - `Next wave: Ns` giua cac wave.
 - HUD doi mau warning cho wave countdown khi con 3 giay, giup nguoi choi nhan biet dot sap toi.
 
+### Combat end-state + tutorial reliability pass — 2026-06-22
+- Tutorial hint khong con chan click gameplay:
+  - `TutorialHint` panel tat `raycastTarget`;
+  - `TutorialCoach` chi hien hint trong thoi gian ngan bang `hintDisplayDuration`, khong bam man hinh vinh vien.
+- Victory timing fix:
+  - `EnemyMover.All` tiep tuc la danh sach enemy con song/co the bi target;
+  - them `EnemyMover.ActiveOrDyingCount` de dem enemy con ton tai ke ca dang death animation;
+  - `EnemySpawner` chi goi `GameManager.Win()` khi `ActiveOrDyingCount == 0`, tuc la enemy da destroy xong sau death flow/VFX delay.
+- AI QA canh bao neu `TutorialCoach.hintDisplayDuration <= 0`.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

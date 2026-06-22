@@ -23,6 +23,8 @@ public class EnemyMover : MonoBehaviour
 
     // Danh sách mọi địch đang sống, để Shooter và Projectile tra cứu (khỏi cần collider).
     public static readonly List<EnemyMover> All = new List<EnemyMover>();
+    static int activeOrDyingCount;
+    bool registeredLifetime;
 
     void Awake()
     {
@@ -32,8 +34,30 @@ public class EnemyMover : MonoBehaviour
         // Nếu sau này dùng art vẽ quay phải, gọi anim.FaceLeft(true) ở đây.
     }
 
-    void OnEnable() { All.Add(this); }
-    void OnDisable() { All.Remove(this); }
+    void OnEnable()
+    {
+        if (!registeredLifetime)
+        {
+            registeredLifetime = true;
+            activeOrDyingCount++;
+        }
+
+        if (!All.Contains(this))
+            All.Add(this);
+    }
+
+    void OnDisable()
+    {
+        All.Remove(this);
+    }
+
+    void OnDestroy()
+    {
+        if (!registeredLifetime) return;
+
+        registeredLifetime = false;
+        activeOrDyingCount = Mathf.Max(0, activeOrDyingCount - 1);
+    }
 
     // Projectile gọi khi trúng đạn băng. Lấy hệ số chậm mạnh nhất, gia hạn thời gian.
     public void ApplySlow(float factor, float duration)
@@ -129,6 +153,7 @@ public class EnemyMover : MonoBehaviour
     }
 
     public float CurrentX => transform.position.x;
+    public static int ActiveOrDyingCount => activeOrDyingCount;
 
     void EnsureTraits()
     {

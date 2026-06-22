@@ -97,7 +97,7 @@ public class EnemySpawner : MonoBehaviour
                 break;
 
             case Phase.WaitingClear:
-                if (EnemyMover.All.Count == 0)
+                if (EnemyMover.ActiveOrDyingCount == 0)
                 {
                     if (currentWave >= waveCount)
                     {

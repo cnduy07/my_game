@@ -183,7 +183,13 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("VFX", "CombatVfxSettings disables fallback but has no core VFX prefabs."));
 
         if (tutorialCoach == null)
+        {
             checks.Add(CheckResult.Warn("Tutorial", "No TutorialCoach found; onboarding hints disabled."));
+        }
+        else if (tutorialCoach.hintDisplayDuration <= 0f)
+        {
+            checks.Add(CheckResult.Warn("Tutorial", "TutorialCoach hintDisplayDuration should be above 0."));
+        }
 
         if (runtimeQuality == null)
         {

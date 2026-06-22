@@ -9,6 +9,11 @@ public class TutorialCoach : MonoBehaviour
     public string defenseHint = "Place Turrets in lanes with incoming enemies.";
     public string bunkerHint = "Use Bunkers to buy time in pressured lanes.";
     public string overchargeHint = "Use Overcharge to stabilize a lane under pressure.";
+    public float hintDisplayDuration = 5f;
+
+    string activeHint = "";
+    string visibleHint = "";
+    float hideAtTime;
 
     void Awake()
     {
@@ -20,24 +25,50 @@ public class TutorialCoach : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    void Update()
+    {
+        if (!showHints)
+        {
+            activeHint = "";
+            visibleHint = "";
+            return;
+        }
+
+        string nextHint = BuildCurrentHint();
+        if (nextHint != activeHint)
+        {
+            activeHint = nextHint;
+            visibleHint = nextHint;
+            hideAtTime = Time.unscaledTime + Mathf.Max(0.5f, hintDisplayDuration);
+        }
+        else if (!string.IsNullOrWhiteSpace(visibleHint) && Time.unscaledTime >= hideAtTime)
+        {
+            visibleHint = "";
+        }
+    }
+
     public string CurrentHint
     {
         get
         {
-            if (!showHints) return "";
-            if (EnergySystem.Instance != null && EnergySystem.Instance.Energy < 100)
-                return energyHint;
-
-            LevelDefinition level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
-            if (EnemyMover.All.Count > 0)
-            {
-                if (level != null && level.overchargeUnlocked)
-                    return overchargeHint;
-                if (level != null && level.AllowsUnit("Bunker"))
-                    return bunkerHint;
-            }
-
-            return defenseHint;
+            return showHints ? visibleHint : "";
         }
+    }
+
+    string BuildCurrentHint()
+    {
+        if (EnergySystem.Instance != null && EnergySystem.Instance.Energy < 100)
+            return energyHint;
+
+        LevelDefinition level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
+        if (EnemyMover.All.Count > 0)
+        {
+            if (level != null && level.overchargeUnlocked)
+                return overchargeHint;
+            if (level != null && level.AllowsUnit("Bunker"))
+                return bunkerHint;
+        }
+
+        return defenseHint;
     }
 }

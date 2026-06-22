@@ -156,6 +156,7 @@ Contract:
 - `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
 - `EnemySpawner` expose `DisplayText` va `IsWaveWarning` cho wave label/canh bao countdown.
+- `EnemyMover.All` chi dai dien enemy dang song/co the bi target; `EnemyMover.ActiveOrDyingCount` dai dien enemy con ton tai trong scene, gom ca death animation pending. Wave clear/victory phai dung `ActiveOrDyingCount`.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
 
@@ -213,6 +214,7 @@ Hooks:
 - `Health.TakeDamage()` -> `Damaged` event.
 - `DamageFeedback` tu duoc gan runtime cho object co `Health`, flash/rung nhe khi damage.
 - `Health.Die()` -> non-enemy death burst co ban.
+- Enemy death flow: `Health.Die()` disable `EnemyMover` de go khoi target list, nhung victory phai cho GameObject destroy xong theo `deathAnimTime`.
 - Enemy chi flash khi bi damage, khong shake root transform vi enemy dang di chuyen.
 - `PlacementController` khong cho dat unit vao cell dang co enemy.
 - Knockback/freeze/stun nen la effect rieng theo loai dan/vu khi sau nay, khong nam trong damage feedback mac dinh.

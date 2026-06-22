@@ -226,7 +226,8 @@ public class GameUiController : MonoBehaviour
     void BuildTutorialPanel(Transform parent)
     {
         tutorialPanel = CreatePanel("TutorialHint", parent, new Color(0.035f, 0.05f, 0.075f, 0.86f));
-        SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(34f, 176f), new Vector2(650f, 256f));
+        tutorialPanel.GetComponent<Image>().raycastTarget = false;
+        SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(34f, 174f), new Vector2(560f, 238f));
 
         tutorialText = CreateText("Text", tutorialPanel, "", 22, FontStyle.Bold, TextAnchor.MiddleLeft);
         tutorialText.color = new Color(0.86f, 0.96f, 1f, 1f);

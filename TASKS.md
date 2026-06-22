@@ -145,6 +145,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Wave status clarity pass:
   - top-right HUD hien `Deploy`, `Wave`, `Clear wave`, `Next wave` dung state;
   - countdown doi mau warning trong 3 giay cuoi truoc wave.
+- Combat end-state + tutorial reliability pass:
+  - Tutorial hint khong chan click ArcReactor/energy orb/placement.
+  - Tutorial hint tu an sau `hintDisplayDuration`.
+  - Victory chi hien sau khi enemy death object bien mat het, khong hien ngay luc HP ve 0.
+  - AI QA warning neu tutorial duration cau hinh khong hop le.
 
 ---
 
