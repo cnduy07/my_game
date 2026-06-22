@@ -5,6 +5,23 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 > Lưu ý IP: tránh nêu thương hiệu thật ("Iron Man", "Plants vs Zombies"…) trong prompt/asset. Chỉ dùng làm cảm hứng, mô tả bằng từ chung chung (powered exo-armor, arc-reactor sci-fi).
 **Engine:** Unity 2D. **Lưới:** 5 hàng × 9 cột. **Quy ước:** 1 ô = 1 unit.
 
+## Working protocol — 2026-06-22
+- Truoc moi feature lon, Codex phai:
+  - phan tich boi canh hien tai;
+  - neu cac phuong an kha thi va tradeoff;
+  - chon phuong an toi uu theo codebase hien co;
+  - cap nhat `.md` lien quan trong cung pass;
+  - commit thanh checkpoint ro rang.
+- Runtime player-facing UI/copy dung **English-first**.
+- Vietnamese, Chinese, French se them sau bang localization table khi gameplay/menu flow on dinh.
+- Khong them Vietnamese khong dau vao UI runtime nua.
+
+## Production roadmap — 2026-06-22
+- Phase 1: gameplay vertical slice — enemy variety, projectile effects/resistance, level 1-3 tuning, reward/unlock panel.
+- Phase 2: visual/audio production — production board, UI skin/icons, VFX prefabs, animation polish, audio layering.
+- Phase 3: campaign content — level 4-10, level select polish, tutorial callouts, unlock/reward copy.
+- Phase 4: mobile/release hardening — safe area, device performance, pooling, build validation, Android/iOS dev builds, store assets.
+
 ---
 
 ## ✅ ĐÃ LÀM

@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
         if (IsGameOver || IsWon) return;
         if (GameUiController.Instance != null && GameUiController.Instance.isPaused) Time.timeScale = 1f;
         IsGameOver = true;
-        Debug.Log($"GAME OVER — địch vượt hàng {row}");
+        Debug.Log($"GAME OVER - enemy breached row {row}");
         AudioManager.PlaySfx(SfxType.GameOver);
         Time.timeScale = 0f;
     }
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
 
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height - 60), IsWon ? "YOU WIN!" : "GAME OVER", bigStyle);
 
-        if (GUI.Button(new Rect(Screen.width / 2f - 70, Screen.height / 2f + 40, 140, 40), "Chơi lại"))
+        if (GUI.Button(new Rect(Screen.width / 2f - 70, Screen.height / 2f + 40, 140, 40), "Restart"))
         {
             AudioManager.PlaySfx(SfxType.UiClick);
             Time.timeScale = 1f;

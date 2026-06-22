@@ -38,7 +38,7 @@ public class EnemySpawner : MonoBehaviour
     public int WaveCount => waveCount;
     public string DisplayText => phase == Phase.Won
         ? ""
-        : (phase == Phase.PreStart ? "Chuan bi..." : $"Wave {currentWave}/{waveCount}");
+        : (phase == Phase.PreStart ? "Preparing..." : $"Wave {currentWave}/{waveCount}");
 
     void Awake()
     {
@@ -109,7 +109,7 @@ public class EnemySpawner : MonoBehaviour
         toSpawn = currentWaveQueue != null ? currentWaveQueue.Length : 0;
         timer = 0f;
         phase = toSpawn > 0 ? Phase.Spawning : Phase.WaitingClear;
-        Debug.Log($"Wave {currentWave}/{waveCount} bắt đầu — {toSpawn} địch");
+        Debug.Log($"Wave {currentWave}/{waveCount} started - {toSpawn} enemies");
     }
 
     void SpawnOne()

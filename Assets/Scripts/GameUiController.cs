@@ -194,7 +194,7 @@ public class GameUiController : MonoBehaviour
         RectTransform topBar = CreatePanel("TopStatusBar", parent, backgroundColor);
         SetAnchor(topBar, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -104f), new Vector2(0f, 0f));
 
-        energyText = CreateText("EnergyText", topBar, "Nang luong: 0", 38, FontStyle.Bold, TextAnchor.MiddleLeft);
+        energyText = CreateText("EnergyText", topBar, "Energy: 0", 38, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(energyText.rectTransform, new Vector2(0f, 0f), new Vector2(0.32f, 1f), new Vector2(32f, 0f), new Vector2(-8f, 0f));
 
         levelText = CreateText("LevelText", topBar, "", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -203,7 +203,7 @@ public class GameUiController : MonoBehaviour
         waveText = CreateText("WaveText", topBar, "", 24, FontStyle.Bold, TextAnchor.MiddleRight);
         SetAnchor(waveText.rectTransform, new Vector2(0.67f, 0f), new Vector2(0.84f, 1f), Vector2.zero, new Vector2(-18f, 0f));
 
-        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "LVL", 22, panelSoftColor, accentColor);
+        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSIONS", 22, panelSoftColor, accentColor);
         levelSelectTopButton.onClick.AddListener(OpenLevelSelect);
         SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-286f, -30f), new Vector2(-166f, 30f));
 
@@ -259,7 +259,7 @@ public class GameUiController : MonoBehaviour
         RectTransform card = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.075f, 0.09f, 0.12f, 0.97f));
         SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-360f, -250f), new Vector2(360f, 250f));
 
-        modalTitleText = CreateText("ModalTitle", card, "TAM DUNG", 42, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalTitleText = CreateText("ModalTitle", card, "PAUSED", 42, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -92f), new Vector2(-28f, -28f));
 
         modalSubtitleText = CreateText("ModalSubtitle", card, "", 24, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -275,27 +275,27 @@ public class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(80f, 8f), new Vector2(-80f, 36f));
         sfxSlider.onValueChanged.AddListener(value => GameSettings.SfxVolume = value);
 
-        reduceShakeToggle = CreateToggle("ReduceShakeToggle", card, "Giam rung");
+        reduceShakeToggle = CreateToggle("ReduceShakeToggle", card, "Reduce shake");
         SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(90f, -54f), new Vector2(-8f, -16f));
         reduceShakeToggle.onValueChanged.AddListener(value => GameSettings.ReduceShake = value);
 
-        vibrationToggle = CreateToggle("VibrationToggle", card, "Rung may");
+        vibrationToggle = CreateToggle("VibrationToggle", card, "Vibration");
         SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(8f, -54f), new Vector2(-90f, -16f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
-        resumeButton = CreateButton("ResumeButton", card, "TIEP TUC", 24, accentColor, Color.white);
+        resumeButton = CreateButton("ResumeButton", card, "RESUME", 24, accentColor, Color.white);
         resumeButton.onClick.AddListener(TogglePause);
         SetAnchor((RectTransform)resumeButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 38f), new Vector2(-10f, 96f));
 
-        Button restartButton = CreateButton("RestartButton", card, "CHOI LAI", 24, panelSoftColor, Color.white);
+        Button restartButton = CreateButton("RestartButton", card, "RESTART", 24, panelSoftColor, Color.white);
         restartButton.onClick.AddListener(RestartLevel);
         SetAnchor((RectTransform)restartButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 38f), new Vector2(-70f, 96f));
 
-        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", card, "CHON MAN", 22, panelSoftColor, Color.white);
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", card, "MISSIONS", 22, panelSoftColor, Color.white);
         modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
         SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 110f), new Vector2(-10f, 162f));
 
-        nextLevelButton = CreateButton("NextLevelButton", card, "MAN TIEP", 22, accentColor, Color.white);
+        nextLevelButton = CreateButton("NextLevelButton", card, "NEXT", 22, accentColor, Color.white);
         nextLevelButton.onClick.AddListener(GoToNextLevel);
         nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
         SetAnchor((RectTransform)nextLevelButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 110f), new Vector2(-70f, 162f));
@@ -315,10 +315,10 @@ public class GameUiController : MonoBehaviour
         RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
         SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -310f), new Vector2(430f, 310f));
 
-        TextMeshProUGUI title = CreateText("Title", card, "CHON NHIEM VU", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
+        TextMeshProUGUI title = CreateText("Title", card, "SELECT MISSION", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -86f), new Vector2(-30f, -24f));
 
-        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Hoan thanh man truoc de mo khoa man tiep theo.", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Complete the previous mission to unlock the next one.", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
         subtitle.color = new Color(0.8f, 0.9f, 0.96f, 1f);
         SetAnchor(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -128f), new Vector2(-42f, -88f));
 
@@ -334,7 +334,7 @@ public class GameUiController : MonoBehaviour
         layout.childForceExpandWidth = true;
         layout.childForceExpandHeight = false;
 
-        Button closeButton = CreateButton("CloseButton", card, "DONG", 24, panelSoftColor, Color.white);
+        Button closeButton = CreateButton("CloseButton", card, "CLOSE", 24, panelSoftColor, Color.white);
         closeButton.onClick.AddListener(CloseLevelSelect);
         SetAnchor((RectTransform)closeButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-150f, 34f), new Vector2(150f, 88f));
 
@@ -506,7 +506,7 @@ public class GameUiController : MonoBehaviour
     void RefreshHud()
     {
         if (energyText != null)
-            energyText.text = EnergySystem.Instance != null ? $"Nang luong: {EnergySystem.Instance.Energy}" : "Nang luong: --";
+            energyText.text = EnergySystem.Instance != null ? $"Energy: {EnergySystem.Instance.Energy}" : "Energy: --";
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         if (levelText != null)
@@ -609,11 +609,11 @@ public class GameUiController : MonoBehaviour
 
             button.label.text = $"{level.levelNumber:00}  {level.displayName}";
             if (current)
-                button.status.text = completed ? "DANG CHOI / XONG" : "DANG CHOI";
+                button.status.text = completed ? "ACTIVE / CLEARED" : "ACTIVE";
             else if (completed)
-                button.status.text = "DA XONG";
+                button.status.text = "CLEARED";
             else
-                button.status.text = unlocked ? "MO KHOA" : "KHOA";
+                button.status.text = unlocked ? "UNLOCKED" : "LOCKED";
 
             button.frame.color = current ? accentColor : (unlocked ? panelSoftColor : disabledColor);
             button.button.interactable = unlocked;
@@ -631,18 +631,18 @@ public class GameUiController : MonoBehaviour
         if (!show) return;
 
         if (won)
-            modalTitleText.text = "THANG";
+            modalTitleText.text = "VICTORY";
         else if (gameOver)
-            modalTitleText.text = "THUA";
+            modalTitleText.text = "DEFEAT";
         else
-            modalTitleText.text = "TAM DUNG";
+            modalTitleText.text = "PAUSED";
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         modalSubtitleText.text = level != null ? level.displayName : "";
         if (level != null)
         {
             bool completed = PlayerProgress.IsLevelCompleted(level);
-            progressText.text = $"Hoan thanh: {(completed ? "Co" : "Chua")}   |   Level cao nhat: {PlayerProgress.HighestCompletedLevel}";
+            progressText.text = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest cleared: {PlayerProgress.HighestCompletedLevel}";
         }
         else
         {
@@ -666,7 +666,7 @@ public class GameUiController : MonoBehaviour
             nextLevelButton.interactable = canPlayNext;
         }
         if (nextLevelButtonText != null && nextLevel != null)
-            nextLevelButtonText.text = $"MAN {nextLevel.levelNumber}";
+            nextLevelButtonText.text = $"MISSION {nextLevel.levelNumber}";
     }
 
     void OpenLevelSelect()

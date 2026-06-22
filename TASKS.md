@@ -8,6 +8,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
+- Mac dinh UI/gameplay copy trong game la **English**.
+- Localization sau release slice:
+  - English la source copy chinh hien tai.
+  - Vietnamese, Chinese, French them sau bang localization table.
+  - Khong them Vietnamese khong dau vao runtime UI nua.
 - Kiem tra mission unlock/gating v1:
   - Play Mode khong co compile/Console error.
   - Level 1 chi hien seed `ArcReactor`, `Turret`; panel OC khong hien va phim so 1-5 khong kich hoat OC.
@@ -35,6 +40,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Codex
 
+- Truoc moi feature lon:
+  - phan tich boi canh va constraint hien co;
+  - neu co nhieu huong, neu ro tradeoff;
+  - chon huong toi uu theo codebase hien tai;
+  - cap nhat `.md` lien quan truoc/kem commit feature.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
@@ -81,17 +91,29 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ## Next
 
-### Roadmap uu tien sau combat feedback
+### Production roadmap phases
 
-1. Runtime HUD polish pass: safe area, final spacing, icons, seed card art, mobile touch targets.
-2. Bunker/object death VFX pass.
-3. Projectile effect architecture: slow/knockback/stun/EMP theo tung loai dan.
-4. Balance pass bang `GameBalance`.
-5. AI QA harness v1.
-6. Mobile UI/input pass: tutorial overlays, level select polish, settings polish.
-7. Tutorial/onboarding pass: day nguoi choi energy, dat unit, Overcharge, Rail Cannon.
-8. Level/progression pass: level data, unlock unit/enemy, save/load.
-9. Performance/device pass: pooling, texture/audio compression, test tren dien thoai.
+1. Phase 1 — Gameplay vertical slice:
+   - enemy variety: fast, shield/heavy, clear counters;
+   - projectile effects/resistance: slow, stun/EMP, pierce/splash later;
+   - tune level 1-3 after unlock gating;
+   - reward/unlock panel after win.
+2. Phase 2 — Visual/audio production pass:
+   - production board/background for First Contact;
+   - UI skin/icon set;
+   - VFX prefab replacements for generated effects;
+   - animation polish for core unit/enemy set.
+3. Phase 3 — Campaign content:
+   - level 4-10;
+   - level select polish with preview/rewards;
+   - tutorial callouts;
+   - unlock/reward copy.
+4. Phase 4 — Mobile/release hardening:
+   - safe area and touch validation;
+   - enemy/VFX pooling;
+   - AI QA/build validator;
+   - Android/iOS dev builds;
+   - store asset checklist.
 
 ### Gameplay/Tech
 
@@ -111,6 +133,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them level definition va wave authoring workflow.
 - Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
 - Polish level select UI: icon/preview/reward text/unlock copy.
+- Runtime text cleanup: keep visible UI in English until localization system exists.
 - Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

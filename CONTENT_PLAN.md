@@ -210,6 +210,7 @@ Runtime hien tai:
 - HUD da chuyen sang uGUI/TextMeshPro code-generated trong `GameUiController`.
 - Day la UI runtime that de gameplay dung duoc, nhung visual art van can polish bang icon/sprite rieng.
 - Board/background da co `BoardVisualController` tao procedural sci-fi lane layout tam thoi. Day la guide layout, khong phai final environment art.
+- Runtime UI copy hien dung English. Vietnamese/Chinese/French se them sau bang localization pipeline.
 
 Can co:
 - Seed packet icons.
@@ -251,6 +252,11 @@ Can them cho mobile release:
 - Level select/map tam thoi.
 - Store screenshots/title logo/app icon.
 
+Localization content policy:
+- English copy la ban goc trong giai doan nay.
+- Khong viet Vietnamese khong dau trong UI runtime.
+- Khi gameplay/menu flow on dinh, tao localization table cho English, Vietnamese, Chinese, French.
+
 ---
 
 ## 9. Level va Progression Content
@@ -273,6 +279,12 @@ Can lam tiep:
 - Wave notes: enemy type, count, timing, huge wave.
 - Reward/unlock copy ngan gon.
 - Level select can icon/preview/reward state de nhin nhu game release hon.
+
+Phase content target:
+- Phase 1: level 1-3 du vui va day dung unit unlock.
+- Phase 2: First Contact co board/UI/VFX/audio du dep de lam vertical slice showcase.
+- Phase 3: level 4-10 co enemy/unit combinations ro.
+- Phase 4: store-facing content gom icon, screenshots, title/logo, short description.
 
 ---
 

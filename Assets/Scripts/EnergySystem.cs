@@ -91,6 +91,6 @@ public class EnergySystem : MonoBehaviour
         if (!showDebugImGui) return;
         if (style == null)
             style = new GUIStyle(GUI.skin.label) { fontSize = 20, fontStyle = FontStyle.Bold };
-        GUI.Label(new Rect(10, 8, 260, 30), $"Nang luong: {Energy}", style);
+        GUI.Label(new Rect(10, 8, 260, 30), $"Energy: {Energy}", style);
     }
 }

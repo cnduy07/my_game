@@ -527,9 +527,10 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialCoach
   showHints: 1
-  energyHint: Thu nang luong, dat ArcReactor truoc de tang kinh te.
-  defenseHint: Dat Turret/SnowGun theo hang co dich.
-  overchargeHint: Dung OC de cuu hang dang bi ep.
+  energyHint: Collect energy and place ArcReactors early to build your economy.
+  defenseHint: Place Turrets in lanes with incoming enemies.
+  bunkerHint: Use Bunkers to buy time in pressured lanes.
+  overchargeHint: Use Overcharge to stabilize a lane under pressure.
 --- !u!114 &53209499
 MonoBehaviour:
   m_ObjectHideFlags: 0

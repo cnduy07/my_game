@@ -145,6 +145,7 @@ Quyet dinh hien tai:
 - Dung **uGUI Canvas + CanvasScaler + TextMeshPro** cho gameplay HUD.
 - Khong tiep tuc dung IMGUI cho UI nguoi choi; cac `OnGUI` cu chi giu lai sau flag `showDebugImGui` de debug nhanh.
 - UI Toolkit co the dung sau nay cho editor tools/custom inspectors, khong phai gameplay HUD chinh luc nay.
+- Runtime copy policy hien tai: **English-first**. Khong dung Vietnamese khong dau trong UI nguoi choi. Vietnamese/Chinese/French se them sau bang localization table khi flow on dinh.
 
 Contract:
 - `GameUiController` tren `GameSystems` tu tao `RuntimeHUD` Canvas va `EventSystem` neu scene chua co.
@@ -166,6 +167,25 @@ Can polish sau:
 - Icon seed/unit, icon energy, icon pause/resume thay chu.
 - Prefab/skin UI rieng khi co art direction.
 - Test touch target tren dien thoai, toi thieu ~44px CSS-equivalent / 7-9mm.
+
+---
+
+## 7.6 Localization Plan
+
+Giai doan hien tai:
+- English la source language duy nhat trong runtime UI.
+- Text trong gameplay/HUD/modal/tutorial/hints phai viet English.
+- Tranh Vietnamese khong dau trong runtime UI vi sau nay se gay no ky thuat khi them ngon ngu that.
+
+Giai doan sau:
+- Them localization table cho key/value.
+- Ngon ngu muc tieu: English, Vietnamese, Chinese, French.
+- UI phai test text expansion cho French/Vietnamese va glyph/font coverage cho Chinese.
+- Runtime copy nen di qua key thay vi hardcoded string khi HUD/menu flow da on dinh.
+
+Chua lam ngay:
+- Chua can cai Unity Localization package neu UI copy con bien dong nhanh.
+- Chua can tach tat ca debug log/comment; uu tien visible player-facing text truoc.
 
 ---
 
@@ -289,6 +309,35 @@ Chu project can uu tien asset:
 - 5 seed icons + energy icon + OC icon + pause icon.
 - 4-6 VFX prefab co ban.
 - 1 UI skin bo nut/panel/slider theo sci-fi.
+
+---
+
+## 10.6 Production Roadmap
+
+Phase 1 — Gameplay vertical slice:
+- Them enemy variety co vai tro ro: fast, shield/heavy.
+- Hoan thien projectile effects/resistance de SnowGun/EMP/OC co ly do chien thuat.
+- Tune level 1-3 sau unlock gating.
+- Them reward/unlock panel sau win.
+
+Phase 2 — Visual/audio production pass:
+- Production board/background cho First Contact.
+- UI skin/icon set thay rectangle code-generated.
+- VFX prefab cho muzzle, hit, death, EMP, rail beam.
+- Animation polish cho core unit/enemy.
+
+Phase 3 — Campaign content:
+- Level 4-10.
+- Level select polish voi preview/reward/unlock copy.
+- Tutorial callouts thay hint text don gian.
+- Mo khoa enemy/unit theo campaign.
+
+Phase 4 — Mobile/release hardening:
+- Safe area, touch target validation.
+- Enemy/VFX pooling.
+- AI QA/build validator.
+- Android/iOS dev build.
+- Store icon/screenshots/privacy/build versioning.
 
 ---
 

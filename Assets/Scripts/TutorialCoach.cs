@@ -5,10 +5,10 @@ public class TutorialCoach : MonoBehaviour
     public static TutorialCoach Instance { get; private set; }
 
     public bool showHints = true;
-    public string energyHint = "Thu nang luong, dat ArcReactor truoc de tang kinh te.";
-    public string defenseHint = "Dat Turret theo hang co dich.";
-    public string bunkerHint = "Dung Bunker de cau gio cho hang bi ep.";
-    public string overchargeHint = "Dung OC de cuu hang dang bi ep.";
+    public string energyHint = "Collect energy and place ArcReactors early to build your economy.";
+    public string defenseHint = "Place Turrets in lanes with incoming enemies.";
+    public string bunkerHint = "Use Bunkers to buy time in pressured lanes.";
+    public string overchargeHint = "Use Overcharge to stabilize a lane under pressure.";
 
     void Awake()
     {

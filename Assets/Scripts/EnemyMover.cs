@@ -104,7 +104,7 @@ public class EnemyMover : MonoBehaviour
 
             // Hết đường cứu -> thua.
             if (GameManager.Instance != null) GameManager.Instance.GameOver(row);
-            Debug.Log($"Địch vượt tuyến ở hàng {row} -> THUA HÀNG");
+            Debug.Log($"Enemy breached row {row} -> row lost");
             Destroy(gameObject);
         }
     }
