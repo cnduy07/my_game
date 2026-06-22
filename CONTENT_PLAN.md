@@ -146,11 +146,17 @@ Can co:
 - Cung bo clip nhu Basic neu dung chung controller.
 - Visual nang hon: giap day, core bi che mot phan.
 - Toc do cham hon, HP cao hon.
+- Gameplay identity hien tai:
+  - resistant hon voi projectile thuong;
+  - it bi slow/knockback/stun hon;
+  - vulnerable hon voi EMP.
+- Art nen doc ro la enemy boc giap/duoc che chan, de nguoi choi hieu vi sao can EMP/SnowGun/OC.
 
 ### Future Enemy
 
-- Fast Alien: chan dai, nho, toc do cao.
-- Shield Alien: khien phia truoc.
+- Fast Alien: chan dai, nho, toc do cao; counter bang SnowGun/Bunker.
+- Shield Alien: khien phia truoc; counter bang EMP/pierce/splash.
+- Heavy Alien: cuc ben, cham; counter bang OC/EMP.
 - Mini-boss: to, doc dao, xuat hien cuoi level.
 
 ---

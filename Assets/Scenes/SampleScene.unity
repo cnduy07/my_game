@@ -445,6 +445,11 @@ MonoBehaviour:
     speed: 0.3
     attackDamage: 25
     attackSfxInterval: 1.1
+    projectileDamageMultiplier: 1
+    empDamageMultiplier: 1
+    slowEffectMultiplier: 1
+    knockbackMultiplier: 1
+    stunDurationMultiplier: 1
   - label: ArmorEnemy
     prefab: {fileID: 6305580585309829948, guid: df5ea8454f9f947a484d25f8e1c35d03, type: 3}
     maxHealth: 300
@@ -452,6 +457,11 @@ MonoBehaviour:
     speed: 0.3
     attackDamage: 30
     attackSfxInterval: 1.1
+    projectileDamageMultiplier: 0.85
+    empDamageMultiplier: 1.25
+    slowEffectMultiplier: 0.65
+    knockbackMultiplier: 0.35
+    stunDurationMultiplier: 0.75
   startEnergy: 75
   skyOrbValue: 25
   skyInterval: 8

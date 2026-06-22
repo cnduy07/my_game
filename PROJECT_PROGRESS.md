@@ -262,6 +262,27 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - `TutorialCoach` khong goi y OC neu level chua mo OC; level co Bunker se goi y dung Bunker khi bi ep.
 - AI QA kiem tra `allowedUnitLabels` co khop voi `GameBalance.units`.
 
+### Phase 1 slice — enemy traits/resistance foundation — 2026-06-22
+- Them `EnemyTraits` runtime component:
+  - projectile damage multiplier;
+  - EMP damage multiplier;
+  - slow effect multiplier;
+  - knockback multiplier;
+  - stun duration multiplier.
+- `GameBalance.EnemyBalance` la source tune trait; `ApplyEnemy` tu add/config `EnemyTraits` khi enemy spawn.
+- `Projectile` dung projectile damage multiplier truoc khi gay damage.
+- `BombUnit` dung EMP damage multiplier.
+- `EnemyMover.ApplySlow/ApplyKnockback/ApplyStun` ton trong trait resistance.
+- ArmorEnemy hien duoc tune thanh:
+  - nhan projectile damage x0.85;
+  - nhan EMP damage x1.25;
+  - slow x0.65;
+  - knockback x0.35;
+  - stun x0.75.
+- `BalanceReportGenerator` tinh TTK theo projectile multiplier va in enemy trait summary.
+- AI QA bao loi neu enemy trait multiplier am.
+- Muc tieu: tao nen counter-play cho SnowGun/EMP/OC truoc khi them enemy variant moi nhu Fast/Shield/Heavy.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

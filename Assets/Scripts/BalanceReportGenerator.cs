@@ -76,9 +76,10 @@ public static class BalanceReportGenerator
             foreach (var enemy in balance.enemies)
             {
                 if (enemy == null || enemy.maxHealth <= 0f) continue;
-                int shots = Mathf.CeilToInt(enemy.maxHealth / Mathf.Max(0.01f, unit.bulletDamage));
+                float effectiveDamage = unit.bulletDamage * Mathf.Max(0f, enemy.projectileDamageMultiplier);
+                int shots = Mathf.CeilToInt(enemy.maxHealth / Mathf.Max(0.01f, effectiveDamage));
                 float ttk = shots * unit.fireInterval;
-                float ocDamage = unit.bulletDamage * Mathf.Max(0f, balance.overchargeDamageMultiplier);
+                float ocDamage = effectiveDamage * Mathf.Max(0f, balance.overchargeDamageMultiplier);
                 float ocInterval = unit.fireInterval / Mathf.Max(0.01f, balance.overchargeFireRateMultiplier);
                 int ocShots = Mathf.CeilToInt(enemy.maxHealth / Mathf.Max(0.01f, ocDamage));
                 float ocTtk = ocShots * ocInterval;
@@ -99,6 +100,14 @@ public static class BalanceReportGenerator
             }
             sb.AppendLine();
         }
+
+        sb.AppendLine("### Enemy traits");
+        foreach (var enemy in balance.enemies)
+        {
+            if (enemy == null) continue;
+            sb.AppendLine($"- {enemy.label}: projectile x`{Format(enemy.projectileDamageMultiplier)}`, EMP x`{Format(enemy.empDamageMultiplier)}`, slow x`{Format(enemy.slowEffectMultiplier)}`, knockback x`{Format(enemy.knockbackMultiplier)}`, stun x`{Format(enemy.stunDurationMultiplier)}`");
+        }
+        sb.AppendLine();
     }
 
     static void AppendEconomy(StringBuilder sb, GameBalance balance)

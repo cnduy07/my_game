@@ -262,6 +262,15 @@ public static class AiQaReportRunner
                     checks.Add(CheckResult.Fail("Enemy Prefab", $"{enemy.label} has no Health."));
                 if (enemy.prefab.GetComponent<EnemyMover>() == null)
                     checks.Add(CheckResult.Fail("Enemy Prefab", $"{enemy.label} has no EnemyMover."));
+
+                if (enemy.projectileDamageMultiplier < 0f ||
+                    enemy.empDamageMultiplier < 0f ||
+                    enemy.slowEffectMultiplier < 0f ||
+                    enemy.knockbackMultiplier < 0f ||
+                    enemy.stunDurationMultiplier < 0f)
+                {
+                    checks.Add(CheckResult.Fail("Enemy Traits", $"{enemy.label} has a negative trait multiplier."));
+                }
             }
         }
     }

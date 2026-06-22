@@ -38,7 +38,12 @@ public class Projectile : MonoBehaviour
             {
                 CombatVfx.PlayHitSpark(transform.position);
                 var hp = e.GetComponent<Health>();
-                if (hp != null) hp.TakeDamage(damage);
+                if (hp != null)
+                {
+                    var traits = e.GetComponent<EnemyTraits>();
+                    float finalDamage = traits != null ? traits.ModifyProjectileDamage(damage) : damage;
+                    hp.TakeDamage(finalDamage);
+                }
                 ApplyHitEffects(e);
                 AudioManager.PlaySfx(SfxType.Hit);
                 ObjectPooler.Despawn(gameObject);

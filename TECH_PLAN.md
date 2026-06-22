@@ -214,6 +214,39 @@ Sau nay:
 
 ---
 
+## 8.5 Enemy Traits / Resistance
+
+Hien tai:
+- `EnemyTraits` la runtime component duoc `GameBalance.ApplyEnemy` tu add/config khi enemy spawn.
+- `EnemyBalance` co trait multipliers:
+  - `projectileDamageMultiplier`;
+  - `empDamageMultiplier`;
+  - `slowEffectMultiplier`;
+  - `knockbackMultiplier`;
+  - `stunDurationMultiplier`.
+- `Projectile` tinh final damage qua `EnemyTraits.ModifyProjectileDamage`.
+- `BombUnit` tinh EMP damage qua `EnemyTraits.ModifyEmpDamage`.
+- `EnemyMover.ApplySlow/ApplyKnockback/ApplyStun` ap dung resistance tu `EnemyTraits`.
+
+Current tuning:
+- Basic enemy: tat ca multiplier x1.
+- ArmorEnemy:
+  - projectile x0.85;
+  - EMP x1.25;
+  - slow x0.65;
+  - knockback x0.35;
+  - stun x0.75.
+
+Design intent:
+- ArmorEnemy khong chi la HP cao hon; no co identity la resistant to normal bullets/control, nhung vulnerable hon voi EMP.
+- SnowGun/EMP/OC co ly do chien thuat ro hon khi enemy variety tang.
+
+Next:
+- Them FastEnemy va ShieldEnemy/HeavyEnemy bang prefab/level data rieng.
+- Them resistance summary vao level select/reward copy khi player can hoc counter.
+
+---
+
 ## 9. Data Architecture
 
 Hien tai stats gameplay chinh da duoc gom ve `GameBalance` tren object `GameSystems` trong `SampleScene`.
@@ -232,6 +265,7 @@ Dang gom trong `GameBalance`:
 - ArcReactor: energyAmount, energyInterval.
 - DroneEMP: empFuse, empRadius, empDamage.
 - Enemy: maxHealth, deathAnimTime, speed, attackDamage, attackSfxInterval.
+- Enemy traits: projectile/EMP damage multiplier, slow/knockback/stun multiplier.
 - Global: startEnergy, sky orb, wave setup, Overcharge cost/duration/multipliers.
 
 Buoc nang cap sau, khi co nhieu level, nen tach tiep thanh:

@@ -19,6 +19,7 @@ public class EnemyMover : MonoBehaviour
 
     private bool caught = false;       // true khi đã bị lawnmower "nhận" — đứng im chờ bị huỷ
     private CharacterAnimator anim;    // null trên bản xám -> mọi lệnh anim tự bỏ qua
+    private EnemyTraits traits;
 
     // Danh sách mọi địch đang sống, để Shooter và Projectile tra cứu (khỏi cần collider).
     public static readonly List<EnemyMover> All = new List<EnemyMover>();
@@ -26,6 +27,7 @@ public class EnemyMover : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<CharacterAnimator>();
+        traits = GetComponent<EnemyTraits>();
         // Art của địch đã vẽ sẵn quay mặt sang trái (đúng hướng di chuyển) nên KHÔNG lật.
         // Nếu sau này dùng art vẽ quay phải, gọi anim.FaceLeft(true) ở đây.
     }
@@ -36,18 +38,35 @@ public class EnemyMover : MonoBehaviour
     // Projectile gọi khi trúng đạn băng. Lấy hệ số chậm mạnh nhất, gia hạn thời gian.
     public void ApplySlow(float factor, float duration)
     {
+        EnsureTraits();
+        if (traits != null)
+        {
+            factor = traits.ModifySlowFactor(factor);
+            duration = traits.ModifySlowDuration(duration);
+        }
+
+        if (duration <= 0f || factor >= 1f) return;
         if (factor < slowFactor) slowFactor = factor;
         slowTimer = Mathf.Max(slowTimer, duration);
     }
 
     public void ApplyKnockback(float distance)
     {
+        EnsureTraits();
+        if (traits != null)
+            distance = traits.ModifyKnockback(distance);
+
         if (distance <= 0f) return;
         transform.position += Vector3.right * distance;
     }
 
     public void ApplyStun(float duration)
     {
+        EnsureTraits();
+        if (traits != null)
+            duration = traits.ModifyStunDuration(duration);
+
+        if (duration <= 0f) return;
         stunTimer = Mathf.Max(stunTimer, duration);
     }
 
@@ -110,4 +129,10 @@ public class EnemyMover : MonoBehaviour
     }
 
     public float CurrentX => transform.position.x;
+
+    void EnsureTraits()
+    {
+        if (traits == null)
+            traits = GetComponent<EnemyTraits>();
+    }
 }

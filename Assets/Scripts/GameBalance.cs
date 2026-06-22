@@ -175,6 +175,14 @@ public class GameBalance : MonoBehaviour
             mover.attackDamage = Mathf.Max(0f, balance.attackDamage);
             mover.attackSfxInterval = Mathf.Max(0.05f, balance.attackSfxInterval);
         }
+
+        var traits = enemy.GetComponent<EnemyTraits>();
+        if (traits == null) traits = enemy.AddComponent<EnemyTraits>();
+        traits.projectileDamageMultiplier = Mathf.Max(0f, balance.projectileDamageMultiplier);
+        traits.empDamageMultiplier = Mathf.Max(0f, balance.empDamageMultiplier);
+        traits.slowEffectMultiplier = Mathf.Max(0f, balance.slowEffectMultiplier);
+        traits.knockbackMultiplier = Mathf.Max(0f, balance.knockbackMultiplier);
+        traits.stunDurationMultiplier = Mathf.Max(0f, balance.stunDurationMultiplier);
     }
 
     public void ApplyEnergySystem(EnergySystem energySystem)
@@ -270,4 +278,11 @@ public class EnemyBalance
     public float speed = 0.3f;
     public float attackDamage = 25f;
     public float attackSfxInterval = 1.1f;
+
+    [Header("Traits")]
+    public float projectileDamageMultiplier = 1f;
+    public float empDamageMultiplier = 1f;
+    public float slowEffectMultiplier = 1f;
+    public float knockbackMultiplier = 1f;
+    public float stunDurationMultiplier = 1f;
 }

@@ -35,7 +35,12 @@ public class BombUnit : MonoBehaviour
             {
                 CombatVfx.PlayHitSpark(e.transform.position);
                 var hp = e.GetComponent<Health>();
-                if (hp != null) hp.TakeDamage(damage);
+                if (hp != null)
+                {
+                    var traits = e.GetComponent<EnemyTraits>();
+                    float finalDamage = traits != null ? traits.ModifyEmpDamage(damage) : damage;
+                    hp.TakeDamage(finalDamage);
+                }
             }
         }
     }

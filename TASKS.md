@@ -21,6 +21,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Khi OC bi khoa, click vung ben phai board khong bi panel OC an click.
   - Tutorial hint khong bao dung OC truoc level 3.
   - Pause/resume/settings/level select/next level/restart van hoat dong.
+- Kiem tra Phase 1 enemy traits/resistance:
+  - Basic enemy van bi Turret/SnowGun/EMP xu ly nhu binh thuong.
+  - ArmorEnemy can nhieu phat dan thuong hon cam giac cu mot chut.
+  - SnowGun van slow ArmorEnemy nhung yeu hon BasicEnemy.
+  - DroneEMP giet/pha ArmorEnemy tot hon dan thuong.
+  - Console khong co error khi enemy spawn/take damage.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -86,6 +92,15 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `OverchargeSystem` co lock state;
   - tutorial hint ton trong unlock state;
   - AI QA check unknown allowed unit labels.
+- English-first runtime UI baseline:
+  - HUD/modal/mission select/tutorial hints doi sang English;
+  - docs ghi ro localization se them sau cho English/Vietnamese/Chinese/French.
+- Phase 1 enemy traits/resistance foundation:
+  - `EnemyTraits`;
+  - `EnemyBalance` trait multipliers;
+  - Projectile/EMP/control effect ton trong trait;
+  - ArmorEnemy co resistance/vulnerability khac BasicEnemy;
+  - balance report va AI QA cap nhat.
 
 ---
 
