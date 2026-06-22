@@ -335,7 +335,7 @@ AI QA v1 hien co:
 - Menu: `Tools > AI QA > Run Full Check`.
 - Batchmode method: `AiQaReportRunner.RunFullCheck`.
 - Output: `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
-- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract.
+- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity.
 
 ---
 
@@ -344,10 +344,11 @@ AI QA v1 hien co:
 IMGUI hien tai tot cho prototype, khong nen giu cho release.
 
 Hien tai v1:
-- `GameUiController` ve pause/settings/progression panel bang IMGUI.
+- `GameUiController` ve HUD/pause/settings/progression bang uGUI/TextMeshPro runtime.
 - `GameSettings` luu SFX volume/reduce shake/vibration bang PlayerPrefs.
 - `PlacementController` hoi `GameUiController.PointerOverPanel` de chan click xuyen UI.
-- Day la UI tam thoi, khong phai final mobile UI.
+- Co top-bar `LVL` button va level select overlay tam thoi doc tu `LevelCatalog`.
+- Day la UI functional, nhung chua phai final mobile UI skin.
 
 Can lam:
 - uGUI hoac UI Toolkit cho seed bar, energy, wave, pause, win/lose.
@@ -368,17 +369,20 @@ Khi co hon 1 level, can tach data:
 
 Hien tai v1:
 - `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
-- `LevelManager` tren `GameSystems` apply `currentLevel` vao `GameBalance` luc Awake.
-- `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`.
-- `Assets/Levels/Level_01.asset` la level data dau tien.
+- `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
+- `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level.
+- `Assets/Levels/Level_01.asset`, `Level_02.asset`, `Level_03.asset` la level pack dau tien.
+- `LevelCatalog.asset` dang chua 3 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
 - `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
 - `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
 - `Level_01.useAuthoredWaves` hien bat mac dinh sau playtest OK.
+- `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Level select UI tam thoi.
+1. Them reward/unlock copy cho tung level.
 2. SaveData co version khi progression phuc tap hon.
-3. Tach UI prototype sang uGUI/UI Toolkit.
+3. Level select art/icon/preview.
+4. Tach level progression sang main menu scene neu can.
 
 ---
 

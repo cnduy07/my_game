@@ -255,16 +255,24 @@ Can them cho mobile release:
 
 ## 9. Level va Progression Content
 
-Vertical slice chi can 1 level dep. Sau do can:
-- Level 1-3 tutorial co wave rat ngan.
+Hien tai:
+- Level 1: First Contact.
+- Level 2: Armor Probe.
+- Level 3: Signal Siege.
+- 3 level nay dung chung scene/board, khac authored waves va balance.
+- Unlock rule: win level truoc de mo level tiep theo.
+
+Can lam tiep:
+- Level 1-3 can duoc tune thanh tutorial/co difficulty ramp ro rang.
 - Level 4-10 mo khoa dan Bunker, SnowGun, DroneEMP, Overcharge.
 - Moi level co theme/tint nho hoac background variation de tranh lap.
 - Wave notes: enemy type, count, timing, huge wave.
 - Reward/unlock copy ngan gon.
+- Level select can icon/preview/reward state de nhin nhu game release hon.
 
 ---
 
-## 9. Final VFX Direction
+## 10. Final VFX Direction
 
 `CombatVfx` hien tai la prototype. Ban final nen co:
 - Muzzle flash prefab rieng cho Turret/SnowGun.

@@ -8,12 +8,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Kiem tra board visual polish pass:
+- Kiem tra mission progression loop v1:
   - Play Mode khong co compile/Console error.
-  - Board moi hien ro, khong che unit/enemy/projectile.
-  - Tile/grid con doc duoc vi tri o.
-  - HUD top/bottom/right khong chong len board theo cach gay roi.
-  - Neu nen qua toi, grid qua mo, hoac cell tint lam mat sprite thi gui screenshot de tune.
+  - Bam nut `LVL`, thay 3 mission: First Contact, Armor Probe, Signal Siege.
+  - Khi chua win level 1, chi level 1 mo khoa.
+  - Win level 1 xong, modal hien nut `MAN 2`; bam vao load level 2.
+  - Vao `LVL` sau khi win level 1, level 2 mo khoa, level 3 van khoa.
+  - Restart level giu dung selected level hien tai.
+  - Pause/resume/settings/seed tray/OC van hoat dong.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -60,6 +62,13 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `BoardVisualController` tao board/background procedural.
   - `Tile.prefab` da doi tint/sorting de bot cam giac mau phang prototype.
   - Camera background da doi sang tone sci-fi toi.
+- Board visual polish pass da duoc chu project test OK trong Unity.
+- Mission progression loop v1:
+  - them `Level_02`, `Level_03`;
+  - `LevelCatalog` co 3 level;
+  - `PlayerProgress` luu selected/unlocked/completed;
+  - HUD co level select overlay va next level button;
+  - AI QA check catalog integrity.
 
 ---
 
@@ -72,7 +81,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 3. Projectile effect architecture: slow/knockback/stun/EMP theo tung loai dan.
 4. Balance pass bang `GameBalance`.
 5. AI QA harness v1.
-6. Mobile UI/input pass: tutorial overlays, level select, settings polish.
+6. Mobile UI/input pass: tutorial overlays, level select polish, settings polish.
 7. Tutorial/onboarding pass: day nguoi choi energy, dat unit, Overcharge, Rail Cannon.
 8. Level/progression pass: level data, unlock unit/enemy, save/load.
 9. Performance/device pass: pooling, texture/audio compression, test tren dien thoai.
@@ -94,7 +103,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them save/load progress va settings volume/vibration.
 - Them level definition va wave authoring workflow.
 - Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
-- Lam level select UI tam thoi doc tu danh sach `LevelDefinition`.
+- Polish level select UI: icon/preview/reward text/unlock copy.
 - Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

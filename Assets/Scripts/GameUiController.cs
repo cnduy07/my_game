@@ -28,6 +28,7 @@ public class GameUiController : MonoBehaviour
     TextMeshProUGUI waveText;
     Button pauseButton;
     TextMeshProUGUI pauseButtonText;
+    Button levelSelectTopButton;
 
     RectTransform seedTray;
     readonly List<SeedCard> seedCards = new List<SeedCard>();
@@ -48,10 +49,19 @@ public class GameUiController : MonoBehaviour
     Toggle reduceShakeToggle;
     Toggle vibrationToggle;
     Button resumeButton;
+    Button modalLevelSelectButton;
+    Button nextLevelButton;
+    TextMeshProUGUI nextLevelButtonText;
+
+    GameObject levelSelectOverlay;
+    RectTransform levelListContainer;
+    readonly List<LevelButton> levelButtons = new List<LevelButton>();
 
     int lastSeedCount = -1;
     int lastRowCount = -1;
+    int lastLevelCount = -1;
     bool modalBuilt;
+    bool wasPausedBeforeLevelSelect;
 
     class SeedCard
     {
@@ -68,6 +78,14 @@ public class GameUiController : MonoBehaviour
         public Image frame;
         public Image fill;
         public TextMeshProUGUI label;
+    }
+
+    class LevelButton
+    {
+        public Button button;
+        public Image frame;
+        public TextMeshProUGUI label;
+        public TextMeshProUGUI status;
     }
 
     void Awake()
@@ -111,7 +129,9 @@ public class GameUiController : MonoBehaviour
         return IsScreenPointIn(seedTray, screenPoint) ||
                IsScreenPointIn(overchargePanel, screenPoint) ||
                (pauseButton != null && IsScreenPointIn((RectTransform)pauseButton.transform, screenPoint)) ||
-               (modalOverlay != null && modalOverlay.activeSelf && IsScreenPointIn((RectTransform)modalOverlay.transform, screenPoint));
+               (levelSelectTopButton != null && IsScreenPointIn((RectTransform)levelSelectTopButton.transform, screenPoint)) ||
+               (modalOverlay != null && modalOverlay.activeSelf && IsScreenPointIn((RectTransform)modalOverlay.transform, screenPoint)) ||
+               (levelSelectOverlay != null && levelSelectOverlay.activeSelf && IsScreenPointIn((RectTransform)levelSelectOverlay.transform, screenPoint));
     }
 
     public bool IsPointerOverUi()
@@ -155,6 +175,7 @@ public class GameUiController : MonoBehaviour
         BuildOverchargePanel(root.transform);
         BuildTutorialPanel(root.transform);
         BuildModal(root.transform);
+        BuildLevelSelectOverlay(root.transform);
         RebuildDynamicUiIfNeeded();
         RefreshHud();
         RefreshModalState();
@@ -180,7 +201,11 @@ public class GameUiController : MonoBehaviour
         SetAnchor(levelText.rectTransform, new Vector2(0.34f, 0f), new Vector2(0.66f, 1f), Vector2.zero, Vector2.zero);
 
         waveText = CreateText("WaveText", topBar, "", 24, FontStyle.Bold, TextAnchor.MiddleRight);
-        SetAnchor(waveText.rectTransform, new Vector2(0.67f, 0f), new Vector2(0.88f, 1f), Vector2.zero, new Vector2(-18f, 0f));
+        SetAnchor(waveText.rectTransform, new Vector2(0.67f, 0f), new Vector2(0.84f, 1f), Vector2.zero, new Vector2(-18f, 0f));
+
+        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "LVL", 22, panelSoftColor, accentColor);
+        levelSelectTopButton.onClick.AddListener(OpenLevelSelect);
+        SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-286f, -30f), new Vector2(-166f, 30f));
 
         pauseButton = CreateButton("PauseButton", topBar, "II", 28, panelSoftColor, accentColor);
         pauseButton.onClick.AddListener(TogglePause);
@@ -266,8 +291,54 @@ public class GameUiController : MonoBehaviour
         restartButton.onClick.AddListener(RestartLevel);
         SetAnchor((RectTransform)restartButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 38f), new Vector2(-70f, 96f));
 
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", card, "CHON MAN", 22, panelSoftColor, Color.white);
+        modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
+        SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 110f), new Vector2(-10f, 162f));
+
+        nextLevelButton = CreateButton("NextLevelButton", card, "MAN TIEP", 22, accentColor, Color.white);
+        nextLevelButton.onClick.AddListener(GoToNextLevel);
+        nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
+        SetAnchor((RectTransform)nextLevelButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 110f), new Vector2(-70f, 162f));
+
         modalBuilt = true;
         modalOverlay.SetActive(false);
+    }
+
+    void BuildLevelSelectOverlay(Transform parent)
+    {
+        levelSelectOverlay = new GameObject("LevelSelectOverlay", typeof(RectTransform), typeof(Image));
+        levelSelectOverlay.transform.SetParent(parent, false);
+        Image overlayImage = levelSelectOverlay.GetComponent<Image>();
+        overlayImage.color = new Color(0f, 0f, 0f, 0.64f);
+        SetAnchor((RectTransform)levelSelectOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
+        SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -310f), new Vector2(430f, 310f));
+
+        TextMeshProUGUI title = CreateText("Title", card, "CHON NHIEM VU", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -86f), new Vector2(-30f, -24f));
+
+        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Hoan thanh man truoc de mo khoa man tiep theo.", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        subtitle.color = new Color(0.8f, 0.9f, 0.96f, 1f);
+        SetAnchor(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -128f), new Vector2(-42f, -88f));
+
+        levelListContainer = CreatePanel("LevelList", card, new Color(0.025f, 0.035f, 0.052f, 0.9f));
+        SetAnchor(levelListContainer, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(56f, 104f), new Vector2(-56f, -148f));
+
+        VerticalLayoutGroup layout = levelListContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+        layout.padding = new RectOffset(14, 14, 14, 14);
+        layout.spacing = 10f;
+        layout.childAlignment = TextAnchor.UpperCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+
+        Button closeButton = CreateButton("CloseButton", card, "DONG", 24, panelSoftColor, Color.white);
+        closeButton.onClick.AddListener(CloseLevelSelect);
+        SetAnchor((RectTransform)closeButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-150f, 34f), new Vector2(150f, 88f));
+
+        levelSelectOverlay.SetActive(false);
     }
 
     void RebuildDynamicUiIfNeeded()
@@ -281,6 +352,11 @@ public class GameUiController : MonoBehaviour
         int rowCount = overcharge != null ? overcharge.RowCount : 0;
         if (rowCount != lastRowCount)
             RebuildRowButtons(rowCount);
+
+        LevelManager levelManager = LevelManager.Instance;
+        int levelCount = levelManager != null ? levelManager.LevelCount : 0;
+        if (levelCount != lastLevelCount)
+            RebuildLevelButtons(levelCount);
     }
 
     void RebuildSeedCards(int seedCount)
@@ -380,6 +456,53 @@ public class GameUiController : MonoBehaviour
         }
     }
 
+    void RebuildLevelButtons(int levelCount)
+    {
+        foreach (LevelButton levelButton in levelButtons)
+            if (levelButton.button != null) Destroy(levelButton.button.gameObject);
+        levelButtons.Clear();
+        lastLevelCount = levelCount;
+
+        if (levelListContainer == null) return;
+
+        LevelManager levelManager = LevelManager.Instance;
+        for (int i = 0; i < levelCount; i++)
+        {
+            LevelDefinition level = levelManager != null ? levelManager.GetLevelAt(i) : null;
+            if (level == null) continue;
+
+            LevelDefinition capturedLevel = level;
+            GameObject go = new GameObject($"LevelButton_{i}", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.transform.SetParent(levelListContainer, false);
+
+            LayoutElement layout = go.GetComponent<LayoutElement>();
+            layout.preferredHeight = 82f;
+            layout.minHeight = 82f;
+
+            Image frame = go.GetComponent<Image>();
+            frame.color = panelSoftColor;
+
+            Button button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.ColorTint;
+            button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            button.onClick.AddListener(() => SelectLevel(capturedLevel));
+
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 24, FontStyle.Bold, TextAnchor.MiddleLeft);
+            SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(0.68f, 1f), new Vector2(20f, 0f), new Vector2(-8f, 0f));
+
+            TextMeshProUGUI status = CreateText("Status", go.transform, "", 20, FontStyle.Bold, TextAnchor.MiddleRight);
+            SetAnchor(status.rectTransform, new Vector2(0.68f, 0f), new Vector2(1f, 1f), new Vector2(8f, 0f), new Vector2(-20f, 0f));
+
+            levelButtons.Add(new LevelButton
+            {
+                button = button,
+                frame = frame,
+                label = label,
+                status = status
+            });
+        }
+    }
+
     void RefreshHud()
     {
         if (energyText != null)
@@ -399,6 +522,7 @@ public class GameUiController : MonoBehaviour
 
         RefreshSeedCards();
         RefreshRowButtons();
+        RefreshLevelButtons();
         RefreshTutorial();
     }
 
@@ -465,6 +589,34 @@ public class GameUiController : MonoBehaviour
         }
     }
 
+    void RefreshLevelButtons()
+    {
+        LevelManager levelManager = LevelManager.Instance;
+        if (levelManager == null) return;
+
+        for (int i = 0; i < levelButtons.Count; i++)
+        {
+            LevelDefinition level = levelManager.GetLevelAt(i);
+            if (level == null) continue;
+
+            LevelButton button = levelButtons[i];
+            bool current = level == levelManager.currentLevel;
+            bool completed = PlayerProgress.IsLevelCompleted(level);
+            bool unlocked = PlayerProgress.IsLevelUnlocked(level);
+
+            button.label.text = $"{level.levelNumber:00}  {level.displayName}";
+            if (current)
+                button.status.text = completed ? "DANG CHOI / XONG" : "DANG CHOI";
+            else if (completed)
+                button.status.text = "DA XONG";
+            else
+                button.status.text = unlocked ? "MO KHOA" : "KHOA";
+
+            button.frame.color = current ? accentColor : (unlocked ? panelSoftColor : disabledColor);
+            button.button.interactable = unlocked;
+        }
+    }
+
     void RefreshModalState()
     {
         if (!modalBuilt) return;
@@ -500,6 +652,61 @@ public class GameUiController : MonoBehaviour
         vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
 
         resumeButton.gameObject.SetActive(!gameOver && !won);
+        if (modalLevelSelectButton != null)
+            modalLevelSelectButton.gameObject.SetActive(true);
+
+        LevelDefinition nextLevel = LevelManager.Instance != null ? LevelManager.Instance.NextLevel : null;
+        bool canPlayNext = won && nextLevel != null && PlayerProgress.IsLevelUnlocked(nextLevel);
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(canPlayNext);
+            nextLevelButton.interactable = canPlayNext;
+        }
+        if (nextLevelButtonText != null && nextLevel != null)
+            nextLevelButtonText.text = $"MAN {nextLevel.levelNumber}";
+    }
+
+    void OpenLevelSelect()
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+        RebuildDynamicUiIfNeeded();
+        RefreshLevelButtons();
+
+        wasPausedBeforeLevelSelect = isPaused;
+        bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
+        if (!terminal)
+            SetPaused(true);
+
+        if (levelSelectOverlay != null)
+            levelSelectOverlay.SetActive(true);
+    }
+
+    void CloseLevelSelect()
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+
+        if (levelSelectOverlay != null)
+            levelSelectOverlay.SetActive(false);
+
+        bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
+        if (!terminal)
+            SetPaused(wasPausedBeforeLevelSelect);
+    }
+
+    void SelectLevel(LevelDefinition level)
+    {
+        if (LevelManager.Instance == null) return;
+
+        AudioManager.PlaySfx(SfxType.UiClick);
+        LevelManager.Instance.SelectLevelAndReload(level);
+    }
+
+    void GoToNextLevel()
+    {
+        if (LevelManager.Instance == null) return;
+
+        AudioManager.PlaySfx(SfxType.UiClick);
+        LevelManager.Instance.SelectNextLevelAndReload();
     }
 
     void RestartLevel()

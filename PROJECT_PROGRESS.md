@@ -215,6 +215,22 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Doi camera background sang mau toi hop voi HUD moi.
 - Luu y: day la visual foundation/procedural placeholder, chua phai final App Store art. Khi co background/board sprite that, co the thay `BoardVisualController` bang prefab art hoac dung no lam guide layout.
 
+### Mission progression loop v1 — 2026-06-22
+- Them 2 level data moi: `Level_02` ("Armor Probe") va `Level_03` ("Signal Siege") voi authored waves rieng.
+- `LevelCatalog.asset` hien co 3 level theo thu tu 1 -> 3.
+- `PlayerProgress` luu:
+  - level da hoan thanh;
+  - highest completed level;
+  - selected level hien tai.
+- `LevelManager` doc selected level khi scene load, chi cho chon level da unlock, reload scene sach khi doi level.
+- `GameUiController` them:
+  - nut `LVL` tren top bar;
+  - overlay chon nhiem vu;
+  - nut `MAN TIEP` trong modal win khi level tiep theo da unlock;
+  - trang thai level: dang choi, da xong, mo khoa, khoa.
+- AI QA kiem tra them catalog: slot null, trung `levelId`, sai thu tu `levelNumber`, authored waves rong.
+- Muc tieu: chuyen game tu single scene prototype sang loop co progression co ban, van giu mot scene duy nhat de it rui ro asset/scene management.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

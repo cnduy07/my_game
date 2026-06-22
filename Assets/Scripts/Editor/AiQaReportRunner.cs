@@ -97,9 +97,50 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("Level", "useAuthoredWaves is true but no waves are defined."));
 
         if (levelManager.levelCatalog == null)
+        {
             checks.Add(CheckResult.Warn("Level", "LevelManager has no LevelCatalog assigned."));
+        }
         else if (levelManager.levelCatalog.levels == null || levelManager.levelCatalog.levels.Length == 0)
+        {
             checks.Add(CheckResult.Warn("Level", "LevelCatalog has no levels."));
+        }
+        else
+        {
+            CheckLevelCatalog(levelManager.levelCatalog, checks);
+        }
+    }
+
+    static void CheckLevelCatalog(LevelCatalog catalog, List<CheckResult> checks)
+    {
+        var ids = new HashSet<string>();
+        int expectedNumber = 1;
+
+        for (int i = 0; i < catalog.levels.Length; i++)
+        {
+            LevelDefinition level = catalog.levels[i];
+            if (level == null)
+            {
+                checks.Add(CheckResult.Fail("Level", $"LevelCatalog slot {i} is empty."));
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(level.levelId))
+            {
+                checks.Add(CheckResult.Fail("Level", $"{level.name} has empty levelId."));
+            }
+            else if (!ids.Add(level.levelId))
+            {
+                checks.Add(CheckResult.Fail("Level", $"Duplicate levelId '{level.levelId}'."));
+            }
+
+            if (level.levelNumber != expectedNumber)
+                checks.Add(CheckResult.Warn("Level", $"{level.name} levelNumber is {level.levelNumber}, expected {expectedNumber}."));
+
+            if (level.useAuthoredWaves && (level.waves == null || level.waves.Length == 0))
+                checks.Add(CheckResult.Fail("Level", $"{level.name} uses authored waves but has no waves."));
+
+            expectedNumber++;
+        }
     }
 
     static void CheckRuntimeFoundations(

@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e44bfc15a4b4a3ea64a842f4876f2f9, type: 3}
+  m_Name: Level_03
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  levelId: level_03
+  displayName: Signal Siege
+  levelNumber: 3
+  balance:
+    startEnergy: 50
+    skyOrbValue: 25
+    skyInterval: 7
+    waveCount: 6
+    baseEnemies: 5
+    enemiesIncreasePerWave: 2
+    finalWaveMultiplier: 2
+    startDelay: 6
+    timeBetweenSpawns: 1.7
+    timeBetweenWaves: 10
+    overchargeEnergyCost: 60
+    overchargeDuration: 6
+    overchargeFireRateMultiplier: 3
+    overchargeDamageMultiplier: 1.35
+  useAuthoredWaves: 1
+  waves:
+  - label: Signal Trace
+    timeBetweenSpawns: 1.75
+    timeBeforeNextWave: 9
+    groups:
+    - enemyType: 0
+      count: 5
+    - enemyType: 1
+      count: 1
+  - label: Dual Entry
+    timeBetweenSpawns: 1.65
+    timeBeforeNextWave: 10
+    groups:
+    - enemyType: 0
+      count: 6
+    - enemyType: 1
+      count: 3
+  - label: Armor Surge
+    timeBetweenSpawns: 1.55
+    timeBeforeNextWave: 10
+    groups:
+    - enemyType: 0
+      count: 6
+    - enemyType: 1
+      count: 5
+  - label: Pressure Wall
+    timeBetweenSpawns: 1.45
+    timeBeforeNextWave: 10
+    groups:
+    - enemyType: 0
+      count: 8
+    - enemyType: 1
+      count: 5
+  - label: Siege Line
+    timeBetweenSpawns: 1.35
+    timeBeforeNextWave: 10
+    groups:
+    - enemyType: 0
+      count: 8
+    - enemyType: 1
+      count: 7
+  - label: Signal Collapse
+    timeBetweenSpawns: 1.25
+    timeBeforeNextWave: 0
+    groups:
+    - enemyType: 0
+      count: 10
+    - enemyType: 1
+      count: 9
