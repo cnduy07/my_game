@@ -177,8 +177,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - VFX prefab builder/editor automation.
 - VFX prefab generation status:
   - Code builder da co: `Tools > VFX > Rebuild Core VFX Prefabs`.
-  - Chua generate/gian prefab vi Unity batchmode bi chan khi Unity Editor dang mo project.
-  - Can dong Unity Editor, sau do Codex chay lai method `VfxPrefabBuilder.RebuildCoreVfxPrefabs`.
+  - DONE: da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` trong `SampleScene`.
+  - AI QA sau khi generate: `0` fail, `1` expected release warning (`unlockAllLevelsForTesting`).
 
 ---
 
@@ -230,7 +230,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Polish command feedback UI: icon warning/success, color state rieng, mobile touch feedback/audio nhe.
 - Replace generated UI accents bang UI sprite skin that khi co art: 9-slice panels, pressed/disabled states, icons.
 - Replace enemy type badges bang Fast/Shield prefab art rieng khi asset production du.
-- Sau khi dong Unity Editor: run VFX builder va AI QA de tao/gian `Assets/Prefabs/VFX/*`.
+- Playtest VFX prefab moi: muzzle, hit spark, enemy death, bunker/static break, EMP pulse, rail cannon impact.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

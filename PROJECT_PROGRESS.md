@@ -254,7 +254,8 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Board procedural them backdrop panels, lane signals va entry chevrons de doc sci-fi battlefield hon.
 - Enemy type visual fallback: Armored/Fast/Shield co badge mau nho khi chua co prefab art rieng.
 - Them `VfxAutoDestroy` va `VfxPrefabBuilder` Editor tool de tao/gian VFX prefab ParticleSystem that vao `CombatVfxSettings`.
-- VFX prefab generation chua chay duoc trong batchmode vi Unity Editor dang mo project. Can dong Editor roi chay lai builder.
+- Da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` cua `SampleScene`.
+- AI QA sau VFX generation: `0` fail, `1` expected warning do `LevelManager.unlockAllLevelsForTesting` dang bat.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.

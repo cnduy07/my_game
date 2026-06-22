@@ -187,6 +187,12 @@ MonoBehaviour:
   startDelay: 8
   timeBetweenSpawns: 2
   timeBetweenWaves: 12
+  useAuthoredWaves: 0
+  authoredWaves: []
+  balanceSpawnRows: 1
+  maxSameRowStreak: 2
+  showEnemyTypeBadges: 1
+  showDebugImGui: 0
 --- !u!114 &53209488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +206,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlacementController
   grid: {fileID: 60195756}
+  feedbackDuration: 2.2
 --- !u!114 &53209489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,6 +224,7 @@ MonoBehaviour:
   grid: {fileID: 60195756}
   skyOrbValue: 25
   skyInterval: 8
+  showDebugImGui: 0
 --- !u!114 &53209490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,6 +259,7 @@ MonoBehaviour:
     cost: 150
     cooldown: 30
   selectedIndex: -1
+  showDebugImGui: 0
 --- !u!114 &53209491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,6 +274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   grid: {fileID: 60195756}
   lawnmowerPrefab: {fileID: 4599616862578025363, guid: a3d85821c2d9f4a6fb5224a9c8364baf, type: 3}
+  showDebugImGui: 0
 --- !u!114 &53209492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +356,9 @@ MonoBehaviour:
   duration: 6
   fireRateMultiplier: 1.6
   damageMultiplier: 1.25
+  unlocked: 1
+  showDebugImGui: 0
+  feedbackDuration: 2.2
 --- !u!114 &53209494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,6 +495,8 @@ MonoBehaviour:
   startDelay: 8
   timeBetweenSpawns: 2
   timeBetweenWaves: 12
+  balanceSpawnRows: 1
+  maxSameRowStreak: 2
   overchargeEnergyCost: 50
   overchargeDuration: 6
   overchargeFireRateMultiplier: 2.5
@@ -515,6 +530,13 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameUiController
   isPaused: 0
+  showMainMenuOnLaunch: 1
+  backgroundColor: {r: 0.035, g: 0.05, b: 0.075, a: 0.94}
+  panelColor: {r: 0.09, g: 0.13, b: 0.18, a: 0.92}
+  panelSoftColor: {r: 0.13, g: 0.18, b: 0.24, a: 0.9}
+  accentColor: {r: 0.13, g: 0.82, b: 0.95, a: 1}
+  warningColor: {r: 1, g: 0.55, b: 0.17, a: 1}
+  disabledColor: {r: 0.33, g: 0.38, b: 0.45, a: 0.86}
 --- !u!114 &53209497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -527,13 +549,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1dce1b53b8c4280ae85576b9253f3e8, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CombatVfxSettings
-  muzzleFlashPrefab: {fileID: 0}
-  hitSparkPrefab: {fileID: 0}
-  enemyDeathPrefab: {fileID: 0}
-  staticBreakPrefab: {fileID: 0}
-  bunkerBreakPrefab: {fileID: 0}
-  empPulsePrefab: {fileID: 0}
-  railCannonBeamPrefab: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 2847648860208776576, guid: 8644499c0a3424b249bea3e9b21c036f, type: 3}
+  hitSparkPrefab: {fileID: 7867909875628627523, guid: 8eea46a5e05dc423798b0e28bf938ac5, type: 3}
+  enemyDeathPrefab: {fileID: 5058142034974698032, guid: 1a9f2cdf4592146548f7909f8d6460c4, type: 3}
+  staticBreakPrefab: {fileID: 8260490592614204698, guid: 5529f3171b4fa4efa82142f3158d2591, type: 3}
+  bunkerBreakPrefab: {fileID: 3846762625367773779, guid: 7ede555543286405aad211881697b8fd, type: 3}
+  empPulsePrefab: {fileID: 3205617938414057331, guid: 80d84dd4a52c94f659ecbaa2f699c5ec, type: 3}
+  railCannonBeamPrefab: {fileID: 5442777090529921366, guid: 1924a578a4f5344fcac6d80b99c0b9ab, type: 3}
   useCodeGeneratedFallback: 1
 --- !u!114 &53209498
 MonoBehaviour:
@@ -552,6 +574,7 @@ MonoBehaviour:
   defenseHint: Place Turrets in lanes with incoming enemies.
   bunkerHint: Use Bunkers to buy time in pressured lanes.
   overchargeHint: Use Overcharge to stabilize a lane under pressure.
+  hintDisplayDuration: 5
 --- !u!114 &53209499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,7 +703,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name:
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
@@ -807,7 +830,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
   m_Name:
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   m_ComponentVersion: 4
   m_LightType: 4
   m_BlendStyleIndex: 0
