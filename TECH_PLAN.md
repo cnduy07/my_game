@@ -34,6 +34,7 @@ Scripts chinh:
 - `LevelCatalog`: danh sach level de level select/progression mo rong.
 - `BoardVisualController`: runtime procedural board/background layer gan tren `GridManager`, tao lane bands/grid lines/rail/entry zone bang SpriteRenderer.
 - `LevelDefinition`: source data cho mission balance, unit/OC unlock gating, authored waves, mission briefing va completion reward copy.
+- `CampaignIntel`: shared campaign analysis helper cho enemy mix, threat label, recommended tools, pressure score va campaign map node type/position.
 
 ---
 
@@ -155,7 +156,7 @@ Contract:
 - `EnergySystem` chi quan ly energy, HUD doc `EnergySystem.Instance.Energy`.
 - `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
-- `EnemySpawner` expose `DisplayText` va `IsWaveWarning` cho wave label/canh bao countdown.
+- `EnemySpawner` expose `DisplayText`, `IsWaveWarning`, va `WaveIntelText` cho wave label/canh bao/intel HUD.
 - `EnemyMover.All` chi dai dien enemy dang song/co the bi target; `EnemyMover.ActiveOrDyingCount` dai dien enemy con ton tai trong scene, gom ca death animation pending. Wave clear/victory phai dung `ActiveOrDyingCount`.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
@@ -165,7 +166,7 @@ Layout v1:
 - Seed tray: nam duoi man hinh de hop mobile/touch, moi card co selected/disabled/cooldown state.
 - Overcharge panel: ben phai, tach khoi pause/wave.
 - Modal: pause/win/lose. Settings chi hien trong Pause; Victory/Defeat uu tien progress/reward/result actions.
-- Level select: hien mission name/status/detail tu `LevelDefinition.missionBriefing` va lock/progress state; mission list dung `ScrollRect` viewport/content de khong tran card khi them level.
+- Campaign map: hien mission node/status/detail tu `LevelDefinition`, enemy mix/tool recommendation tu `CampaignIntel`, va deploy action rieng sau khi select node.
 
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
@@ -179,6 +180,10 @@ Current scale pass:
 - Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
 - Mission reward/unlock copy dang data-driven trong `LevelDefinition`, tranh hardcode content vao `GameUiController`.
 - Scene dev hien bat `LevelManager.unlockAllLevelsForTesting` de test nhanh level pack; production unlock rule van nam trong `PlayerProgress`.
+- Tactical campaign map dang thay mission list cu:
+  - route/node UI runtime-generated de test flow nhanh;
+  - final art sau nay nen thay node icon/route/panel sprite bang UI skin rieng;
+  - `CampaignIntel.DefaultMapPositions` phai du so vi tri so voi `LevelCatalog.levels`.
 
 Can polish sau:
 - Safe area/notch cho mobile that.

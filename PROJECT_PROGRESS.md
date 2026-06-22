@@ -1,4 +1,4 @@
-# Game Tower Defense (PvZ Reskin) — Tiến độ dự án
+# Coreline Defense — Tiến độ dự án
 
 **Chủ đề:** Game thủ thành phong cách sci-fi tương lai (KHÔNG gắn tên thương hiệu có bản quyền).
 Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng lượng. Địch: **robot ngoài hành tinh (alien robot invader)** tiến từ phải sang trái.
@@ -217,6 +217,17 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - `GameUiController` tu tao `EventSystem` neu scene chua co, va `PlacementController` van hoi `PointerOverPanel` de chan click UI xuyen xuong board.
 - **Unity verify:** chu project da test cac chuc nang chinh hoat dong binh thuong: HUD hien dung, seed tray/OC/pause/settings co ban chay duoc.
 - TextMeshPro Essentials da duoc Unity import sau khi mo project. Khong can import `Examples & Extras` vao ban release.
+
+### Overnight tactical campaign sprint — 2026-06-23
+- Them `OVERNIGHT_SPRINT.md` lam checkpoint cho phien lam viec tu chu 6 gio: objective, non-negotiables, work blocks, desired morning state.
+- Them `CampaignIntel` lam shared logic cho campaign map, enemy mix, threat label, recommended tools va pressure score.
+- Dang thay mission select scroll list bang **campaign map**:
+  - node theo sector type (`Outpost`, `Armor Gate`, `Shield Column`, `Coreline Stand`...);
+  - route line giua cac level;
+  - detail panel hien status, briefing/reward, enemy mix, tool recommendation, pressure score;
+  - click node chi select, nut `DEPLOY` moi reload mission.
+- Them wave intel HUD nho duoi top bar: doc wave hien tai/ke tiep tu `EnemySpawner` va `CampaignIntel`.
+- Balance/AI QA duoc mo rong de report campaign pressure, enemy mix, tool recommendation va canh bao map position/catalog mismatch.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.

@@ -62,8 +62,10 @@ Can than trong cac viec:
 - `CONTENT_PLAN.md`: danh sach sprite, rig, animation, VFX, SFX, UI asset can lam.
 - `TECH_PLAN.md`: systems, architecture, performance, testing.
 - `RELEASE_CHECKLIST.md`: App Store/Google Play checklist.
+- `OVERNIGHT_SPRINT.md`: snapshot objective/constraint/work blocks cho phien nang cap tu chu 2026-06-23.
 - `GameSystems > GameBalance` trong `SampleScene`: source of truth tam thoi cho stats gameplay chinh.
 - `GameUiController` tren `GameSystems`: source of truth tam thoi cho runtime HUD uGUI/TextMeshPro. Cac IMGUI cu chi la debug khi bat `showDebugImGui`.
+- `CampaignIntel`: source of truth code-side cho campaign map node positions/types, enemy mix, threat label, recommended tools va pressure score.
 
 ---
 

@@ -227,6 +227,10 @@ Can co:
 - Cooldown overlay.
 - Energy counter.
 - Wave indicator.
+- Campaign map node icons:
+  - outpost/armor gate/signal relay/raider track/shield column/EMP corridor/velocity net/iron rain/breach point/coreline stand;
+  - route line/sector connector art;
+  - selected/current/cleared/locked visual states.
 - Pause button.
 - Win/Game Over panels.
 - Main menu sau vertical slice.

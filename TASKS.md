@@ -21,6 +21,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Codex
 
+- Overnight sprint dang chay:
+  - thay mission select scroll list bang tactical campaign map;
+  - them wave intel HUD;
+  - mo rong balance report/AI QA bang campaign pressure va enemy mix;
+  - chay static check + Unity batchmode QA neu licensing/editor state cho phep;
+  - commit checkpoint sau khi check pass.
 - Truoc moi feature lon:
   - phan tich boi canh va constraint hien co;
   - neu co nhieu huong, neu ro tradeoff;
@@ -142,6 +148,9 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `LevelCatalog` co 10 level;
   - level 6-10 dung authored waves voi Basic/Armored/Fast/Shield;
   - chua them enemy/art moi, day la data baseline de test campaign length.
+- Overnight sprint plan snapshot:
+  - `OVERNIGHT_SPRINT.md` da ghi objective, constraint va work blocks cho phien lam viec tu chu.
+  - `CampaignIntel` da duoc them de dung chung cho UI/report/QA, tranh hardcode enemy mix rieng trong HUD.
 
 ---
 
@@ -161,6 +170,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
    - audio layering / music pass.
 3. Phase 3 — Campaign content:
    - DONE baseline: level 1-10 data pack;
+   - IN PROGRESS: campaign map UI thay scroll mission list;
    - level select polish with preview/rewards;
    - tutorial callouts;
    - unlock/reward copy.
@@ -188,7 +198,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them speed control neu gameplay can.
 - Save/progress/settings baseline da co; chi nang len JSON/full SaveData khi co currency/upgrades/inventory.
 - Level definition va authored wave workflow baseline da co.
-- Polish level select UI: icon/preview/reward text/unlock copy.
+- Polish campaign map UI: node icon art, route art, sector preview, reward text, lock/current/cleared states.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

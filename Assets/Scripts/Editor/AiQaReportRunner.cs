@@ -143,6 +143,8 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("Level", "Current level has empty levelId."));
         if (levelManager.currentLevel.levelNumber <= 0)
             checks.Add(CheckResult.Warn("Level", "Current levelNumber should be above 0."));
+        if (levelManager.unlockAllLevelsForTesting)
+            checks.Add(CheckResult.Warn("Release", "LevelManager.unlockAllLevelsForTesting is enabled. Keep it for test builds only."));
         if (levelManager.currentLevel.useAuthoredWaves &&
             (levelManager.currentLevel.waves == null || levelManager.currentLevel.waves.Length == 0))
             checks.Add(CheckResult.Fail("Level", "useAuthoredWaves is true but no waves are defined."));
@@ -226,7 +228,41 @@ public static class AiQaReportRunner
         if (catalog.levels.Length >= 5 && !hasShieldEnemy)
             checks.Add(CheckResult.Warn("Level", "LevelCatalog has 5+ levels but no authored Shield enemy group."));
 
+        CheckCampaignIntel(catalog, checks);
         CheckEnemyTypeTuning(checks);
+    }
+
+    static void CheckCampaignIntel(LevelCatalog catalog, List<CheckResult> checks)
+    {
+        if (catalog == null || catalog.levels == null) return;
+
+        if (catalog.levels.Length > CampaignIntel.DefaultMapPositions.Length)
+            checks.Add(CheckResult.Fail("Campaign Map", $"LevelCatalog has {catalog.levels.Length} levels but CampaignIntel has only {CampaignIntel.DefaultMapPositions.Length} map positions."));
+
+        int previousPressure = -1;
+        foreach (LevelDefinition level in catalog.levels)
+        {
+            if (level == null) continue;
+
+            EnemyMix mix = CampaignIntel.BuildLevelMix(level);
+            if (level.useAuthoredWaves && mix.Total <= 0)
+                checks.Add(CheckResult.Fail("Campaign Intel", $"{level.name} uses authored waves but CampaignIntel reads no enemies."));
+
+            string tools = CampaignIntel.BuildRecommendedTools(mix);
+            if (string.IsNullOrWhiteSpace(tools))
+                checks.Add(CheckResult.Fail("Campaign Intel", $"{level.name} has no recommended tools."));
+
+            if (level.levelNumber >= 4 && mix.HasFast && !tools.Contains("SnowGun"))
+                checks.Add(CheckResult.Warn("Campaign Intel", $"{level.name} includes Fast enemies but does not recommend SnowGun."));
+
+            if (level.levelNumber >= 5 && mix.HasShield && !tools.Contains("DroneEMP"))
+                checks.Add(CheckResult.Warn("Campaign Intel", $"{level.name} includes Shield enemies but does not recommend DroneEMP."));
+
+            int pressure = CampaignIntel.PressureScore(level);
+            if (previousPressure > 0 && level.levelNumber > 2 && pressure + 10 < previousPressure)
+                checks.Add(CheckResult.Warn("Campaign Balance", $"{level.name} pressure score drops sharply from previous level ({previousPressure} -> {pressure})."));
+            previousPressure = pressure;
+        }
     }
 
     static void CheckLevelWaves(

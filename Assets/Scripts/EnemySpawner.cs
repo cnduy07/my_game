@@ -94,6 +94,19 @@ public class EnemySpawner : MonoBehaviour
             }
         }
     }
+    public string WaveIntelText
+    {
+        get
+        {
+            if (phase == Phase.Won) return "";
+
+            EnemyMix mix = BuildVisibleWaveMix();
+            if (mix.Total <= 0) return "";
+
+            int waveNumber = VisibleWaveNumber();
+            return $"Wave {waveNumber}/{waveCount}: {CampaignIntel.BuildThreatLabel(mix)} | {CampaignIntel.BuildMixLabel(mix)}";
+        }
+    }
 
     void Awake()
     {
@@ -241,6 +254,71 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < queue.Length; i++)
             queue[i] = RollFormulaType(waveNumber);
         return queue;
+    }
+
+    EnemyMix BuildVisibleWaveMix()
+    {
+        int waveNumber = VisibleWaveNumber();
+        if (waveNumber <= 0) return new EnemyMix();
+
+        if ((phase == Phase.Spawning || phase == Phase.WaitingClear) && currentWaveTypes != null && currentWaveTypes.Length > 0)
+            return BuildMixFromQueue(currentWaveTypes);
+
+        if (useAuthoredWaves && authoredWaves != null && waveNumber - 1 < authoredWaves.Length)
+            return CampaignIntel.BuildWaveMix(authoredWaves[waveNumber - 1]);
+
+        return BuildFormulaWaveMix(waveNumber);
+    }
+
+    int VisibleWaveNumber()
+    {
+        switch (phase)
+        {
+            case Phase.PreStart:
+                return 1;
+            case Phase.Spawning:
+            case Phase.WaitingClear:
+                return currentWave;
+            case Phase.BetweenWaves:
+                return Mathf.Min(currentWave + 1, waveCount);
+            default:
+                return 0;
+        }
+    }
+
+    EnemyMix BuildMixFromQueue(LevelEnemyType[] queue)
+    {
+        var mix = new EnemyMix();
+        if (queue == null) return mix;
+
+        foreach (LevelEnemyType enemyType in queue)
+            mix.Add(enemyType, 1);
+
+        return mix;
+    }
+
+    EnemyMix BuildFormulaWaveMix(int waveNumber)
+    {
+        var mix = new EnemyMix();
+        int count = baseEnemies + (waveNumber - 1) * enemiesIncreasePerWave;
+        if (waveNumber >= waveCount) count *= finalWaveMultiplier;
+
+        for (int i = 0; i < count; i++)
+            mix.Add(EstimateFormulaType(waveNumber, i, count), 1);
+
+        return mix;
+    }
+
+    LevelEnemyType EstimateFormulaType(int waveNumber, int index, int count)
+    {
+        float progress = Mathf.Clamp01((waveNumber - 1) / (float)Mathf.Max(1, waveCount - 1));
+        if (waveNumber >= 5 && index < Mathf.RoundToInt(count * progress * 0.18f))
+            return LevelEnemyType.Shield;
+        if (waveNumber >= 4 && index < Mathf.RoundToInt(count * progress * 0.32f))
+            return LevelEnemyType.Fast;
+        if (armoredPrefab != null && index < Mathf.RoundToInt(count * progress * 0.6f))
+            return LevelEnemyType.Armored;
+        return LevelEnemyType.Basic;
     }
 
     LevelEnemyType[] BuildAuthoredWaveTypeQueue(LevelWaveDefinition wave)

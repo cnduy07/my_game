@@ -20,6 +20,7 @@ public static class BalanceReportGenerator
         AppendEconomy(sb, balance);
         AppendEnemyTypeTuning(sb);
         AppendLevel(sb);
+        AppendCampaign(sb);
         return sb.ToString();
     }
 
@@ -166,6 +167,25 @@ public static class BalanceReportGenerator
                 if (wave == null) continue;
                 sb.AppendLine($"- Wave {i + 1}: `{wave.label}`, `{wave.TotalCount}` enemies{BuildGroupSummary(wave)}");
             }
+        }
+
+        sb.AppendLine();
+    }
+
+    static void AppendCampaign(StringBuilder sb)
+    {
+        var levelManager = Object.FindAnyObjectByType<LevelManager>(FindObjectsInactive.Include);
+        LevelCatalog catalog = levelManager != null ? levelManager.levelCatalog : null;
+        if (catalog == null || catalog.levels == null || catalog.levels.Length == 0) return;
+
+        sb.AppendLine("## Campaign Intel");
+        foreach (LevelDefinition level in catalog.levels)
+        {
+            if (level == null) continue;
+
+            EnemyMix mix = CampaignIntel.BuildLevelMix(level);
+            MissionNodeType nodeType = CampaignIntel.NodeTypeFor(level);
+            sb.AppendLine($"- `{level.levelNumber:00}` {level.displayName}: {CampaignIntel.NodeTypeLabel(nodeType)}, pressure `{CampaignIntel.PressureScore(level)}`, {CampaignIntel.BuildThreatLabel(mix)}, {CampaignIntel.BuildMixLabel(mix)}, tools `{CampaignIntel.BuildRecommendedTools(mix)}`");
         }
 
         sb.AppendLine();
