@@ -18,6 +18,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Khi co thiet bi that: test safe area/notch/touch target.
   - Test level 4-10 ve pacing/fairness; enemy/stat identity do AI QA kiem tra bang so lieu.
   - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
+  - Test campaign map moi bang cach mo `MISSIONS`, drag/pan map ngang, click mission 1/5/10 va sau nay 20+ level khi co data.
+  - Kiem tra main menu co phu hop flow mong muon khong: hien mot lan moi session, `CAMPAIGN` mo map, `CONTINUE` vao game.
 
 ### Codex
 
@@ -166,6 +168,17 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - AI QA playtest checklist:
   - `AiQaReportRunner` sinh them `AIReports/latest_playtest_checklist.md`;
   - checklist gom campaign map, HUD intel, command feedback, OC pressure, spawn fairness, regression smoke.
+- Campaign/UI/visual foundation pass:
+  - campaign map horizontal scroll/pan, khong con ep 10 mission vao mot box;
+  - main menu runtime overlay;
+  - test-mode badge cho unlock-all;
+  - board procedural polish;
+  - enemy type color badges;
+  - VFX prefab builder/editor automation.
+- VFX prefab generation status:
+  - Code builder da co: `Tools > VFX > Rebuild Core VFX Prefabs`.
+  - Chua generate/gian prefab vi Unity batchmode bi chan khi Unity Editor dang mo project.
+  - Can dong Unity Editor, sau do Codex chay lai method `VfxPrefabBuilder.RebuildCoreVfxPrefabs`.
 
 ---
 
@@ -215,6 +228,9 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Level definition va authored wave workflow baseline da co.
 - Polish campaign map UI: node icon art, route art, sector preview, reward text, lock/current/cleared states.
 - Polish command feedback UI: icon warning/success, color state rieng, mobile touch feedback/audio nhe.
+- Replace generated UI accents bang UI sprite skin that khi co art: 9-slice panels, pressed/disabled states, icons.
+- Replace enemy type badges bang Fast/Shield prefab art rieng khi asset production du.
+- Sau khi dong Unity Editor: run VFX builder va AI QA de tao/gian `Assets/Prefabs/VFX/*`.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

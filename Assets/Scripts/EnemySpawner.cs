@@ -26,6 +26,7 @@ public class EnemySpawner : MonoBehaviour
     public LevelWaveDefinition[] authoredWaves;
     public bool balanceSpawnRows = true;
     public int maxSameRowStreak = 2;
+    public bool showEnemyTypeBadges = true;
     public bool showDebugImGui;
 
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
@@ -207,6 +208,7 @@ public class EnemySpawner : MonoBehaviour
         if (GameBalance.Instance != null)
             GameBalance.Instance.ApplyEnemy(e, prefab);
         ApplyEnemyTypeModifiers(e, enemyType);
+        ApplyEnemyTypeVisualFallback(e, enemyType);
     }
 
     int ChooseSpawnRow()
@@ -514,6 +516,56 @@ public class EnemySpawner : MonoBehaviour
             traits.knockbackMultiplier *= modifier.knockbackMultiplier;
             traits.stunDurationMultiplier *= modifier.stunDurationMultiplier;
         }
+    }
+
+    void ApplyEnemyTypeVisualFallback(GameObject enemy, LevelEnemyType enemyType)
+    {
+        if (!showEnemyTypeBadges || enemy == null || enemyType == LevelEnemyType.Basic) return;
+        if (enemy.transform.Find("EnemyTypeBadge") != null) return;
+
+        Color color;
+        Vector2 size;
+        switch (enemyType)
+        {
+            case LevelEnemyType.Fast:
+                color = new Color(0.1f, 0.9f, 1f, 0.95f);
+                size = new Vector2(0.12f, 0.36f);
+                break;
+            case LevelEnemyType.Shield:
+                color = new Color(0.65f, 0.34f, 1f, 0.95f);
+                size = new Vector2(0.18f, 0.42f);
+                break;
+            default:
+                color = new Color(1f, 0.42f, 0.12f, 0.95f);
+                size = new Vector2(0.14f, 0.34f);
+                break;
+        }
+
+        GameObject badge = new GameObject("EnemyTypeBadge");
+        badge.transform.SetParent(enemy.transform, false);
+        badge.transform.localPosition = new Vector3(-0.28f, 0.34f, -0.02f);
+        badge.transform.localScale = new Vector3(size.x, size.y, 1f);
+
+        SpriteRenderer renderer = badge.AddComponent<SpriteRenderer>();
+        renderer.sprite = RuntimePixelSprite();
+        renderer.color = color;
+        renderer.sortingOrder = 18;
+    }
+
+    static Sprite runtimePixelSprite;
+
+    static Sprite RuntimePixelSprite()
+    {
+        if (runtimePixelSprite != null) return runtimePixelSprite;
+
+        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+        texture.hideFlags = HideFlags.HideAndDontSave;
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+
+        runtimePixelSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
+        runtimePixelSprite.hideFlags = HideFlags.HideAndDontSave;
+        return runtimePixelSprite;
     }
 
     void OnGUI()

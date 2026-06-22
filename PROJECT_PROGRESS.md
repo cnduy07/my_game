@@ -242,6 +242,20 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - config di qua `LevelDefinition` -> `GameBalance` -> `EnemySpawner`, khong hardcode rieng.
 - AI QA runner sinh them `AIReports/latest_playtest_checklist.md` de huong dan test thu cong sau moi pass lon.
 
+### Campaign/UI/visual foundation pass — 2026-06-23
+- Campaign map chuyen tu fixed 10-node layout sang horizontal `ScrollRect` viewport:
+  - content width tinh theo so level;
+  - node/route dat theo content coordinates;
+  - mo map tu focus selected/current mission;
+  - san sang mo rong 20+ level ma khong tran mep card.
+- Them `TEST MODE: ALL MISSIONS UNLOCKED` badge trong mission detail khi `LevelManager.unlockAllLevelsForTesting` dang bat.
+- Them main menu runtime overlay `CORELINE DEFENSE` voi `CONTINUE`, `CAMPAIGN`, `RESTART`; main menu pause game nhung khong chong pause modal.
+- UI runtime co accent strip cho buttons/cards de bot cam giac rectangle prototype.
+- Board procedural them backdrop panels, lane signals va entry chevrons de doc sci-fi battlefield hon.
+- Enemy type visual fallback: Armored/Fast/Shield co badge mau nho khi chua co prefab art rieng.
+- Them `VfxAutoDestroy` va `VfxPrefabBuilder` Editor tool de tao/gian VFX prefab ParticleSystem that vao `CombatVfxSettings`.
+- VFX prefab generation chua chay duoc trong batchmode vi Unity Editor dang mo project. Can dong Editor roi chay lai builder.
+
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.
 - Them `ObjectPooler` + `PooledObject`, da ap dung cho projectile va energy orb de giam Instantiate/Destroy lap lai.

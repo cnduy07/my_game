@@ -43,6 +43,7 @@ public class BoardVisualController : MonoBehaviour
         Vector2 boardSize = BoardSize();
 
         AddRect("Backdrop", center, boardSize + new Vector2(backdropPaddingX, backdropPaddingY), backdropColor, -40);
+        AddBackdropPanels(center, boardSize);
         AddRect("BoardBase", center, boardSize + Vector2.one * outerPadding, boardBaseColor, -35);
 
         for (int row = 0; row < grid.rows; row++)
@@ -55,7 +56,20 @@ public class BoardVisualController : MonoBehaviour
         AddDefenseZone(center, boardSize);
         AddSpawnZone(center, boardSize);
         AddGridLines(center, boardSize);
+        AddLaneLabels(center, boardSize);
+        AddEntryChevrons(center, boardSize);
         AddFrame(center, boardSize);
+    }
+
+    void AddBackdropPanels(Vector2 center, Vector2 boardSize)
+    {
+        Color panelA = new Color(0.025f, 0.055f, 0.075f, 0.78f);
+        Color panelB = new Color(0.015f, 0.038f, 0.058f, 0.72f);
+
+        AddRect("BackdropPanel_Left", center + new Vector2(-boardSize.x * 0.44f, boardSize.y * 0.68f), new Vector2(2.4f, 0.28f), panelA, -39);
+        AddRect("BackdropPanel_Right", center + new Vector2(boardSize.x * 0.34f, -boardSize.y * 0.7f), new Vector2(3.4f, 0.24f), panelB, -39);
+        AddRect("BackdropPanel_Top", center + new Vector2(boardSize.x * 0.16f, boardSize.y * 0.78f), new Vector2(4.2f, 0.16f), new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.16f), -38);
+        AddRect("BackdropPanel_Bottom", center + new Vector2(-boardSize.x * 0.1f, -boardSize.y * 0.82f), new Vector2(4.8f, 0.14f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.12f), -38);
     }
 
     void AddDefenseZone(Vector2 center, Vector2 boardSize)
@@ -70,6 +84,28 @@ public class BoardVisualController : MonoBehaviour
         Vector2 zoneCenter = new Vector2(grid.origin.x + grid.cols * grid.cellSize - grid.cellSize * 0.25f, center.y);
         AddRect("EnemyEntryZone", zoneCenter, new Vector2(grid.cellSize * 0.42f, boardSize.y + outerPadding), new Color(0.18f, 0.05f, 0.035f, 0.72f), -31);
         AddRect("EnemyEntryGlow", zoneCenter - Vector2.right * 0.25f, new Vector2(0.04f, boardSize.y + outerPadding), dangerLineColor, -29);
+    }
+
+    void AddLaneLabels(Vector2 center, Vector2 boardSize)
+    {
+        float left = grid.origin.x - grid.cellSize * 1.02f;
+        for (int row = 0; row < grid.rows; row++)
+        {
+            Vector2 labelCenter = new Vector2(left, grid.origin.y + row * grid.cellSize);
+            AddRect($"LaneSignal_{row}", labelCenter, new Vector2(0.18f, 0.42f), new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.2f + row * 0.025f), -27);
+            AddRect($"LaneSignalCore_{row}", labelCenter + Vector2.right * 0.03f, new Vector2(0.06f, 0.24f), new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.55f), -26);
+        }
+    }
+
+    void AddEntryChevrons(Vector2 center, Vector2 boardSize)
+    {
+        float right = grid.origin.x + (grid.cols - 0.38f) * grid.cellSize;
+        for (int row = 0; row < grid.rows; row++)
+        {
+            float y = grid.origin.y + row * grid.cellSize;
+            AddRect($"EntryChevronA_{row}", new Vector2(right, y + 0.13f), new Vector2(0.32f, 0.055f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.48f), -26);
+            AddRect($"EntryChevronB_{row}", new Vector2(right, y - 0.13f), new Vector2(0.32f, 0.055f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.32f), -26);
+        }
     }
 
     void AddGridLines(Vector2 center, Vector2 boardSize)

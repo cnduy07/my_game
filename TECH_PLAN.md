@@ -41,6 +41,10 @@ AI QA outputs:
 - `AIReports/latest_balance_metrics.json`: machine-readable balance snapshot.
 - `AIReports/latest_playtest_checklist.md`: manual Unity playtest checklist generated from current systems.
 
+Editor production helpers:
+- `Tools > VFX > Rebuild Core VFX Prefabs` tao prefab ParticleSystem trong `Assets/Prefabs/VFX` va gan vao `CombatVfxSettings` cua `SampleScene`.
+- `VfxAutoDestroy` gan tren prefab VFX de tranh object ton tai mai sau khi effect chay xong.
+
 ---
 
 ## 2. Animator Contract
@@ -163,6 +167,7 @@ Contract:
 - `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
 - `EnemySpawner` expose `DisplayText`, `IsWaveWarning`, va `WaveIntelText` cho wave label/canh bao/intel HUD.
 - `EnemySpawner` dung balanced row spawning mac dinh qua `GameBalance.balanceSpawnRows` va `maxSameRowStreak` de giam lane clump bat cong tu random.
+- `EnemySpawner.showEnemyTypeBadges` them badge mau runtime cho Armored/Fast/Shield khi chua co prefab art rieng. Day la fallback readability, khong phai final art.
 - `EnemyMover.All` chi dai dien enemy dang song/co the bi target; `EnemyMover.ActiveOrDyingCount` dai dien enemy con ton tai trong scene, gom ca death animation pending. Wave clear/victory phai dung `ActiveOrDyingCount`.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
@@ -178,6 +183,9 @@ Layout v1:
   - threat fill cam/do khong thay doi combat, chi tang readability.
 - Modal: pause/win/lose. Settings chi hien trong Pause; Victory/Defeat uu tien progress/reward/result actions.
 - Campaign map: hien mission node/status/detail tu `LevelDefinition`, enemy mix/tool recommendation tu `CampaignIntel`, va deploy action rieng sau khi select node.
+- Campaign map dung horizontal `ScrollRect` + content width theo so level; node/route dat trong content coordinates, khong bi gioi han 10 level.
+- Mission detail hien dev badge `TEST MODE: ALL MISSIONS UNLOCKED` khi `unlockAllLevelsForTesting` dang bat.
+- Main menu runtime overlay la mot phan cua `GameUiController`, hien mot lan moi process/session bang static `mainMenuShownThisSession`.
 
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
@@ -194,7 +202,7 @@ Current scale pass:
 - Tactical campaign map dang thay mission list cu:
   - route/node UI runtime-generated de test flow nhanh;
   - final art sau nay nen thay node icon/route/panel sprite bang UI skin rieng;
-  - `CampaignIntel.DefaultMapPositions` phai du so vi tri so voi `LevelCatalog.levels`.
+  - map da scroll ngang nen khong phu thuoc so vi tri hardcoded.
 - Command status strip nam tren seed tray:
   - hien selected seed/passive placement instruction khi khong co loi;
   - hien transient warning/success tu placement/Overcharge;

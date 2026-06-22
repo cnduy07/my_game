@@ -258,9 +258,6 @@ public static class AiQaReportRunner
     {
         if (catalog == null || catalog.levels == null) return;
 
-        if (catalog.levels.Length > CampaignIntel.DefaultMapPositions.Length)
-            checks.Add(CheckResult.Fail("Campaign Map", $"LevelCatalog has {catalog.levels.Length} levels but CampaignIntel has only {CampaignIntel.DefaultMapPositions.Length} map positions."));
-
         int previousPressure = -1;
         foreach (LevelDefinition level in catalog.levels)
         {

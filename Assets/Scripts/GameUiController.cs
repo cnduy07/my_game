@@ -11,6 +11,7 @@ public class GameUiController : MonoBehaviour
 
     [Header("HUD")]
     public bool isPaused;
+    public bool showMainMenuOnLaunch = true;
     public Color backgroundColor = new Color(0.035f, 0.05f, 0.075f, 0.94f);
     public Color panelColor = new Color(0.09f, 0.13f, 0.18f, 0.92f);
     public Color panelSoftColor = new Color(0.13f, 0.18f, 0.24f, 0.9f);
@@ -28,6 +29,9 @@ public class GameUiController : MonoBehaviour
     const float SeedTrayMaxWidth = 1100f;
     const float CampaignNodeWidth = 112f;
     const float CampaignNodeHeight = 82f;
+    const float CampaignNodeStep = 190f;
+    const float CampaignMapSidePadding = 150f;
+    const float CampaignMapMinContentWidth = 1040f;
 
     Canvas canvas;
 
@@ -67,10 +71,18 @@ public class GameUiController : MonoBehaviour
     Button nextLevelButton;
     TextMeshProUGUI nextLevelButtonText;
 
+    GameObject mainMenuOverlay;
+    TextMeshProUGUI mainMenuSubtitleText;
+    bool mainMenuOpen;
+    bool wasPausedBeforeMainMenu;
+    static bool mainMenuShownThisSession;
+
     GameObject levelSelectOverlay;
     RectTransform campaignMapPanel;
+    RectTransform campaignMapContent;
     RectTransform campaignRouteLayer;
     RectTransform campaignNodeLayer;
+    ScrollRect campaignMapScroll;
     RectTransform missionDetailPanel;
     TextMeshProUGUI missionTitleText;
     TextMeshProUGUI missionTypeText;
@@ -80,6 +92,7 @@ public class GameUiController : MonoBehaviour
     TextMeshProUGUI missionToolsText;
     TextMeshProUGUI missionPressureText;
     TextMeshProUGUI missionRewardText;
+    TextMeshProUGUI missionDevModeText;
     Button missionDeployButton;
     TextMeshProUGUI missionDeployButtonText;
     readonly List<CampaignNode> levelButtons = new List<CampaignNode>();
@@ -128,6 +141,8 @@ public class GameUiController : MonoBehaviour
     void Start()
     {
         BuildHud();
+        if (showMainMenuOnLaunch && !mainMenuShownThisSession)
+            OpenMainMenu();
     }
 
     void OnDestroy()
@@ -143,6 +158,12 @@ public class GameUiController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
+            if (mainMenuOpen)
+            {
+                CloseMainMenu();
+                return;
+            }
+
             if (GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon))
                 TogglePause();
         }
@@ -160,6 +181,7 @@ public class GameUiController : MonoBehaviour
         Vector2 screenPoint = new Vector2(guiX, Screen.height - guiY);
         return IsScreenPointIn(seedTray, screenPoint) ||
                IsScreenPointIn(overchargePanel, screenPoint) ||
+               (mainMenuOverlay != null && mainMenuOverlay.activeSelf && IsScreenPointIn((RectTransform)mainMenuOverlay.transform, screenPoint)) ||
                (pauseButton != null && IsScreenPointIn((RectTransform)pauseButton.transform, screenPoint)) ||
                (levelSelectTopButton != null && IsScreenPointIn((RectTransform)levelSelectTopButton.transform, screenPoint)) ||
                (modalOverlay != null && modalOverlay.activeSelf && IsScreenPointIn((RectTransform)modalOverlay.transform, screenPoint)) ||
@@ -212,6 +234,7 @@ public class GameUiController : MonoBehaviour
         BuildOverchargePanel(safeAreaRoot);
         BuildTutorialPanel(safeAreaRoot);
         BuildCommandStatusPanel(safeAreaRoot);
+        BuildMainMenu(safeAreaRoot);
         BuildModal(safeAreaRoot);
         BuildLevelSelectOverlay(safeAreaRoot);
         RebuildDynamicUiIfNeeded();
@@ -301,6 +324,54 @@ public class GameUiController : MonoBehaviour
         commandStatusText.color = new Color(0.86f, 0.96f, 1f, 1f);
         SetAnchor(commandStatusText.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 2f), new Vector2(-14f, -2f));
         commandStatusPanel.gameObject.SetActive(false);
+    }
+
+    void BuildMainMenu(Transform parent)
+    {
+        mainMenuOverlay = new GameObject("MainMenuOverlay", typeof(RectTransform), typeof(Image));
+        mainMenuOverlay.transform.SetParent(parent, false);
+        Image overlayImage = mainMenuOverlay.GetComponent<Image>();
+        overlayImage.color = new Color(0.005f, 0.012f, 0.02f, 0.92f);
+        SetAnchor((RectTransform)mainMenuOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform titleBand = CreatePanel("TitleBand", mainMenuOverlay.transform, new Color(0.035f, 0.05f, 0.075f, 0.94f));
+        AddFrame(titleBand, new Color(0.08f, 0.24f, 0.32f, 0.9f), new Vector2(2f, -2f));
+        SetAnchor(titleBand, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-460f, 40f), new Vector2(460f, 250f));
+
+        TextMeshProUGUI title = CreateText("Title", titleBand, "CORELINE DEFENSE", 54, FontStyle.Bold, TextAnchor.MiddleCenter);
+        title.color = Color.white;
+        SetAnchor(title.rectTransform, new Vector2(0f, 0.36f), new Vector2(1f, 1f), new Vector2(28f, 0f), new Vector2(-28f, -8f));
+
+        mainMenuSubtitleText = CreateText("Subtitle", titleBand, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
+        mainMenuSubtitleText.color = new Color(0.82f, 0.95f, 1f, 1f);
+        SetAnchor(mainMenuSubtitleText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(28f, 10f), new Vector2(-28f, -8f));
+
+        RectTransform buttonRow = new GameObject("ButtonRow", typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
+        buttonRow.SetParent(mainMenuOverlay.transform, false);
+        SetAnchor(buttonRow, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -88f), new Vector2(430f, -20f));
+
+        HorizontalLayoutGroup layout = buttonRow.GetComponent<HorizontalLayoutGroup>();
+        layout.spacing = 18f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = true;
+
+        Button continueButton = CreateButton("ContinueButton", buttonRow, "CONTINUE", 22, accentColor, Color.white);
+        continueButton.onClick.AddListener(CloseMainMenu);
+
+        Button campaignButton = CreateButton("CampaignButton", buttonRow, "CAMPAIGN", 22, panelSoftColor, Color.white);
+        campaignButton.onClick.AddListener(() =>
+        {
+            CloseMainMenu(false);
+            OpenLevelSelect();
+        });
+
+        Button restartButton = CreateButton("RestartButton", buttonRow, "RESTART", 22, panelSoftColor, Color.white);
+        restartButton.onClick.AddListener(RestartLevel);
+
+        mainMenuOverlay.SetActive(false);
     }
 
     void BuildSeedTray(Transform parent)
@@ -410,13 +481,29 @@ public class GameUiController : MonoBehaviour
         campaignMapPanel = CreatePanel("CampaignMap", card, new Color(0.025f, 0.035f, 0.052f, 0.94f));
         AddFrame(campaignMapPanel, new Color(0.08f, 0.16f, 0.22f, 0.9f));
         SetAnchor(campaignMapPanel, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(46f, 104f), new Vector2(-448f, -132f));
+        campaignMapPanel.gameObject.AddComponent<RectMask2D>();
+
+        campaignMapScroll = campaignMapPanel.gameObject.AddComponent<ScrollRect>();
+        campaignMapScroll.horizontal = true;
+        campaignMapScroll.vertical = false;
+        campaignMapScroll.movementType = ScrollRect.MovementType.Clamped;
+        campaignMapScroll.scrollSensitivity = 42f;
+        campaignMapScroll.inertia = true;
+        campaignMapScroll.decelerationRate = 0.135f;
+        campaignMapScroll.viewport = campaignMapPanel;
+
+        campaignMapContent = new GameObject("CampaignMapContent", typeof(RectTransform)).GetComponent<RectTransform>();
+        campaignMapContent.SetParent(campaignMapPanel, false);
+        campaignMapContent.pivot = new Vector2(0f, 0.5f);
+        SetAnchor(campaignMapContent, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+        campaignMapScroll.content = campaignMapContent;
 
         campaignRouteLayer = new GameObject("RouteLayer", typeof(RectTransform)).GetComponent<RectTransform>();
-        campaignRouteLayer.SetParent(campaignMapPanel, false);
+        campaignRouteLayer.SetParent(campaignMapContent, false);
         SetAnchor(campaignRouteLayer, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         campaignNodeLayer = new GameObject("NodeLayer", typeof(RectTransform)).GetComponent<RectTransform>();
-        campaignNodeLayer.SetParent(campaignMapPanel, false);
+        campaignNodeLayer.SetParent(campaignMapContent, false);
         SetAnchor(campaignNodeLayer, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         BuildMissionDetailPanel(card);
@@ -436,7 +523,11 @@ public class GameUiController : MonoBehaviour
 
         missionStatusText = CreateText("Status", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionStatusText.color = accentColor;
-        SetAnchor(missionStatusText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -44f), new Vector2(-24f, -12f));
+        SetAnchor(missionStatusText.rectTransform, new Vector2(0f, 1f), new Vector2(0.54f, 1f), new Vector2(24f, -44f), new Vector2(-8f, -12f));
+
+        missionDevModeText = CreateText("DevMode", missionDetailPanel, "", 13, FontStyle.Bold, TextAnchor.MiddleRight);
+        missionDevModeText.color = warningColor;
+        SetAnchor(missionDevModeText.rectTransform, new Vector2(0.54f, 1f), new Vector2(1f, 1f), new Vector2(8f, -44f), new Vector2(-24f, -12f));
 
         missionTitleText = CreateText("Title", missionDetailPanel, "", 28, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(missionTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -92f), new Vector2(-24f, -42f));
@@ -507,6 +598,7 @@ public class GameUiController : MonoBehaviour
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
             AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.8f));
+            AddCardAccent((RectTransform)go.transform);
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
             layout.preferredWidth = SeedCardWidth;
@@ -578,6 +670,7 @@ public class GameUiController : MonoBehaviour
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
             AddFrame(rect, new Color(0.1f, 0.2f, 0.27f, 0.8f));
+            AddCardAccent(rect);
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -614,10 +707,13 @@ public class GameUiController : MonoBehaviour
         levelButtons.Clear();
         lastLevelCount = levelCount;
 
-        if (campaignMapPanel == null || campaignRouteLayer == null || campaignNodeLayer == null) return;
+        if (campaignMapPanel == null || campaignMapContent == null || campaignRouteLayer == null || campaignNodeLayer == null) return;
 
         foreach (Transform child in campaignRouteLayer)
             Destroy(child.gameObject);
+
+        float contentWidth = CampaignMapContentWidth(levelCount);
+        SetCampaignMapContentWidth(contentWidth);
 
         LevelManager levelManager = LevelManager.Instance;
         BuildCampaignRoute(levelCount);
@@ -632,14 +728,14 @@ public class GameUiController : MonoBehaviour
             go.transform.SetParent(campaignNodeLayer, false);
 
             RectTransform rect = (RectTransform)go.transform;
-            Vector2 position = CampaignIntel.DefaultMapPositions[Mathf.Min(i, CampaignIntel.DefaultMapPositions.Length - 1)];
-            rect.anchorMin = position;
-            rect.anchorMax = position;
             bool finale = i == levelCount - 1;
             float width = finale ? CampaignNodeWidth + 24f : CampaignNodeWidth;
             float height = finale ? CampaignNodeHeight + 12f : CampaignNodeHeight;
-            rect.offsetMin = new Vector2(-width * 0.5f, -height * 0.5f);
-            rect.offsetMax = new Vector2(width * 0.5f, height * 0.5f);
+            rect.anchorMin = new Vector2(0f, 0.5f);
+            rect.anchorMax = new Vector2(0f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(width, height);
+            rect.anchoredPosition = CampaignNodePosition(i);
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
@@ -702,6 +798,7 @@ public class GameUiController : MonoBehaviour
         if (overchargePanel != null)
             overchargePanel.gameObject.SetActive(OverchargeSystem.Instance != null && OverchargeSystem.Instance.IsUnlocked);
 
+        RefreshMainMenu();
         RefreshSeedCards();
         RefreshRowButtons();
         RefreshLevelButtons();
@@ -721,6 +818,15 @@ public class GameUiController : MonoBehaviour
 
         waveIntelPanel.gameObject.SetActive(show);
         if (show) waveIntelText.text = intel;
+    }
+
+    void RefreshMainMenu()
+    {
+        if (mainMenuSubtitleText == null) return;
+
+        LevelDefinition level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
+        string levelName = level != null ? level.displayName : "Campaign";
+        mainMenuSubtitleText.text = $"{levelName}  |  Highest cleared: {PlayerProgress.HighestCompletedLevel}";
     }
 
     void RefreshTutorial()
@@ -906,13 +1012,13 @@ public class GameUiController : MonoBehaviour
 
     void BuildCampaignRoute(int levelCount)
     {
-        if (campaignRouteLayer == null) return;
+        if (campaignRouteLayer == null || campaignMapContent == null) return;
 
-        int routeCount = Mathf.Min(levelCount, CampaignIntel.DefaultMapPositions.Length) - 1;
+        int routeCount = levelCount - 1;
         for (int i = 0; i < routeCount; i++)
         {
-            Vector2 from = CampaignIntel.DefaultMapPositions[i];
-            Vector2 to = CampaignIntel.DefaultMapPositions[i + 1];
+            Vector2 from = CampaignNodePosition(i);
+            Vector2 to = CampaignNodePosition(i + 1);
             Vector2 pivot = new Vector2(to.x, from.y);
             CreateRouteLine($"RouteH_{i}", from, pivot);
             CreateRouteLine($"RouteV_{i}", pivot, to);
@@ -926,19 +1032,63 @@ public class GameUiController : MonoBehaviour
 
         Image line = CreateImage(name, campaignRouteLayer, new Color(0.09f, 0.55f, 0.66f, 0.62f));
         RectTransform rect = line.rectTransform;
+        rect.anchorMin = new Vector2(0f, 0.5f);
+        rect.anchorMax = new Vector2(0f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+
         if (Mathf.Abs(from.y - to.y) <= Mathf.Abs(from.x - to.x))
         {
             float xMin = Mathf.Min(from.x, to.x);
             float xMax = Mathf.Max(from.x, to.x);
             float y = from.y;
-            SetAnchor(rect, new Vector2(xMin, y), new Vector2(xMax, y), new Vector2(0f, -3f), new Vector2(0f, 3f));
+            rect.anchoredPosition = new Vector2((xMin + xMax) * 0.5f, y);
+            rect.sizeDelta = new Vector2(Mathf.Max(6f, xMax - xMin), 6f);
         }
         else
         {
             float x = from.x;
             float yMin = Mathf.Min(from.y, to.y);
             float yMax = Mathf.Max(from.y, to.y);
-            SetAnchor(rect, new Vector2(x, yMin), new Vector2(x, yMax), new Vector2(-3f, 0f), new Vector2(3f, 0f));
+            rect.anchoredPosition = new Vector2(x, (yMin + yMax) * 0.5f);
+            rect.sizeDelta = new Vector2(6f, Mathf.Max(6f, yMax - yMin));
+        }
+    }
+
+    float CampaignMapContentWidth(int levelCount)
+    {
+        if (levelCount <= 0) return CampaignMapMinContentWidth;
+        return Mathf.Max(CampaignMapMinContentWidth, CampaignMapSidePadding * 2f + (levelCount - 1) * CampaignNodeStep);
+    }
+
+    void SetCampaignMapContentWidth(float width)
+    {
+        if (campaignMapContent == null) return;
+
+        campaignMapContent.anchorMin = new Vector2(0f, 0f);
+        campaignMapContent.anchorMax = new Vector2(0f, 1f);
+        campaignMapContent.offsetMin = Vector2.zero;
+        campaignMapContent.offsetMax = new Vector2(width, 0f);
+    }
+
+    Vector2 CampaignNodePosition(int index)
+    {
+        return new Vector2(CampaignMapSidePadding + index * CampaignNodeStep, CampaignNodeOffsetY(index));
+    }
+
+    float CampaignNodeOffsetY(int index)
+    {
+        switch (index % 10)
+        {
+            case 1: return 94f;
+            case 2: return -26f;
+            case 3: return 138f;
+            case 4: return 22f;
+            case 5: return -126f;
+            case 6: return 104f;
+            case 7: return -58f;
+            case 8: return 150f;
+            case 9: return -102f;
+            default: return -92f;
         }
     }
 
@@ -968,6 +1118,34 @@ public class GameUiController : MonoBehaviour
         selectedCampaignLevel = level;
         AudioManager.PlaySfx(SfxType.UiClick);
         RefreshLevelButtons();
+        FocusCampaignLevel(level);
+    }
+
+    void FocusCampaignLevel(LevelDefinition level)
+    {
+        if (level == null || campaignMapScroll == null || campaignMapPanel == null || campaignMapContent == null) return;
+
+        int index = CampaignLevelIndex(level);
+        if (index < 0) return;
+
+        Canvas.ForceUpdateCanvases();
+        float contentWidth = Mathf.Max(CampaignMapMinContentWidth, campaignMapContent.rect.width);
+        float viewportWidth = Mathf.Max(1f, campaignMapPanel.rect.width);
+        float scrollableWidth = Mathf.Max(1f, contentWidth - viewportWidth);
+        float targetX = CampaignNodePosition(index).x - viewportWidth * 0.45f;
+        campaignMapScroll.horizontalNormalizedPosition = Mathf.Clamp01(targetX / scrollableWidth);
+    }
+
+    int CampaignLevelIndex(LevelDefinition level)
+    {
+        LevelManager levelManager = LevelManager.Instance;
+        if (levelManager == null || level == null) return -1;
+
+        for (int i = 0; i < levelManager.LevelCount; i++)
+            if (levelManager.GetLevelAt(i) == level)
+                return i;
+
+        return -1;
     }
 
     void RefreshCampaignDetail()
@@ -986,6 +1164,7 @@ public class GameUiController : MonoBehaviour
             missionToolsText.text = "";
             missionPressureText.text = "";
             missionRewardText.text = "";
+            if (missionDevModeText != null) missionDevModeText.text = "";
             missionDeployButton.interactable = false;
             return;
         }
@@ -998,6 +1177,8 @@ public class GameUiController : MonoBehaviour
 
         missionStatusText.text = BuildLevelStatus(level, current, completed, unlocked);
         missionStatusText.color = unlocked ? accentColor : disabledColor;
+        if (missionDevModeText != null)
+            missionDevModeText.text = levelManager != null && levelManager.unlockAllLevelsForTesting ? "TEST MODE: ALL MISSIONS UNLOCKED" : "";
         missionTitleText.text = $"{level.levelNumber:00}  {level.displayName}";
         missionTypeText.text = CampaignIntel.NodeTypeLabel(nodeType);
         missionBriefingText.text = BuildLevelDetail(level, unlocked, completed);
@@ -1019,7 +1200,7 @@ public class GameUiController : MonoBehaviour
 
         bool gameOver = GameManager.Instance != null && GameManager.Instance.IsGameOver;
         bool won = GameManager.Instance != null && GameManager.Instance.IsWon;
-        bool show = isPaused || gameOver || won;
+        bool show = !mainMenuOpen && (isPaused || gameOver || won);
         modalOverlay.SetActive(show);
         if (!show) return;
 
@@ -1105,6 +1286,36 @@ public class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, yMin), new Vector2(-72f, yMax));
     }
 
+    void OpenMainMenu()
+    {
+        if (mainMenuOverlay == null) return;
+
+        mainMenuShownThisSession = true;
+        wasPausedBeforeMainMenu = isPaused;
+        mainMenuOpen = true;
+        isPaused = true;
+        Time.timeScale = 0f;
+        RefreshMainMenu();
+        mainMenuOverlay.SetActive(true);
+        RefreshModalState();
+    }
+
+    void CloseMainMenu()
+    {
+        CloseMainMenu(true);
+    }
+
+    void CloseMainMenu(bool restorePauseState)
+    {
+        if (mainMenuOverlay != null)
+            mainMenuOverlay.SetActive(false);
+
+        mainMenuOpen = false;
+        bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
+        if (!terminal)
+            SetPaused(restorePauseState ? wasPausedBeforeMainMenu : false);
+    }
+
     void OpenLevelSelect()
     {
         AudioManager.PlaySfx(SfxType.UiClick);
@@ -1120,6 +1331,8 @@ public class GameUiController : MonoBehaviour
 
         if (levelSelectOverlay != null)
             levelSelectOverlay.SetActive(true);
+
+        FocusCampaignLevel(selectedCampaignLevel);
     }
 
     void CloseLevelSelect()
@@ -1222,6 +1435,7 @@ public class GameUiController : MonoBehaviour
         Image image = go.GetComponent<Image>();
         image.color = normal;
         AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.85f));
+        AddButtonAccent((RectTransform)go.transform);
 
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.ColorTint;
@@ -1231,6 +1445,24 @@ public class GameUiController : MonoBehaviour
         label.color = textColor;
         SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
         return button;
+    }
+
+    void AddButtonAccent(RectTransform parent)
+    {
+        Image top = CreateImage("TopAccent", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
+        top.raycastTarget = false;
+        SetAnchor(top.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -5f), new Vector2(-8f, -2f));
+
+        Image bottom = CreateImage("BottomShade", parent, new Color(0f, 0f, 0f, 0.2f));
+        bottom.raycastTarget = false;
+        SetAnchor(bottom.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(8f, 2f), new Vector2(-8f, 5f));
+    }
+
+    void AddCardAccent(RectTransform parent)
+    {
+        Image left = CreateImage("LeftAccent", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.2f));
+        left.raycastTarget = false;
+        SetAnchor(left.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(3f, 8f), new Vector2(7f, -8f));
     }
 
     Slider CreateSlider(string name, Transform parent)

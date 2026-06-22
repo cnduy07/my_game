@@ -178,6 +178,7 @@ Must-have vertical slice:
 Implementation note:
 - `CombatVfxSettings` tren `GameSystems` da co slot prefab cho muzzle/hit/death/static break/bunker break/EMP/Rail Cannon.
 - Khi co VFX prefab that, keo vao day; fallback code-generated se duoc thay the tung phan.
+- `Tools > VFX > Rebuild Core VFX Prefabs` co the tao placeholder ParticleSystem prefab that trong `Assets/Prefabs/VFX` va gan vao scene. Day la baseline production-friendly hon code-generated fallback, nhung van can art/VFX final sau.
 
 Nice-to-have:
 - Screen shake nhe khi EMP/lawnmower.
@@ -234,6 +235,7 @@ Can co:
 - Pause button.
 - Win/Game Over panels.
 - Main menu sau vertical slice.
+- Campaign map node/route art cho map scroll ngang.
 - Icon/skin cho Overcharge row buttons.
 - Pause/settings modal background + button states.
 
