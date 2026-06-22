@@ -161,6 +161,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - output vao `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
 - Them `AIReports/` vao `.gitignore`.
 
+### Level/progression foundation v1 — 2026-06-22
+- Them `LevelDefinition` ScriptableObject va `Assets/Levels/Level_01.asset`.
+- Them `LevelManager` tren `GameSystems`, apply level balance vao `GameBalance` luc Awake.
+- Them `PlayerProgress` dung PlayerPrefs; `GameManager.Win()` mark current level complete.
+- AI QA v1 check them `LevelManager.currentLevel`.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

@@ -66,6 +66,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them pause/resume, restart, speed control neu can.
 - Them save/load progress va settings volume/vibration.
 - Them level definition va wave authoring workflow.
+- Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
+- Lam level select UI tam thoi doc tu danh sach `LevelDefinition`.
 
 ### Art/Content
 

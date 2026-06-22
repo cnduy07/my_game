@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
         if (IsGameOver || IsWon) return;
         IsWon = true;
         Debug.Log("YOU WIN!");
+        if (LevelManager.Instance != null) LevelManager.Instance.MarkCurrentLevelCompleted();
         AudioManager.PlaySfx(SfxType.Win);
         Time.timeScale = 0f;
     }

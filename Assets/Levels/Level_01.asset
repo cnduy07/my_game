@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e44bfc15a4b4a3ea64a842f4876f2f9, type: 3}
+  m_Name: Level_01
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  levelId: level_01
+  displayName: First Contact
+  levelNumber: 1
+  balance:
+    startEnergy: 75
+    skyOrbValue: 25
+    skyInterval: 8
+    waveCount: 5
+    baseEnemies: 3
+    enemiesIncreasePerWave: 2
+    finalWaveMultiplier: 2
+    startDelay: 8
+    timeBetweenSpawns: 2
+    timeBetweenWaves: 12
+    overchargeEnergyCost: 50
+    overchargeDuration: 6
+    overchargeFireRateMultiplier: 2.5
+    overchargeDamageMultiplier: 1.25

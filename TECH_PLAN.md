@@ -296,10 +296,16 @@ Khi co hon 1 level, can tach data:
 - UnlockDefinition: unit/enemy/tutorial gates.
 - SaveData: completed levels, unlocked units, settings.
 
-Uu tien:
-1. LevelDefinition ScriptableObject.
-2. Local save/load JSON hoac PlayerPrefs co version.
-3. Level select UI tam thoi.
+Hien tai v1:
+- `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
+- `LevelManager` tren `GameSystems` apply `currentLevel` vao `GameBalance` luc Awake.
+- `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`.
+- `Assets/Levels/Level_01.asset` la level data dau tien.
+
+Uu tien tiep:
+1. Tach wave list that thay cho formula wave hien tai.
+2. Level select UI tam thoi.
+3. SaveData co version khi progression phuc tap hon.
 
 ---
 

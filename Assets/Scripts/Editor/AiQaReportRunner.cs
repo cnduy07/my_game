@@ -18,8 +18,10 @@ public static class AiQaReportRunner
         var checks = new List<CheckResult>();
         GameBalance balance = UnityEngine.Object.FindAnyObjectByType<GameBalance>(FindObjectsInactive.Include);
         AudioManager audio = UnityEngine.Object.FindAnyObjectByType<AudioManager>(FindObjectsInactive.Include);
+        LevelManager levelManager = UnityEngine.Object.FindAnyObjectByType<LevelManager>(FindObjectsInactive.Include);
 
         CheckGameBalance(balance, checks);
+        CheckLevelManager(levelManager, checks);
         CheckAudio(audio, checks);
         CheckPrefabs(balance, checks);
         CheckAnimatorContracts(balance, checks);
@@ -52,6 +54,26 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Warn("GameBalance", "Overcharge fire-rate multiplier is not above 1."));
         if (balance.skyInterval <= 0f)
             checks.Add(CheckResult.Fail("GameBalance", "Sky interval must be above 0."));
+    }
+
+    static void CheckLevelManager(LevelManager levelManager, List<CheckResult> checks)
+    {
+        if (levelManager == null)
+        {
+            checks.Add(CheckResult.Warn("Level", "No LevelManager found in loaded scene."));
+            return;
+        }
+
+        if (levelManager.currentLevel == null)
+        {
+            checks.Add(CheckResult.Warn("Level", "LevelManager has no currentLevel assigned."));
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(levelManager.currentLevel.levelId))
+            checks.Add(CheckResult.Fail("Level", "Current level has empty levelId."));
+        if (levelManager.currentLevel.levelNumber <= 0)
+            checks.Add(CheckResult.Warn("Level", "Current levelNumber should be above 0."));
     }
 
     static void CheckAudio(AudioManager audio, List<CheckResult> checks)

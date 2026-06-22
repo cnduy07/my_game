@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 53209492}
   - component: {fileID: 53209493}
   - component: {fileID: 53209494}
+  - component: {fileID: 53209495}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -461,6 +462,20 @@ MonoBehaviour:
   overchargeDuration: 6
   overchargeFireRateMultiplier: 2.5
   overchargeDamageMultiplier: 1.25
+--- !u!114 &53209495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad7cc460b849404296cf82ffb3b0ac36, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  currentLevel: {fileID: 11400000, guid: f49c8b5fbecf4fe5ac79142d98e02fe7, type: 2}
+  applyLevelOnAwake: 1
 --- !u!1 &60195754
 GameObject:
   m_ObjectHideFlags: 0
