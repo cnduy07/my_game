@@ -15,6 +15,8 @@ MonoBehaviour:
   levelId: level_01
   displayName: First Contact
   levelNumber: 1
+  missionBriefing: Establish an energy line and stop the first probe wave.
+  completionReward: 'Unlocked: Bunker. Use it to hold pressured lanes.'
   balance:
     startEnergy: 75
     skyOrbValue: 25

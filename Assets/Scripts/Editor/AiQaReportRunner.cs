@@ -144,6 +144,11 @@ public static class AiQaReportRunner
             if (level.levelNumber != expectedNumber)
                 checks.Add(CheckResult.Warn("Level", $"{level.name} levelNumber is {level.levelNumber}, expected {expectedNumber}."));
 
+            if (string.IsNullOrWhiteSpace(level.missionBriefing))
+                checks.Add(CheckResult.Warn("Level", $"{level.name} has no mission briefing copy."));
+            if (string.IsNullOrWhiteSpace(level.completionReward))
+                checks.Add(CheckResult.Warn("Level", $"{level.name} has no completion reward copy."));
+
             if (level.useAuthoredWaves && (level.waves == null || level.waves.Length == 0))
                 checks.Add(CheckResult.Fail("Level", $"{level.name} uses authored waves but has no waves."));
 

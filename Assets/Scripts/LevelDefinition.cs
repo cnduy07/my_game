@@ -6,6 +6,8 @@ public class LevelDefinition : ScriptableObject
     public string levelId = "level_01";
     public string displayName = "Level 1";
     public int levelNumber = 1;
+    [TextArea(2, 4)] public string missionBriefing = "";
+    [TextArea(2, 4)] public string completionReward = "";
     public LevelBalanceSettings balance = new LevelBalanceSettings();
     public string[] allowedUnitLabels;
     public bool overchargeUnlocked = true;

@@ -90,6 +90,7 @@ public class GameUiController : MonoBehaviour
         public Button button;
         public Image frame;
         public TextMeshProUGUI label;
+        public TextMeshProUGUI detail;
         public TextMeshProUGUI status;
     }
 
@@ -493,8 +494,8 @@ public class GameUiController : MonoBehaviour
             go.transform.SetParent(levelListContainer, false);
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
-            layout.preferredHeight = 82f;
-            layout.minHeight = 82f;
+            layout.preferredHeight = 96f;
+            layout.minHeight = 96f;
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
@@ -505,7 +506,11 @@ public class GameUiController : MonoBehaviour
             button.onClick.AddListener(() => SelectLevel(capturedLevel));
 
             TextMeshProUGUI label = CreateText("Label", go.transform, "", 24, FontStyle.Bold, TextAnchor.MiddleLeft);
-            SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(0.68f, 1f), new Vector2(20f, 0f), new Vector2(-8f, 0f));
+            SetAnchor(label.rectTransform, new Vector2(0f, 0.45f), new Vector2(0.68f, 1f), new Vector2(20f, 0f), new Vector2(-8f, -2f));
+
+            TextMeshProUGUI detail = CreateText("Detail", go.transform, "", 17, FontStyle.Normal, TextAnchor.MiddleLeft);
+            detail.color = new Color(0.78f, 0.88f, 0.94f, 1f);
+            SetAnchor(detail.rectTransform, new Vector2(0f, 0f), new Vector2(0.74f, 0.5f), new Vector2(20f, 4f), new Vector2(-8f, -2f));
 
             TextMeshProUGUI status = CreateText("Status", go.transform, "", 20, FontStyle.Bold, TextAnchor.MiddleRight);
             SetAnchor(status.rectTransform, new Vector2(0.68f, 0f), new Vector2(1f, 1f), new Vector2(8f, 0f), new Vector2(-20f, 0f));
@@ -515,6 +520,7 @@ public class GameUiController : MonoBehaviour
                 button = button,
                 frame = frame,
                 label = label,
+                detail = detail,
                 status = status
             });
         }
@@ -632,9 +638,26 @@ public class GameUiController : MonoBehaviour
             else
                 button.status.text = unlocked ? "UNLOCKED" : "LOCKED";
 
+            if (button.detail != null)
+                button.detail.text = BuildLevelDetail(level, unlocked, completed);
+
             button.frame.color = current ? accentColor : (unlocked ? panelSoftColor : disabledColor);
             button.button.interactable = unlocked;
         }
+    }
+
+    string BuildLevelDetail(LevelDefinition level, bool unlocked, bool completed)
+    {
+        if (!unlocked)
+            return "Complete the previous mission to unlock.";
+
+        if (completed && !string.IsNullOrWhiteSpace(level.completionReward))
+            return level.completionReward;
+
+        if (!string.IsNullOrWhiteSpace(level.missionBriefing))
+            return level.missionBriefing;
+
+        return completed ? "Mission cleared." : "Ready for deployment.";
     }
 
     void RefreshModalState()
@@ -654,22 +677,38 @@ public class GameUiController : MonoBehaviour
         else
             modalTitleText.text = "PAUSED";
 
+        if (gameOver || won)
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -228f), new Vector2(-28f, -144f));
+        else
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -188f), new Vector2(-28f, -144f));
+
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         modalSubtitleText.text = level != null ? level.displayName : "";
         if (level != null)
         {
             bool completed = PlayerProgress.IsLevelCompleted(level);
-            progressText.text = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest cleared: {PlayerProgress.HighestCompletedLevel}";
+            string progress = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest cleared: {PlayerProgress.HighestCompletedLevel}";
+            if (won && !string.IsNullOrWhiteSpace(level.completionReward))
+                progress += $"\n{level.completionReward}";
+            progressText.text = progress;
         }
         else
         {
             progressText.text = "";
         }
 
-        sfxText.text = $"SFX: {GameSettings.SfxVolume:0.00}";
-        sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume);
-        reduceShakeToggle.SetIsOnWithoutNotify(GameSettings.ReduceShake);
-        vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
+        bool showSettings = !gameOver && !won;
+        sfxText.gameObject.SetActive(showSettings);
+        sfxSlider.gameObject.SetActive(showSettings);
+        reduceShakeToggle.gameObject.SetActive(showSettings);
+        vibrationToggle.gameObject.SetActive(showSettings);
+        if (showSettings)
+        {
+            sfxText.text = $"SFX: {GameSettings.SfxVolume:0.00}";
+            sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume);
+            reduceShakeToggle.SetIsOnWithoutNotify(GameSettings.ReduceShake);
+            vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
+        }
 
         resumeButton.gameObject.SetActive(!gameOver && !won);
         if (modalLevelSelectButton != null)

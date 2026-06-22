@@ -32,6 +32,7 @@ Scripts chinh:
 - `RuntimeQualitySettings`: target FPS/sleep/vsync/multitouch cho mobile.
 - `LevelCatalog`: danh sach level de level select/progression mo rong.
 - `BoardVisualController`: runtime procedural board/background layer gan tren `GridManager`, tao lane bands/grid lines/rail/entry zone bang SpriteRenderer.
+- `LevelDefinition`: source data cho mission balance, unit/OC unlock gating, authored waves, mission briefing va completion reward copy.
 
 ---
 
@@ -160,7 +161,8 @@ Layout v1:
 - Top status bar: energy ben trai, level giua, wave ben phai, pause sat phai.
 - Seed tray: nam duoi man hinh de hop mobile/touch, moi card co selected/disabled/cooldown state.
 - Overcharge panel: ben phai, tach khoi pause/wave.
-- Modal: pause/win/lose + settings co ban.
+- Modal: pause/win/lose. Settings chi hien trong Pause; Victory/Defeat uu tien progress/reward/result actions.
+- Level select: hien mission name/status/detail tu `LevelDefinition.missionBriefing` va lock/progress state.
 
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
@@ -168,6 +170,7 @@ Current scale pass:
 - Seed tray width tu co theo active seed count; khong force-expand cards.
 - Board/cell screen size duoc tang bang camera orthographic size `3.6`, khong doi `GridManager.cellSize`.
 - Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
+- Mission reward/unlock copy dang data-driven trong `LevelDefinition`, tranh hardcode content vao `GameUiController`.
 
 Can polish sau:
 - Safe area/notch cho mobile that.

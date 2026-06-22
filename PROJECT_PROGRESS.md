@@ -308,6 +308,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - `HorizontalLayoutGroup.childForceExpandWidth` tat de seed cards giu kich thuoc thiet ke, khong bi keo gian bat thuong.
 - Muc tieu: board nhin full-screen hon, command UI gon hon va gan voi game surface hon.
 
+### Mission reward/unlock copy v1 — 2026-06-22
+- Them `missionBriefing` va `completionReward` vao `LevelDefinition`.
+- `Level_01`, `Level_02`, `Level_03` da co English-first briefing/reward copy:
+  - Level 1 reward: Bunker.
+  - Level 2 reward: SnowGun, DroneEMP, Overcharge.
+  - Level 3 reward: sector secured / more missions later.
+- Level select hien mo ta ngan theo tung mission; mission bi khoa hien yeu cau clear mission truoc.
+- Victory modal hien reward/unlock copy; Pause modal van la noi duy nhat hien settings SFX/reduce shake/vibration de tranh modal ket qua bi roi.
+- AI QA canh bao level moi neu thieu mission briefing hoac completion reward copy.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

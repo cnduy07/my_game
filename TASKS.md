@@ -23,6 +23,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Level 1 wave dau cho du thoi gian dat ArcReactor/Turret.
   - Level 2 wave dau khong thung nha qua som khi moi mo Bunker.
   - Level 3 kho hon nhung khong ep ngay khi bat dau.
+- Kiem tra reward/unlock copy pass:
+  - Level select hien mission briefing cho mission da unlock.
+  - Mission bi khoa hien "Complete the previous mission to unlock."
+  - Win level 1 hien reward Bunker.
+  - Win level 2 hien reward SnowGun, DroneEMP, Overcharge.
+  - Victory/Defeat modal khong hien settings SFX/reduce shake/vibration; Pause modal van hien settings.
 - Kiem tra mission unlock/gating v1:
   - Play Mode khong co compile/Console error.
   - Level 1 chi hien seed `ArcReactor`, `Turret`; panel OC khong hien va phim so 1-5 khong kich hoat OC.
@@ -119,6 +125,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - camera zoom nhe de board/cells lon hon;
   - seed tray width tu tinh theo seed count;
   - seed cards khong bi force-expand.
+- Mission reward/unlock copy v1:
+  - `LevelDefinition` co `missionBriefing` va `completionReward`;
+  - level select hien briefing/lock detail;
+  - victory modal hien reward;
+  - AI QA canh bao level moi neu thieu copy.
 
 ---
 
