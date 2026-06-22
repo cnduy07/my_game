@@ -165,7 +165,7 @@ Layout v1:
 - Seed tray: nam duoi man hinh de hop mobile/touch, moi card co selected/disabled/cooldown state.
 - Overcharge panel: ben phai, tach khoi pause/wave.
 - Modal: pause/win/lose. Settings chi hien trong Pause; Victory/Defeat uu tien progress/reward/result actions.
-- Level select: hien mission name/status/detail tu `LevelDefinition.missionBriefing` va lock/progress state.
+- Level select: hien mission name/status/detail tu `LevelDefinition.missionBriefing` va lock/progress state; mission list dung `ScrollRect` viewport/content de khong tran card khi them level.
 
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
@@ -178,6 +178,7 @@ Current scale pass:
   - board/cell screen size duoc tang bang camera orthographic size `3.35`, khong doi `GridManager.cellSize`.
 - Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
 - Mission reward/unlock copy dang data-driven trong `LevelDefinition`, tranh hardcode content vao `GameUiController`.
+- Scene dev hien bat `LevelManager.unlockAllLevelsForTesting` de test nhanh level pack; production unlock rule van nam trong `PlayerProgress`.
 
 Can polish sau:
 - Safe area/notch cho mobile that.
@@ -367,7 +368,7 @@ Chu project can uu tien asset:
 ## 10.6 Production Roadmap
 
 Phase 1 — Gameplay vertical slice:
-- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD.
+- DONE baseline: level 1-5, authored waves, unlock/gating, reward copy, enemy trait foundation, Fast/Shield archetype modifiers, compact HUD, dev unlock all levels for testing.
 - Remaining: Fast/Shield prefab/art identity rieng; hien tai co fallback prefab de gameplay chay.
 - Remaining: gan projectile/control effects vao weapon/unit content that, khong chi dung architecture.
 - Remaining: tune lai level 1-5 sau khi playtest Fast/Shield.
@@ -436,7 +437,7 @@ AI QA v1 hien co:
 - Menu: `Tools > AI QA > Run Full Check`.
 - Batchmode method: `AiQaReportRunner.RunFullCheck`.
 - Output: `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
-- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity, Build Settings enabled scene, PlayerSettings metadata, va orphan/duplicate `LevelDefinition` assets.
+- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity, authored wave enemy groups, Fast/Shield tuning identity, Build Settings enabled scene, PlayerSettings metadata, va orphan/duplicate `LevelDefinition` assets.
 
 ---
 
@@ -471,6 +472,7 @@ Khi co hon 1 level, can tach data:
 Hien tai v1:
 - `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
 - `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
+- `LevelManager.unlockAllLevelsForTesting` la dev/test override; khi bat, UI va select/reload cho phep chon moi mission nhung khong danh dau completed gia.
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level, completed count, last completed level id, va save schema version.
 - `Assets/Levels/Level_01.asset` den `Level_05.asset` la level pack dau tien.
 - `LevelCatalog.asset` dang chua 5 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
@@ -483,14 +485,14 @@ Hien tai v1:
   - Level 3+: ArcReactor, Turret, Bunker, SnowGun, DroneEMP, Overcharge.
 - Enemy archetype hien tai:
   - Basic va Armored dung prefab rieng da co.
-  - Fast va Shield co `LevelEnemyType` rieng va stat modifiers trong `EnemySpawner`; `fastPrefab`/`shieldPrefab` optional, fallback ve Basic/Armored prefab neu chua co asset.
+  - Fast va Shield co `LevelEnemyType` rieng va stat modifiers trong `EnemySpawner.GetTypeModifier`; `fastPrefab`/`shieldPrefab` optional, fallback ve Basic/Armored prefab neu chua co asset.
 - `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
 - `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
 - `Level_01.useAuthoredWaves` hien bat mac dinh sau playtest OK.
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Playtest level 4-5 va tune Fast/Shield.
+1. Playtest level 4-5 ve pacing/fairness; stat identity Fast/Shield da duoc AI QA kiem tra bang multiplier.
 2. Level select art/icon/preview.
 3. Chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
 4. Tach level progression sang main menu scene khi campaign/menu flow ro hon.

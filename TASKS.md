@@ -14,9 +14,9 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Vietnamese, Chinese, French them sau bang localization table.
   - Khong them Vietnamese khong dau vao runtime UI nua.
 - Current validation focus:
-  - Neu UI compact pass co van de moi tren aspect ratio khac, bao lai screenshot.
+  - Kiem tra level select khong tran khoi mission box khi co 5+ level.
   - Khi co thiet bi that: test safe area/notch/touch target.
-  - Test level 4-5 moi: Fast/Shield enemy modifier co cam giac khac ro khong.
+  - Test level 4-5 moi ve pacing/fairness; Fast/Shield stat identity do AI QA kiem tra bang so lieu.
   - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
 
 ### Codex
@@ -127,6 +127,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Level 4 `Velocity Breach` gioi thieu Fast.
   - Level 5 `Shield Column` gioi thieu Shield.
   - `LevelCatalog` co 5 level.
+- Mission select testability + QA tuning checks:
+  - level select dung `ScrollRect` nen list 5+ level khong tran card;
+  - `LevelManager.unlockAllLevelsForTesting` dang bat trong scene de test nhanh tat ca level;
+  - Fast/Shield tuning doc tu `EnemySpawner.GetTypeModifier`;
+  - AI QA fail/warn neu Fast/Shield mat identity so lieu.
 
 ---
 
@@ -135,7 +140,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ### Production roadmap phases
 
 1. Phase 1 — Gameplay vertical slice:
-   - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers.
+   - DONE baseline: level 1-5, unlock/gating, reward copy, authored waves, enemy trait foundation, Fast/Shield type modifiers, dev unlock all levels for testing.
    - Remaining: art/prefab identity rieng cho Fast/Shield.
    - Remaining: use `ProjectileHitEffect` in actual weapon/unit content, not only architecture.
    - Remaining: one more balance pass after level 4-5 playtest.
@@ -166,6 +171,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Thay code-generated VFX bang prefab VFX dep hon khi visual direction on dinh.
 - Test `ProjectileHitEffect` cho knockback/stun tren mot bullet rieng khi can them weapon moi.
 - Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
+- Khi test xong level pack, tat `LevelManager.unlockAllLevelsForTesting` truoc release/build review neu muon restore unlock tuan tu.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
 - Them/replace hit flash/hit sound bang prefab/audio final cho enemy va bunker.
@@ -203,7 +209,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Heavy enemy neu sau level 5 can them nhịp tank khac ArmorEnemy.
 - Projectile effects: knockback, freeze/slow variants, stun/EMP variants.
 - Boss/mini-boss.
-- Level select.
+- Level select art/icon/preview polish.
 - Upgrade system.
 - Level pack 1: 5-10 level dau voi do kho tang dan.
 - Economy/progression meta: unlock unit, upgrade, reward currency.

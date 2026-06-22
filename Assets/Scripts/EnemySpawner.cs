@@ -37,6 +37,40 @@ public class EnemySpawner : MonoBehaviour
     float timer = 0f;
     GUIStyle style;
 
+    public struct EnemyTypeModifier
+    {
+        public float healthMultiplier;
+        public float speedMultiplier;
+        public float attackDamageMultiplier;
+        public float projectileDamageMultiplier;
+        public float empDamageMultiplier;
+        public float slowEffectMultiplier;
+        public float knockbackMultiplier;
+        public float stunDurationMultiplier;
+
+        public EnemyTypeModifier(
+            float healthMultiplier,
+            float speedMultiplier,
+            float attackDamageMultiplier,
+            float projectileDamageMultiplier,
+            float empDamageMultiplier,
+            float slowEffectMultiplier,
+            float knockbackMultiplier,
+            float stunDurationMultiplier)
+        {
+            this.healthMultiplier = healthMultiplier;
+            this.speedMultiplier = speedMultiplier;
+            this.attackDamageMultiplier = attackDamageMultiplier;
+            this.projectileDamageMultiplier = projectileDamageMultiplier;
+            this.empDamageMultiplier = empDamageMultiplier;
+            this.slowEffectMultiplier = slowEffectMultiplier;
+            this.knockbackMultiplier = knockbackMultiplier;
+            this.stunDurationMultiplier = stunDurationMultiplier;
+        }
+
+        public static EnemyTypeModifier Identity => new EnemyTypeModifier(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f);
+    }
+
     public int CurrentWave => currentWave;
     public int WaveCount => waveCount;
     public bool IsWaveWarning => (phase == Phase.PreStart && RemainingPhaseTime(startDelay) <= 3f) ||
@@ -268,6 +302,35 @@ public class EnemySpawner : MonoBehaviour
         return LevelEnemyType.Basic;
     }
 
+    public static EnemyTypeModifier GetTypeModifier(LevelEnemyType enemyType)
+    {
+        switch (enemyType)
+        {
+            case LevelEnemyType.Fast:
+                return new EnemyTypeModifier(
+                    healthMultiplier: 0.7f,
+                    speedMultiplier: 1.55f,
+                    attackDamageMultiplier: 0.8f,
+                    projectileDamageMultiplier: 1.1f,
+                    empDamageMultiplier: 1.15f,
+                    slowEffectMultiplier: 1.25f,
+                    knockbackMultiplier: 1.1f,
+                    stunDurationMultiplier: 1f);
+            case LevelEnemyType.Shield:
+                return new EnemyTypeModifier(
+                    healthMultiplier: 1.35f,
+                    speedMultiplier: 0.82f,
+                    attackDamageMultiplier: 1.1f,
+                    projectileDamageMultiplier: 0.65f,
+                    empDamageMultiplier: 1.45f,
+                    slowEffectMultiplier: 0.75f,
+                    knockbackMultiplier: 0.45f,
+                    stunDurationMultiplier: 0.65f);
+            default:
+                return EnemyTypeModifier.Identity;
+        }
+    }
+
     GameObject PrefabFor(LevelEnemyType enemyType)
     {
         switch (enemyType)
@@ -302,41 +365,24 @@ public class EnemySpawner : MonoBehaviour
         var health = enemy.GetComponent<Health>();
         var mover = enemy.GetComponent<EnemyMover>();
         var traits = enemy.GetComponent<EnemyTraits>();
+        EnemyTypeModifier modifier = GetTypeModifier(enemyType);
 
-        switch (enemyType)
+        if (health != null)
+            health.SetMaxHealth(health.maxHealth * modifier.healthMultiplier, true);
+
+        if (mover != null)
         {
-            case LevelEnemyType.Fast:
-                if (health != null) health.SetMaxHealth(health.maxHealth * 0.7f, true);
-                if (mover != null)
-                {
-                    mover.speed *= 1.55f;
-                    mover.attackDamage *= 0.8f;
-                }
-                if (traits != null)
-                {
-                    traits.projectileDamageMultiplier *= 1.1f;
-                    traits.empDamageMultiplier *= 1.15f;
-                    traits.slowEffectMultiplier *= 1.25f;
-                    traits.knockbackMultiplier *= 1.1f;
-                }
-                break;
+            mover.speed *= modifier.speedMultiplier;
+            mover.attackDamage *= modifier.attackDamageMultiplier;
+        }
 
-            case LevelEnemyType.Shield:
-                if (health != null) health.SetMaxHealth(health.maxHealth * 1.35f, true);
-                if (mover != null)
-                {
-                    mover.speed *= 0.82f;
-                    mover.attackDamage *= 1.1f;
-                }
-                if (traits != null)
-                {
-                    traits.projectileDamageMultiplier *= 0.65f;
-                    traits.empDamageMultiplier *= 1.45f;
-                    traits.slowEffectMultiplier *= 0.75f;
-                    traits.knockbackMultiplier *= 0.45f;
-                    traits.stunDurationMultiplier *= 0.65f;
-                }
-                break;
+        if (traits != null)
+        {
+            traits.projectileDamageMultiplier *= modifier.projectileDamageMultiplier;
+            traits.empDamageMultiplier *= modifier.empDamageMultiplier;
+            traits.slowEffectMultiplier *= modifier.slowEffectMultiplier;
+            traits.knockbackMultiplier *= modifier.knockbackMultiplier;
+            traits.stunDurationMultiplier *= modifier.stunDurationMultiplier;
         }
     }
 

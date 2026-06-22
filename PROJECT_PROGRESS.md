@@ -394,6 +394,17 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Them `Level_05` ("Shield Column") gioi thieu Shield enemy.
 - `LevelCatalog` nay co level 1-5.
 
+### Mission select dev unlock + QA tuning checks — 2026-06-23
+- Sua level select popup thanh `ScrollRect`/viewport/content dung uGUI de list 5+ mission khong tran khoi card.
+- Them `LevelManager.unlockAllLevelsForTesting`; scene hien dang bat flag nay de test nhanh tat ca level ma khong ghi gia progress completed vao `PlayerPrefs`.
+- Production unlock rule van giu trong `PlayerProgress.IsLevelUnlocked`; khi gan release co the tat test flag de quay lai unlock tuan tu.
+- Chuan hoa Fast/Shield tuning vao `EnemySpawner.GetTypeModifier`, de runtime va QA report dung cung mot source so lieu.
+- AI QA check them:
+  - authored waves co group Fast/Shield khi level pack da co 4-5 mission;
+  - Fast phai health thap hon + speed cao hon baseline;
+  - Shield phai health cao hon + speed thap hon + resist projectile + vulnerable EMP.
+- Balance report hien `Enemy Type Tuning` de Codex kiem soat stat identity bang so lieu, khong bat chu project do bang cam giac.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

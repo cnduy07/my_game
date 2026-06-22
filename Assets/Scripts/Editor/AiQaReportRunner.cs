@@ -116,6 +116,8 @@ public static class AiQaReportRunner
         var ids = new HashSet<string>();
         var unitLabels = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         int expectedNumber = 1;
+        bool hasFastEnemy = false;
+        bool hasShieldEnemy = false;
 
         if (balance != null && balance.units != null)
         {
@@ -152,6 +154,8 @@ public static class AiQaReportRunner
 
             if (level.useAuthoredWaves && (level.waves == null || level.waves.Length == 0))
                 checks.Add(CheckResult.Fail("Level", $"{level.name} uses authored waves but has no waves."));
+            else if (level.waves != null)
+                CheckLevelWaves(level, checks, ref hasFastEnemy, ref hasShieldEnemy);
 
             if (level.allowedUnitLabels != null)
             {
@@ -166,6 +170,65 @@ public static class AiQaReportRunner
 
             expectedNumber++;
         }
+
+        if (catalog.levels.Length >= 4 && !hasFastEnemy)
+            checks.Add(CheckResult.Warn("Level", "LevelCatalog has 4+ levels but no authored Fast enemy group."));
+        if (catalog.levels.Length >= 5 && !hasShieldEnemy)
+            checks.Add(CheckResult.Warn("Level", "LevelCatalog has 5+ levels but no authored Shield enemy group."));
+
+        CheckEnemyTypeTuning(checks);
+    }
+
+    static void CheckLevelWaves(
+        LevelDefinition level,
+        List<CheckResult> checks,
+        ref bool hasFastEnemy,
+        ref bool hasShieldEnemy)
+    {
+        for (int waveIndex = 0; waveIndex < level.waves.Length; waveIndex++)
+        {
+            LevelWaveDefinition wave = level.waves[waveIndex];
+            if (wave == null)
+            {
+                checks.Add(CheckResult.Fail("Level", $"{level.name} wave {waveIndex + 1} is empty."));
+                continue;
+            }
+
+            if (wave.TotalCount <= 0)
+                checks.Add(CheckResult.Fail("Level", $"{level.name} wave {waveIndex + 1} has no enemies."));
+            if (wave.timeBetweenSpawns <= 0f)
+                checks.Add(CheckResult.Fail("Level", $"{level.name} wave {waveIndex + 1} spawn interval must be above 0."));
+
+            if (wave.groups == null) continue;
+            foreach (LevelSpawnGroup group in wave.groups)
+            {
+                if (group == null) continue;
+                if (group.count <= 0)
+                    checks.Add(CheckResult.Warn("Level", $"{level.name} wave {waveIndex + 1} has a non-positive {group.enemyType} group."));
+                if (!Enum.IsDefined(typeof(LevelEnemyType), group.enemyType))
+                    checks.Add(CheckResult.Fail("Level", $"{level.name} wave {waveIndex + 1} has undefined enemy type {group.enemyType}."));
+
+                if (group.enemyType == LevelEnemyType.Fast && group.count > 0)
+                    hasFastEnemy = true;
+                if (group.enemyType == LevelEnemyType.Shield && group.count > 0)
+                    hasShieldEnemy = true;
+            }
+        }
+    }
+
+    static void CheckEnemyTypeTuning(List<CheckResult> checks)
+    {
+        EnemySpawner.EnemyTypeModifier fast = EnemySpawner.GetTypeModifier(LevelEnemyType.Fast);
+        if (fast.healthMultiplier >= 1f || fast.speedMultiplier <= 1f)
+            checks.Add(CheckResult.Fail("Enemy Type", "Fast enemy must have lower health and higher speed than baseline."));
+        if (fast.slowEffectMultiplier <= 1f)
+            checks.Add(CheckResult.Warn("Enemy Type", "Fast enemy should stay vulnerable to slow effects."));
+
+        EnemySpawner.EnemyTypeModifier shield = EnemySpawner.GetTypeModifier(LevelEnemyType.Shield);
+        if (shield.healthMultiplier <= 1f || shield.speedMultiplier >= 1f)
+            checks.Add(CheckResult.Fail("Enemy Type", "Shield enemy must have higher health and lower speed than baseline."));
+        if (shield.projectileDamageMultiplier >= 1f || shield.empDamageMultiplier <= 1f)
+            checks.Add(CheckResult.Fail("Enemy Type", "Shield enemy must resist projectiles and stay vulnerable to EMP."));
     }
 
     static void CheckRuntimeFoundations(

@@ -18,6 +18,7 @@ public static class BalanceReportGenerator
         AppendGlobal(sb, balance);
         AppendCombat(sb, balance);
         AppendEconomy(sb, balance);
+        AppendEnemyTypeTuning(sb);
         AppendLevel(sb);
         return sb.ToString();
     }
@@ -108,6 +109,22 @@ public static class BalanceReportGenerator
             sb.AppendLine($"- {enemy.label}: projectile x`{Format(enemy.projectileDamageMultiplier)}`, EMP x`{Format(enemy.empDamageMultiplier)}`, slow x`{Format(enemy.slowEffectMultiplier)}`, knockback x`{Format(enemy.knockbackMultiplier)}`, stun x`{Format(enemy.stunDurationMultiplier)}`");
         }
         sb.AppendLine();
+    }
+
+    static void AppendEnemyTypeTuning(StringBuilder sb)
+    {
+        sb.AppendLine("## Enemy Type Tuning");
+        AppendEnemyType(sb, LevelEnemyType.Basic);
+        AppendEnemyType(sb, LevelEnemyType.Armored);
+        AppendEnemyType(sb, LevelEnemyType.Fast);
+        AppendEnemyType(sb, LevelEnemyType.Shield);
+        sb.AppendLine();
+    }
+
+    static void AppendEnemyType(StringBuilder sb, LevelEnemyType enemyType)
+    {
+        EnemySpawner.EnemyTypeModifier modifier = EnemySpawner.GetTypeModifier(enemyType);
+        sb.AppendLine($"- {enemyType}: health x`{Format(modifier.healthMultiplier)}`, speed x`{Format(modifier.speedMultiplier)}`, attack x`{Format(modifier.attackDamageMultiplier)}`, projectile x`{Format(modifier.projectileDamageMultiplier)}`, EMP x`{Format(modifier.empDamageMultiplier)}`, slow x`{Format(modifier.slowEffectMultiplier)}`, knockback x`{Format(modifier.knockbackMultiplier)}`, stun x`{Format(modifier.stunDurationMultiplier)}`");
     }
 
     static void AppendEconomy(StringBuilder sb, GameBalance balance)

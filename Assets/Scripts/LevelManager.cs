@@ -9,6 +9,7 @@ public class LevelManager : MonoBehaviour
     public LevelDefinition currentLevel;
     public LevelCatalog levelCatalog;
     public bool applyLevelOnAwake = true;
+    public bool unlockAllLevelsForTesting = true;
 
     void Awake()
     {
@@ -65,7 +66,7 @@ public class LevelManager : MonoBehaviour
 
     public bool SelectLevel(LevelDefinition level)
     {
-        if (level == null) return false;
+        if (level == null || !IsLevelUnlocked(level)) return false;
         currentLevel = level;
         PlayerProgress.SelectLevel(level);
         ApplyCurrentLevel();
@@ -74,13 +75,19 @@ public class LevelManager : MonoBehaviour
 
     public bool SelectLevelAndReload(LevelDefinition level)
     {
-        if (level == null || !PlayerProgress.IsLevelUnlocked(level)) return false;
+        if (level == null || !IsLevelUnlocked(level)) return false;
 
         currentLevel = level;
         PlayerProgress.SelectLevel(level);
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         return true;
+    }
+
+    public bool IsLevelUnlocked(LevelDefinition level)
+    {
+        if (level == null) return false;
+        return unlockAllLevelsForTesting || PlayerProgress.IsLevelUnlocked(level);
     }
 
     public bool SelectNextLevelAndReload()
@@ -93,13 +100,13 @@ public class LevelManager : MonoBehaviour
         if (levelCatalog == null) return;
 
         LevelDefinition selected = levelCatalog.GetById(PlayerProgress.SelectedLevelId);
-        if (selected != null && PlayerProgress.IsLevelUnlocked(selected))
+        if (selected != null && IsLevelUnlocked(selected))
         {
             currentLevel = selected;
             return;
         }
 
-        if (currentLevel == null || !PlayerProgress.IsLevelUnlocked(currentLevel))
+        if (currentLevel == null || !IsLevelUnlocked(currentLevel))
             currentLevel = levelCatalog.GetAt(0);
     }
 }

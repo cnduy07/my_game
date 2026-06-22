@@ -26,6 +26,7 @@ public class GameUiController : MonoBehaviour
     const float SeedTrayHorizontalPadding = 28f;
     const float SeedTrayMinWidth = 420f;
     const float SeedTrayMaxWidth = 1100f;
+    const float LevelButtonHeight = 84f;
 
     Canvas canvas;
 
@@ -352,15 +353,29 @@ public class GameUiController : MonoBehaviour
         TextMeshProUGUI title = CreateText("Title", card, "SELECT MISSION", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -78f), new Vector2(-30f, -22f));
 
-        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Complete the previous mission to unlock the next one.", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        TextMeshProUGUI subtitle = CreateText("Subtitle", card, "Choose a mission to deploy.", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
         subtitle.color = new Color(0.8f, 0.9f, 0.96f, 1f);
         SetAnchor(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -116f), new Vector2(-42f, -80f));
 
-        levelListContainer = CreatePanel("LevelList", card, new Color(0.025f, 0.035f, 0.052f, 0.9f));
-        AddFrame(levelListContainer, new Color(0.08f, 0.16f, 0.22f, 0.9f));
-        SetAnchor(levelListContainer, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(56f, 100f), new Vector2(-56f, -134f));
+        RectTransform levelListViewport = CreatePanel("LevelListViewport", card, new Color(0.025f, 0.035f, 0.052f, 0.9f));
+        AddFrame(levelListViewport, new Color(0.08f, 0.16f, 0.22f, 0.9f));
+        SetAnchor(levelListViewport, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(56f, 100f), new Vector2(-56f, -134f));
+        levelListViewport.gameObject.AddComponent<RectMask2D>();
 
-        VerticalLayoutGroup layout = levelListContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+        ScrollRect scrollRect = levelListViewport.gameObject.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+        scrollRect.scrollSensitivity = 36f;
+        scrollRect.viewport = levelListViewport;
+
+        levelListContainer = new GameObject("LevelListContent", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter)).GetComponent<RectTransform>();
+        levelListContainer.SetParent(levelListViewport, false);
+        levelListContainer.pivot = new Vector2(0.5f, 1f);
+        SetAnchor(levelListContainer, new Vector2(0f, 1f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
+        scrollRect.content = levelListContainer;
+
+        VerticalLayoutGroup layout = levelListContainer.GetComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(14, 14, 14, 14);
         layout.spacing = 10f;
         layout.childAlignment = TextAnchor.UpperCenter;
@@ -368,6 +383,10 @@ public class GameUiController : MonoBehaviour
         layout.childControlHeight = true;
         layout.childForceExpandWidth = true;
         layout.childForceExpandHeight = false;
+
+        ContentSizeFitter fitter = levelListContainer.GetComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         Button closeButton = CreateButton("CloseButton", card, "CLOSE", 22, panelSoftColor, Color.white);
         closeButton.onClick.AddListener(CloseLevelSelect);
@@ -525,8 +544,8 @@ public class GameUiController : MonoBehaviour
             go.transform.SetParent(levelListContainer, false);
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
-            layout.preferredHeight = 96f;
-            layout.minHeight = 96f;
+            layout.preferredHeight = LevelButtonHeight;
+            layout.minHeight = LevelButtonHeight;
 
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
@@ -537,14 +556,14 @@ public class GameUiController : MonoBehaviour
             button.colors = BuildButtonColors(panelSoftColor, accentColor);
             button.onClick.AddListener(() => SelectLevel(capturedLevel));
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 24, FontStyle.Bold, TextAnchor.MiddleLeft);
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 22, FontStyle.Bold, TextAnchor.MiddleLeft);
             SetAnchor(label.rectTransform, new Vector2(0f, 0.45f), new Vector2(0.68f, 1f), new Vector2(20f, 0f), new Vector2(-8f, -2f));
 
-            TextMeshProUGUI detail = CreateText("Detail", go.transform, "", 17, FontStyle.Normal, TextAnchor.MiddleLeft);
+            TextMeshProUGUI detail = CreateText("Detail", go.transform, "", 15, FontStyle.Normal, TextAnchor.MiddleLeft);
             detail.color = new Color(0.78f, 0.88f, 0.94f, 1f);
             SetAnchor(detail.rectTransform, new Vector2(0f, 0f), new Vector2(0.74f, 0.5f), new Vector2(20f, 4f), new Vector2(-8f, -2f));
 
-            TextMeshProUGUI status = CreateText("Status", go.transform, "", 20, FontStyle.Bold, TextAnchor.MiddleRight);
+            TextMeshProUGUI status = CreateText("Status", go.transform, "", 18, FontStyle.Bold, TextAnchor.MiddleRight);
             SetAnchor(status.rectTransform, new Vector2(0.68f, 0f), new Vector2(1f, 1f), new Vector2(8f, 0f), new Vector2(-20f, 0f));
 
             levelButtons.Add(new LevelButton
@@ -664,7 +683,7 @@ public class GameUiController : MonoBehaviour
             LevelButton button = levelButtons[i];
             bool current = level == levelManager.currentLevel;
             bool completed = PlayerProgress.IsLevelCompleted(level);
-            bool unlocked = PlayerProgress.IsLevelUnlocked(level);
+            bool unlocked = levelManager.IsLevelUnlocked(level);
 
             button.label.text = $"{level.levelNumber:00}  {level.displayName}";
             if (current)
@@ -751,7 +770,7 @@ public class GameUiController : MonoBehaviour
             modalLevelSelectButton.gameObject.SetActive(true);
 
         LevelDefinition nextLevel = LevelManager.Instance != null ? LevelManager.Instance.NextLevel : null;
-        bool canPlayNext = won && nextLevel != null && PlayerProgress.IsLevelUnlocked(nextLevel);
+        bool canPlayNext = won && nextLevel != null && LevelManager.Instance != null && LevelManager.Instance.IsLevelUnlocked(nextLevel);
         if (nextLevelButton != null)
         {
             nextLevelButton.gameObject.SetActive(canPlayNext);
