@@ -63,6 +63,7 @@ Can than trong cac viec:
 - `TECH_PLAN.md`: systems, architecture, performance, testing.
 - `RELEASE_CHECKLIST.md`: App Store/Google Play checklist.
 - `GameSystems > GameBalance` trong `SampleScene`: source of truth tam thoi cho stats gameplay chinh.
+- `GameUiController` tren `GameSystems`: source of truth tam thoi cho runtime HUD uGUI/TextMeshPro. Cac IMGUI cu chi la debug khi bat `showDebugImGui`.
 
 ---
 

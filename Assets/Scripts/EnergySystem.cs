@@ -2,7 +2,7 @@ using UnityEngine;
 
 // Gắn vào object "GameSystems".
 // Quản lý tổng năng lượng: tự sinh nhỏ giọt theo thời gian, cộng/trừ khi đặt unit.
-// Hiển thị số năng lượng góc trên-trái bằng IMGUI (khỏi dựng Canvas).
+// Runtime HUD đọc Energy để hiển thị.
 public class EnergySystem : MonoBehaviour
 {
     public static EnergySystem Instance { get; private set; }
@@ -16,6 +16,7 @@ public class EnergySystem : MonoBehaviour
     public float skyInterval = 8f;      // mỗi mấy giây rơi 1 mặt trời
 
     public int Energy { get; private set; }
+    public bool showDebugImGui;
     private float skyTimer;
     private GUIStyle style;
 
@@ -85,6 +86,7 @@ public class EnergySystem : MonoBehaviour
 
     void OnGUI()
     {
+        if (!showDebugImGui) return;
         if (style == null)
             style = new GUIStyle(GUI.skin.label) { fontSize = 20, fontStyle = FontStyle.Bold };
         GUI.Label(new Rect(10, 8, 260, 30), $"Nang luong: {Energy}", style);

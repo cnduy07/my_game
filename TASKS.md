@@ -8,11 +8,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Test UI/settings/progression v1:
-  - nut pause/resume khong lam dat unit sau UI;
-  - SFX volume thay doi am luong;
-  - Reduce shake lam bunker rung nhe hon;
-  - win game van mark level complete.
+- Test runtime HUD rebuild:
+  - neu Unity hien popup TextMeshPro Essentials khi compile UI moi, bam import;
+  - top bar hien energy/level/wave/pause dung, khong chong len OC;
+  - seed tray duoi man hinh click duoc, khong dat unit xuyen xuong board;
+  - seed disabled khi thieu energy, cooldown overlay hien sau khi dat;
+  - OC panel ben phai click/phim so hoat dong va tru energy;
+  - pause/resume/restart, SFX volume, reduce shake, vibration van hoat dong;
+  - win/lose modal hien dung va restart duoc.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -36,6 +39,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
 - Ho tro tinh chinh `GameBalance`, Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
 - Tinh chinh combat feedback pass sau Play Mode: flash strength, shake amount, VFX duration/color.
+- Tinh chinh runtime HUD sau Play Mode: safe area, spacing, text size, seed card state, modal layout.
 - Nang cap VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon khi co art/VFX prefab.
 - Chay/cai tien AI QA report khi Unity Editor dong hoac qua menu trong Editor.
 - Sau khi vertical slice on, danh gia co nen nang `GameBalance` len ScriptableObject/level config hay giu MonoBehaviour tren scene.
@@ -46,14 +50,15 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Roadmap uu tien sau combat feedback
 
-1. Bunker/object death VFX pass.
-2. Projectile effect architecture: slow/knockback/stun/EMP theo tung loai dan.
-3. Balance pass bang `GameBalance`.
-4. AI QA harness v1.
-5. Mobile UI/input pass: thay IMGUI bang UI mobile that, safe area, touch target.
-6. Tutorial/onboarding pass: day nguoi choi energy, dat unit, Overcharge, Rail Cannon.
-7. Level/progression pass: level data, unlock unit/enemy, save/load.
-8. Performance/device pass: pooling, texture/audio compression, test tren dien thoai.
+1. Runtime HUD polish pass: safe area, final spacing, icons, seed card art, mobile touch targets.
+2. Bunker/object death VFX pass.
+3. Projectile effect architecture: slow/knockback/stun/EMP theo tung loai dan.
+4. Balance pass bang `GameBalance`.
+5. AI QA harness v1.
+6. Mobile UI/input pass: tutorial overlays, level select, settings polish.
+7. Tutorial/onboarding pass: day nguoi choi energy, dat unit, Overcharge, Rail Cannon.
+8. Level/progression pass: level data, unlock unit/enemy, save/load.
+9. Performance/device pass: pooling, texture/audio compression, test tren dien thoai.
 
 ### Gameplay/Tech
 
@@ -67,14 +72,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
 - Them hit flash/hit sound cho enemy va bunker.
-- Lam UI mobile thay cho IMGUI khi gameplay core on.
+- Polish UI runtime moi: icon seed card, energy icon, OC row feedback, pause modal visual.
 - Them pause/resume, restart, speed control neu can.
 - Them save/load progress va settings volume/vibration.
 - Them level definition va wave authoring workflow.
 - Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
 - Lam level select UI tam thoi doc tu danh sach `LevelDefinition`.
 - Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
-- Sau UI/settings v1 on dinh, thay IMGUI bang UI mobile that theo tung man hinh.
+- Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 
 ### Art/Content
 

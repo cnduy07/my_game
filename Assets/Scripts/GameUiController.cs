@@ -1,41 +1,119 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameUiController : MonoBehaviour
 {
     public static GameUiController Instance { get; private set; }
 
+    [Header("HUD")]
     public bool isPaused;
+    public Color backgroundColor = new Color(0.035f, 0.05f, 0.075f, 0.94f);
+    public Color panelColor = new Color(0.09f, 0.13f, 0.18f, 0.92f);
+    public Color panelSoftColor = new Color(0.13f, 0.18f, 0.24f, 0.9f);
+    public Color accentColor = new Color(0.13f, 0.82f, 0.95f, 1f);
+    public Color warningColor = new Color(1f, 0.55f, 0.17f, 1f);
+    public Color disabledColor = new Color(0.33f, 0.38f, 0.45f, 0.86f);
 
-    private Rect pauseButtonRect;
-    private Rect panelRect;
-    private GUIStyle titleStyle;
-    private GUIStyle smallStyle;
-    private GUIStyle panelStyle;
+    const float ReferenceWidth = 1920f;
+    const float ReferenceHeight = 1080f;
+
+    Canvas canvas;
+
+    TextMeshProUGUI energyText;
+    TextMeshProUGUI levelText;
+    TextMeshProUGUI waveText;
+    Button pauseButton;
+    TextMeshProUGUI pauseButtonText;
+
+    RectTransform seedTray;
+    readonly List<SeedCard> seedCards = new List<SeedCard>();
+
+    RectTransform overchargePanel;
+    TextMeshProUGUI overchargeCostText;
+    readonly List<RowButton> rowButtons = new List<RowButton>();
+
+    GameObject modalOverlay;
+    TextMeshProUGUI modalTitleText;
+    TextMeshProUGUI modalSubtitleText;
+    TextMeshProUGUI progressText;
+    TextMeshProUGUI sfxText;
+    Slider sfxSlider;
+    Toggle reduceShakeToggle;
+    Toggle vibrationToggle;
+    Button resumeButton;
+
+    int lastSeedCount = -1;
+    int lastRowCount = -1;
+    bool modalBuilt;
+
+    class SeedCard
+    {
+        public Button button;
+        public Image frame;
+        public Image cooldownFill;
+        public TextMeshProUGUI label;
+        public TextMeshProUGUI cost;
+    }
+
+    class RowButton
+    {
+        public Button button;
+        public Image frame;
+        public Image fill;
+        public TextMeshProUGUI label;
+    }
 
     void Awake()
     {
         Instance = this;
     }
 
+    void Start()
+    {
+        BuildHud();
+    }
+
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
+        if (isPaused) Time.timeScale = 1f;
     }
 
     void Update()
     {
-        if (GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon))
-            return;
+        if (canvas == null)
+            BuildHud();
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
-            TogglePause();
+        {
+            if (GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon))
+                TogglePause();
+        }
+
+        RebuildDynamicUiIfNeeded();
+        RefreshHud();
+        RefreshModalState();
     }
 
     public bool PointerOverPanel(float guiX, float guiY)
     {
-        return pauseButtonRect.Contains(new Vector2(guiX, guiY)) ||
-               (isPaused && panelRect.Contains(new Vector2(guiX, guiY)));
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return true;
+
+        Vector2 screenPoint = new Vector2(guiX, Screen.height - guiY);
+        return IsScreenPointIn(seedTray, screenPoint) ||
+               IsScreenPointIn(overchargePanel, screenPoint) ||
+               (pauseButton != null && IsScreenPointIn((RectTransform)pauseButton.transform, screenPoint)) ||
+               (modalOverlay != null && modalOverlay.activeSelf && IsScreenPointIn((RectTransform)modalOverlay.transform, screenPoint));
+    }
+
+    public bool IsPointerOverUi()
+    {
+        return PointerOverPanel(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
     }
 
     void TogglePause()
@@ -46,101 +124,523 @@ public class GameUiController : MonoBehaviour
 
     void SetPaused(bool paused)
     {
+        if (GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon))
+            paused = false;
+
         isPaused = paused;
         Time.timeScale = paused ? 0f : 1f;
+        RefreshModalState();
     }
 
-    void OnGUI()
+    void BuildHud()
     {
-        GUI.depth = -100;
-        EnsureStyles();
-        DrawTopHud();
+        EnsureEventSystem();
 
-        if (isPaused)
-            DrawPausePanel();
+        GameObject root = new GameObject("RuntimeHUD", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        root.transform.SetParent(transform, false);
+        canvas = root.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 100;
+
+        CanvasScaler scaler = root.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(ReferenceWidth, ReferenceHeight);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        BuildTopBar(root.transform);
+        BuildSeedTray(root.transform);
+        BuildOverchargePanel(root.transform);
+        BuildModal(root.transform);
+        RebuildDynamicUiIfNeeded();
+        RefreshHud();
+        RefreshModalState();
     }
 
-    void DrawTopHud()
+    void EnsureEventSystem()
     {
-        float margin = 8f;
-        float pauseX = Mathf.Min(Screen.width - 256f, Screen.width * 0.5f + 132f);
-        pauseButtonRect = new Rect(pauseX, margin, 112f, 36f);
-        GUI.enabled = GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon);
-        GUI.Box(new Rect(pauseButtonRect.x - 4f, pauseButtonRect.y - 4f, pauseButtonRect.width + 8f, pauseButtonRect.height + 8f), GUIContent.none, panelStyle);
-        if (GUI.Button(pauseButtonRect, isPaused ? "RESUME" : "PAUSE"))
-            TogglePause();
-        GUI.enabled = true;
+        if (EventSystem.current != null) return;
+
+        GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        eventSystem.transform.SetParent(transform, false);
+    }
+
+    void BuildTopBar(Transform parent)
+    {
+        RectTransform topBar = CreatePanel("TopStatusBar", parent, backgroundColor);
+        SetAnchor(topBar, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -104f), new Vector2(0f, 0f));
+
+        energyText = CreateText("EnergyText", topBar, "Nang luong: 0", 38, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(energyText.rectTransform, new Vector2(0f, 0f), new Vector2(0.32f, 1f), new Vector2(32f, 0f), new Vector2(-8f, 0f));
+
+        levelText = CreateText("LevelText", topBar, "", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(levelText.rectTransform, new Vector2(0.34f, 0f), new Vector2(0.66f, 1f), Vector2.zero, Vector2.zero);
+
+        waveText = CreateText("WaveText", topBar, "", 24, FontStyle.Bold, TextAnchor.MiddleRight);
+        SetAnchor(waveText.rectTransform, new Vector2(0.67f, 0f), new Vector2(0.88f, 1f), Vector2.zero, new Vector2(-18f, 0f));
+
+        pauseButton = CreateButton("PauseButton", topBar, "II", 28, panelSoftColor, accentColor);
+        pauseButton.onClick.AddListener(TogglePause);
+        pauseButtonText = pauseButton.GetComponentInChildren<TextMeshProUGUI>();
+        SetAnchor((RectTransform)pauseButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-154f, -30f), new Vector2(-28f, 30f));
+    }
+
+    void BuildSeedTray(Transform parent)
+    {
+        seedTray = CreatePanel("SeedTray", parent, new Color(0.045f, 0.064f, 0.09f, 0.94f));
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-510f, 22f), new Vector2(510f, 134f));
+
+        HorizontalLayoutGroup layout = seedTray.gameObject.AddComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(14, 14, 12, 12);
+        layout.spacing = 10f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = true;
+    }
+
+    void BuildOverchargePanel(Transform parent)
+    {
+        overchargePanel = CreatePanel("OverchargePanel", parent, new Color(0.045f, 0.064f, 0.09f, 0.9f));
+        SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-184f, -196f), new Vector2(-24f, 196f));
+
+        overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(overchargeCostText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -52f), new Vector2(-10f, -10f));
+    }
+
+    void BuildModal(Transform parent)
+    {
+        modalOverlay = new GameObject("ModalOverlay", typeof(RectTransform), typeof(Image));
+        modalOverlay.transform.SetParent(parent, false);
+        Image overlayImage = modalOverlay.GetComponent<Image>();
+        overlayImage.color = new Color(0f, 0f, 0f, 0.42f);
+        SetAnchor((RectTransform)modalOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform card = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.075f, 0.09f, 0.12f, 0.97f));
+        SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-360f, -250f), new Vector2(360f, 250f));
+
+        modalTitleText = CreateText("ModalTitle", card, "TAM DUNG", 42, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -92f), new Vector2(-28f, -28f));
+
+        modalSubtitleText = CreateText("ModalSubtitle", card, "", 24, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -140f), new Vector2(-28f, -96f));
+
+        progressText = CreateText("ProgressText", card, "", 22, FontStyle.Normal, TextAnchor.MiddleCenter);
+        SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -188f), new Vector2(-28f, -144f));
+
+        sfxText = CreateText("SfxText", card, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(sfxText.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(40f, 42f), new Vector2(-40f, 82f));
+
+        sfxSlider = CreateSlider("SfxSlider", card);
+        SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(80f, 8f), new Vector2(-80f, 36f));
+        sfxSlider.onValueChanged.AddListener(value => GameSettings.SfxVolume = value);
+
+        reduceShakeToggle = CreateToggle("ReduceShakeToggle", card, "Giam rung");
+        SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(90f, -54f), new Vector2(-8f, -16f));
+        reduceShakeToggle.onValueChanged.AddListener(value => GameSettings.ReduceShake = value);
+
+        vibrationToggle = CreateToggle("VibrationToggle", card, "Rung may");
+        SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(8f, -54f), new Vector2(-90f, -16f));
+        vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
+
+        resumeButton = CreateButton("ResumeButton", card, "TIEP TUC", 24, accentColor, Color.white);
+        resumeButton.onClick.AddListener(TogglePause);
+        SetAnchor((RectTransform)resumeButton.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(70f, 38f), new Vector2(-10f, 96f));
+
+        Button restartButton = CreateButton("RestartButton", card, "CHOI LAI", 24, panelSoftColor, Color.white);
+        restartButton.onClick.AddListener(RestartLevel);
+        SetAnchor((RectTransform)restartButton.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(10f, 38f), new Vector2(-70f, 96f));
+
+        modalBuilt = true;
+        modalOverlay.SetActive(false);
+    }
+
+    void RebuildDynamicUiIfNeeded()
+    {
+        SeedBar seedBar = SeedBar.Instance;
+        int seedCount = seedBar != null ? seedBar.SeedCount : 0;
+        if (seedCount != lastSeedCount)
+            RebuildSeedCards(seedCount);
+
+        OverchargeSystem overcharge = OverchargeSystem.Instance;
+        int rowCount = overcharge != null ? overcharge.RowCount : 0;
+        if (rowCount != lastRowCount)
+            RebuildRowButtons(rowCount);
+    }
+
+    void RebuildSeedCards(int seedCount)
+    {
+        foreach (SeedCard card in seedCards)
+            if (card.button != null) Destroy(card.button.gameObject);
+        seedCards.Clear();
+        lastSeedCount = seedCount;
+
+        for (int i = 0; i < seedCount; i++)
+        {
+            int index = i;
+            GameObject go = new GameObject($"SeedCard_{i}", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            go.transform.SetParent(seedTray, false);
+
+            Image frame = go.GetComponent<Image>();
+            frame.color = panelSoftColor;
+
+            LayoutElement layout = go.GetComponent<LayoutElement>();
+            layout.preferredWidth = 182f;
+            layout.preferredHeight = 88f;
+            layout.minHeight = 88f;
+
+            Button button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.ColorTint;
+            button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            button.onClick.AddListener(() =>
+            {
+                if (SeedBar.Instance != null)
+                    SeedBar.Instance.SelectSeed(index);
+            });
+
+            Image cooldown = CreateImage("CooldownFill", go.transform, new Color(0f, 0f, 0f, 0.52f));
+            cooldown.type = Image.Type.Filled;
+            cooldown.fillMethod = Image.FillMethod.Vertical;
+            cooldown.fillOrigin = (int)Image.OriginVertical.Bottom;
+            SetAnchor(cooldown.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetAnchor(label.rectTransform, new Vector2(0f, 0.36f), new Vector2(1f, 1f), new Vector2(8f, -6f), new Vector2(-8f, -4f));
+
+            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+            cost.color = new Color(0.88f, 0.96f, 1f, 1f);
+            SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(8f, 2f), new Vector2(-8f, 0f));
+
+            seedCards.Add(new SeedCard
+            {
+                button = button,
+                frame = frame,
+                cooldownFill = cooldown,
+                label = label,
+                cost = cost
+            });
+        }
+    }
+
+    void RebuildRowButtons(int rowCount)
+    {
+        foreach (RowButton rowButton in rowButtons)
+            if (rowButton.button != null) Destroy(rowButton.button.gameObject);
+        rowButtons.Clear();
+        lastRowCount = rowCount;
+
+        float top = -60f;
+        for (int row = rowCount - 1; row >= 0; row--)
+        {
+            int rowIndex = row;
+            int visualIndex = rowCount - 1 - row;
+            GameObject go = new GameObject($"OverchargeRow_{row}", typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(overchargePanel, false);
+
+            RectTransform rect = (RectTransform)go.transform;
+            SetAnchor(rect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(12f, top - 52f - visualIndex * 58f), new Vector2(-12f, top - 6f - visualIndex * 58f));
+
+            Image frame = go.GetComponent<Image>();
+            frame.color = panelSoftColor;
+
+            Button button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.ColorTint;
+            button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            button.onClick.AddListener(() =>
+            {
+                if (OverchargeSystem.Instance != null)
+                    OverchargeSystem.Instance.TryActivate(rowIndex);
+            });
+
+            Image fill = CreateImage("ActiveFill", go.transform, new Color(0.1f, 0.85f, 1f, 0.35f));
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+
+            rowButtons.Add(new RowButton { button = button, frame = frame, fill = fill, label = label });
+        }
+    }
+
+    void RefreshHud()
+    {
+        if (energyText != null)
+            energyText.text = EnergySystem.Instance != null ? $"Nang luong: {EnergySystem.Instance.Energy}" : "Nang luong: --";
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
+        if (levelText != null)
+            levelText.text = level != null ? level.displayName : "Level";
+
+        if (waveText != null)
+            waveText.text = EnemySpawner.Instance != null ? EnemySpawner.Instance.DisplayText : "";
+
+        if (pauseButtonText != null)
+            pauseButtonText.text = isPaused ? ">" : "II";
+        if (pauseButton != null)
+            pauseButton.interactable = GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon);
+
+        RefreshSeedCards();
+        RefreshRowButtons();
+    }
+
+    void RefreshSeedCards()
+    {
+        SeedBar seedBar = SeedBar.Instance;
+        if (seedBar == null) return;
+
+        for (int i = 0; i < seedCards.Count; i++)
+        {
+            SeedCard card = seedCards[i];
+            UnitType seed = seedBar.GetSeed(i);
+            if (seed == null) continue;
+
+            bool selected = seedBar.selectedIndex == i;
+            bool ready = seedBar.IsReady(i);
+            bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(seed.cost);
+            float cooldownNormalized = seedBar.GetCooldownNormalized(i);
+
+            card.label.text = seed.label;
+            card.cost.text = ready ? seed.cost.ToString() : $"{seed.cost}  {seedBar.GetCooldownRemaining(i):0.0}s";
+            card.cooldownFill.fillAmount = cooldownNormalized;
+            card.cooldownFill.gameObject.SetActive(cooldownNormalized > 0.001f);
+            card.frame.color = selected ? accentColor : (ready && afford ? panelSoftColor : disabledColor);
+            card.button.interactable = ready && afford;
+        }
+    }
+
+    void RefreshRowButtons()
+    {
+        OverchargeSystem overcharge = OverchargeSystem.Instance;
+        if (overcharge == null) return;
+
+        if (overchargeCostText != null)
+            overchargeCostText.text = $"OC {overcharge.energyCost}";
+
+        for (int i = 0; i < rowButtons.Count; i++)
+        {
+            int row = overcharge.RowCount - 1 - i;
+            RowButton button = rowButtons[i];
+            bool active = overcharge.IsActive(row);
+            bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(overcharge.energyCost);
+            float remaining = overcharge.GetRemaining(row);
+            float fill = overcharge.duration > 0f ? remaining / overcharge.duration : 0f;
+
+            button.label.text = active ? $"{row + 1}: {remaining:0.0}s" : $"{row + 1}: OC";
+            button.fill.fillAmount = Mathf.Clamp01(fill);
+            button.fill.gameObject.SetActive(active);
+            button.frame.color = active ? accentColor : (afford ? panelSoftColor : disabledColor);
+            button.button.interactable = !active && afford;
+        }
+    }
+
+    void RefreshModalState()
+    {
+        if (!modalBuilt) return;
+
+        bool gameOver = GameManager.Instance != null && GameManager.Instance.IsGameOver;
+        bool won = GameManager.Instance != null && GameManager.Instance.IsWon;
+        bool show = isPaused || gameOver || won;
+        modalOverlay.SetActive(show);
+        if (!show) return;
+
+        if (won)
+            modalTitleText.text = "THANG";
+        else if (gameOver)
+            modalTitleText.text = "THUA";
+        else
+            modalTitleText.text = "TAM DUNG";
+
+        var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
+        modalSubtitleText.text = level != null ? level.displayName : "";
         if (level != null)
         {
-            Rect levelRect = new Rect(Screen.width * 0.5f - 110f, 10f, 220f, 24f);
-            GUI.Label(levelRect, level.displayName, smallStyle);
+            bool completed = PlayerProgress.IsLevelCompleted(level);
+            progressText.text = $"Hoan thanh: {(completed ? "Co" : "Chua")}   |   Level cao nhat: {PlayerProgress.HighestCompletedLevel}";
+        }
+        else
+        {
+            progressText.text = "";
+        }
+
+        sfxText.text = $"SFX: {GameSettings.SfxVolume:0.00}";
+        sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume);
+        reduceShakeToggle.SetIsOnWithoutNotify(GameSettings.ReduceShake);
+        vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
+
+        resumeButton.gameObject.SetActive(!gameOver && !won);
+    }
+
+    void RestartLevel()
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    RectTransform CreatePanel(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
+        image.color = color;
+        return (RectTransform)go.transform;
+    }
+
+    Image CreateImage(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
+        image.color = color;
+        return image;
+    }
+
+    TextMeshProUGUI CreateText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor alignment)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        go.transform.SetParent(parent, false);
+        TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
+        label.text = text;
+        label.fontSize = size;
+        label.fontStyle = ToTmpFontStyle(style);
+        label.alignment = ToTmpAlignment(alignment);
+        label.color = Color.white;
+        label.raycastTarget = false;
+        label.enableWordWrapping = true;
+        label.overflowMode = TextOverflowModes.Ellipsis;
+        return label;
+    }
+
+    Button CreateButton(string name, Transform parent, string text, int size, Color normal, Color textColor)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
+        image.color = normal;
+
+        Button button = go.GetComponent<Button>();
+        button.transition = Selectable.Transition.ColorTint;
+        button.colors = BuildButtonColors(normal, accentColor);
+
+        TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
+        label.color = textColor;
+        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+        return button;
+    }
+
+    Slider CreateSlider(string name, Transform parent)
+    {
+        GameObject root = new GameObject(name, typeof(RectTransform), typeof(Slider));
+        root.transform.SetParent(parent, false);
+        Slider slider = root.GetComponent<Slider>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = GameSettings.SfxVolume;
+
+        RectTransform background = CreatePanel("Background", root.transform, new Color(0.23f, 0.27f, 0.32f, 1f));
+        SetAnchor(background, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
+        fillArea.SetParent(root.transform, false);
+        SetAnchor(fillArea, Vector2.zero, Vector2.one, new Vector2(3f, 3f), new Vector2(-3f, -3f));
+
+        Image fill = CreateImage("Fill", fillArea, accentColor);
+        SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        Image handle = CreateImage("Handle", root.transform, Color.white);
+        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-12f, -16f), new Vector2(12f, 16f));
+
+        slider.fillRect = fill.rectTransform;
+        slider.handleRect = handle.rectTransform;
+        slider.targetGraphic = handle;
+        return slider;
+    }
+
+    Toggle CreateToggle(string name, Transform parent, string labelText)
+    {
+        GameObject root = new GameObject(name, typeof(RectTransform), typeof(Toggle));
+        root.transform.SetParent(parent, false);
+        Toggle toggle = root.GetComponent<Toggle>();
+
+        Image box = CreateImage("Box", root.transform, panelSoftColor);
+        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -15f), new Vector2(30f, 15f));
+
+        Image check = CreateImage("Checkmark", box.transform, accentColor);
+        SetAnchor(check.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 6f), new Vector2(-6f, -6f));
+
+        TextMeshProUGUI label = CreateText("Label", root.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(42f, 0f), Vector2.zero);
+
+        toggle.targetGraphic = box;
+        toggle.graphic = check;
+        return toggle;
+    }
+
+    ColorBlock BuildButtonColors(Color normal, Color highlighted)
+    {
+        ColorBlock colors = ColorBlock.defaultColorBlock;
+        colors.normalColor = normal;
+        colors.highlightedColor = Color.Lerp(normal, highlighted, 0.35f);
+        colors.pressedColor = highlighted;
+        colors.selectedColor = Color.Lerp(normal, highlighted, 0.25f);
+        colors.disabledColor = disabledColor;
+        colors.colorMultiplier = 1f;
+        return colors;
+    }
+
+    void SetAnchor(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+    {
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.offsetMin = offsetMin;
+        rect.offsetMax = offsetMax;
+    }
+
+    bool IsScreenPointIn(RectTransform rect, Vector2 screenPoint)
+    {
+        return rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, null);
+    }
+
+    FontStyles ToTmpFontStyle(FontStyle style)
+    {
+        switch (style)
+        {
+            case FontStyle.Bold:
+                return FontStyles.Bold;
+            case FontStyle.Italic:
+                return FontStyles.Italic;
+            case FontStyle.BoldAndItalic:
+                return FontStyles.Bold | FontStyles.Italic;
+            default:
+                return FontStyles.Normal;
         }
     }
 
-    void DrawPausePanel()
+    TextAlignmentOptions ToTmpAlignment(TextAnchor alignment)
     {
-        float width = Mathf.Min(360f, Screen.width - 32f);
-        float height = 300f;
-        panelRect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
-        GUI.Box(panelRect, GUIContent.none, panelStyle);
-
-        GUILayout.BeginArea(new Rect(panelRect.x + 18f, panelRect.y + 16f, panelRect.width - 36f, panelRect.height - 32f));
-
-        GUILayout.Label("PAUSED", titleStyle);
-        DrawLevelProgress();
-
-        GUILayout.Space(12f);
-        GUILayout.Label($"SFX Volume: {GameSettings.SfxVolume:0.00}", smallStyle);
-        float newVolume = GUILayout.HorizontalSlider(GameSettings.SfxVolume, 0f, 1f, GUILayout.Height(28f));
-        if (!Mathf.Approximately(newVolume, GameSettings.SfxVolume))
-            GameSettings.SfxVolume = newVolume;
-
-        GUILayout.Space(8f);
-        GameSettings.ReduceShake = GUILayout.Toggle(GameSettings.ReduceShake, "Reduce shake");
-        GameSettings.VibrationEnabled = GUILayout.Toggle(GameSettings.VibrationEnabled, "Vibration");
-
-        GUILayout.FlexibleSpace();
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Resume", GUILayout.Height(38f)))
-            TogglePause();
-        if (GUILayout.Button("Restart", GUILayout.Height(38f)))
+        switch (alignment)
         {
-            AudioManager.PlaySfx(SfxType.UiClick);
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            case TextAnchor.UpperLeft:
+                return TextAlignmentOptions.TopLeft;
+            case TextAnchor.UpperCenter:
+                return TextAlignmentOptions.Top;
+            case TextAnchor.UpperRight:
+                return TextAlignmentOptions.TopRight;
+            case TextAnchor.MiddleLeft:
+                return TextAlignmentOptions.Left;
+            case TextAnchor.MiddleRight:
+                return TextAlignmentOptions.Right;
+            case TextAnchor.LowerLeft:
+                return TextAlignmentOptions.BottomLeft;
+            case TextAnchor.LowerCenter:
+                return TextAlignmentOptions.Bottom;
+            case TextAnchor.LowerRight:
+                return TextAlignmentOptions.BottomRight;
+            default:
+                return TextAlignmentOptions.Center;
         }
-        GUILayout.EndHorizontal();
-        GUILayout.EndArea();
-    }
-
-    void DrawLevelProgress()
-    {
-        var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
-        if (level == null) return;
-
-        bool completed = PlayerProgress.IsLevelCompleted(level);
-        GUILayout.Label($"{level.displayName}  |  Completed: {(completed ? "Yes" : "No")}", smallStyle);
-        GUILayout.Label($"Highest completed level: {PlayerProgress.HighestCompletedLevel}", smallStyle);
-    }
-
-    void EnsureStyles()
-    {
-        if (titleStyle != null) return;
-
-        titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 24,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter
-        };
-        smallStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 14,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter
-        };
-        panelStyle = new GUIStyle(GUI.skin.box);
     }
 }

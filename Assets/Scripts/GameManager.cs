@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private Lawnmower[] perRow;
     public bool IsGameOver { get; private set; }
     public bool IsWon { get; private set; }
+    public bool showDebugImGui;
     private GUIStyle bigStyle;
 
     void Awake() { Instance = this; }
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
 
     void OnGUI()
     {
+        if (!showDebugImGui) return;
         if (!IsGameOver && !IsWon) return;
 
         if (bigStyle == null)

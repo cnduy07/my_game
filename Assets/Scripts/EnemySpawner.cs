@@ -22,6 +22,7 @@ public class EnemySpawner : MonoBehaviour
     public float timeBetweenWaves = 12f;    // nghỉ giữa các đợt
     public bool useAuthoredWaves = false;
     public LevelWaveDefinition[] authoredWaves;
+    public bool showDebugImGui;
 
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
     Phase phase = Phase.PreStart;
@@ -32,6 +33,12 @@ public class EnemySpawner : MonoBehaviour
     int currentWaveQueueIndex;
     float timer = 0f;
     GUIStyle style;
+
+    public int CurrentWave => currentWave;
+    public int WaveCount => waveCount;
+    public string DisplayText => phase == Phase.Won
+        ? ""
+        : (phase == Phase.PreStart ? "Chuan bi..." : $"Wave {currentWave}/{waveCount}");
 
     void Awake()
     {
@@ -221,9 +228,10 @@ public class EnemySpawner : MonoBehaviour
 
     void OnGUI()
     {
+        if (!showDebugImGui) return;
         if (phase == Phase.Won) return;
 
-        string txt = (phase == Phase.PreStart) ? "Chuẩn bị..." : $"Wave {currentWave}/{waveCount}";
+        string txt = DisplayText;
         if (style == null)
             style = new GUIStyle(GUI.skin.label)
             { fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperRight };

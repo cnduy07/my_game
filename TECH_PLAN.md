@@ -25,6 +25,7 @@ Scripts chinh:
 - `GameBalance`: central runtime config cho unit/enemy/energy/wave/Overcharge.
 - `CombatVfx`: code-generated prototype VFX cho muzzle/hit/death/pulse.
 - `DamageFeedback`: auto flash/shake khi `Health` nhan damage.
+- `GameUiController`: runtime HUD bang uGUI/TextMeshPro; tao Canvas/EventSystem, seed tray, overcharge panel, pause/win/lose modal.
 
 ---
 
@@ -122,13 +123,43 @@ Contract:
 - Gan tren `GameSystems`.
 - Ton `energyCost` de buff mot row trong `duration` giay.
 - Shooter cung row doc multiplier qua `OverchargeSystem.FireRateMultiplierForRow(row)` va `DamageMultiplierForRow(row)`.
-- UI tam thoi la IMGUI nut `OC` ben phai va phim so 1-5.
+- UI runtime nam trong `GameUiController` bang uGUI; phim so 1-5 van hoat dong.
 
 Can tuning sau Play Mode:
 - energyCost
 - duration
 - fireRateMultiplier
 - damageMultiplier
+
+---
+
+## 7.5 Runtime UI/HUD
+
+Quyet dinh hien tai:
+- Dung **uGUI Canvas + CanvasScaler + TextMeshPro** cho gameplay HUD.
+- Khong tiep tuc dung IMGUI cho UI nguoi choi; cac `OnGUI` cu chi giu lai sau flag `showDebugImGui` de debug nhanh.
+- UI Toolkit co the dung sau nay cho editor tools/custom inspectors, khong phai gameplay HUD chinh luc nay.
+
+Contract:
+- `GameUiController` tren `GameSystems` tu tao `RuntimeHUD` Canvas va `EventSystem` neu scene chua co.
+- `EnergySystem` chi quan ly energy, HUD doc `EnergySystem.Instance.Energy`.
+- `SeedBar` chi quan ly selected seed/cost/cooldown, HUD goi `SelectSeed`.
+- `OverchargeSystem` chi quan ly row timers, HUD goi `TryActivate(row)`.
+- `EnemySpawner` expose `DisplayText` cho wave label.
+- `GameManager` expose win/lose state, HUD hien modal va restart scene.
+- `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
+
+Layout v1:
+- Top status bar: energy ben trai, level giua, wave ben phai, pause sat phai.
+- Seed tray: nam duoi man hinh de hop mobile/touch, moi card co selected/disabled/cooldown state.
+- Overcharge panel: ben phai, tach khoi pause/wave.
+- Modal: pause/win/lose + settings co ban.
+
+Can polish sau:
+- Safe area/notch cho mobile that.
+- Icon seed/unit, icon energy, icon pause/resume thay chu.
+- Prefab/skin UI rieng khi co art direction.
+- Test touch target tren dien thoai, toi thieu ~44px CSS-equivalent / 7-9mm.
 
 ---
 

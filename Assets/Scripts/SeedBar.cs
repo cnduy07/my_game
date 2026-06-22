@@ -12,13 +12,14 @@ public class UnitType
 
 // Gắn vào object "GameSystems".
 // Thanh chọn loại unit (seed packet). Mỗi loại có giá + cooldown riêng.
-// Vẽ nút bằng IMGUI. PlacementController hỏi SeedBar.Instance để biết đang chọn gì.
+// Runtime HUD đọc trạng thái qua API public bên dưới.
 public class SeedBar : MonoBehaviour
 {
     public static SeedBar Instance { get; private set; }
 
     public UnitType[] seeds;
     public int selectedIndex = -1;
+    public bool showDebugImGui;
 
     private float[] cdTimer;
 
@@ -43,7 +44,33 @@ public class SeedBar : MonoBehaviour
     public UnitType Selected =>
         (seeds != null && selectedIndex >= 0 && selectedIndex < seeds.Length) ? seeds[selectedIndex] : null;
 
-    bool IsReady(int i) => i >= 0 && i < cdTimer.Length && cdTimer[i] <= 0f;
+    public int SeedCount => seeds != null ? seeds.Length : 0;
+
+    public UnitType GetSeed(int i)
+    {
+        return seeds != null && i >= 0 && i < seeds.Length ? seeds[i] : null;
+    }
+
+    public bool IsReady(int i) => i >= 0 && i < cdTimer.Length && cdTimer[i] <= 0f;
+
+    public float GetCooldownRemaining(int i)
+    {
+        return i >= 0 && i < cdTimer.Length ? Mathf.Max(0f, cdTimer[i]) : 0f;
+    }
+
+    public float GetCooldownNormalized(int i)
+    {
+        UnitType seed = GetSeed(i);
+        if (seed == null || seed.cooldown <= 0f) return 0f;
+        return Mathf.Clamp01(GetCooldownRemaining(i) / seed.cooldown);
+    }
+
+    public void SelectSeed(int i)
+    {
+        if (seeds == null || i < 0 || i >= seeds.Length) return;
+        selectedIndex = i;
+        AudioManager.PlaySfx(SfxType.UiClick);
+    }
 
     // PlacementController gọi trước khi đặt: phải có chọn seed, hết cooldown, đủ năng lượng.
     public bool CanPlaceSelected()
@@ -65,12 +92,12 @@ public class SeedBar : MonoBehaviour
     // Chặn click "đặt unit" khi con trỏ đang nằm trên thanh seed (tránh vừa bấm nút vừa đặt).
     public bool PointerOverBar(float guiX, float guiY)
     {
-        if (seeds == null) return false;
-        return new Rect(0, 44, 10 + seeds.Length * 130, 62).Contains(new Vector2(guiX, guiY));
+        return GameUiController.Instance != null && GameUiController.Instance.PointerOverPanel(guiX, guiY);
     }
 
     void OnGUI()
     {
+        if (!showDebugImGui) return;
         if (seeds == null) return;
         for (int i = 0; i < seeds.Length; i++)
         {
@@ -85,8 +112,7 @@ public class SeedBar : MonoBehaviour
             GUI.color = (i == selectedIndex) ? Color.cyan : Color.white;
             if (GUI.Button(r, label))
             {
-                selectedIndex = i;
-                AudioManager.PlaySfx(SfxType.UiClick);
+                SelectSeed(i);
             }
             GUI.color = Color.white;
             GUI.enabled = true;

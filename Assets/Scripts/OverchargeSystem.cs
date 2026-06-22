@@ -11,6 +11,7 @@ public class OverchargeSystem : MonoBehaviour
     public float duration = 6f;
     public float fireRateMultiplier = 1.6f;
     public float damageMultiplier = 1.25f;
+    public bool showDebugImGui;
 
     private float[] timers;
     private GUIStyle activeStyle;
@@ -26,12 +27,12 @@ public class OverchargeSystem : MonoBehaviour
         if (GameBalance.Instance != null)
             GameBalance.Instance.ApplyOverchargeSystem(this);
 
-        int rowCount = grid != null ? grid.rows : 5;
-        timers = new float[rowCount];
+        EnsureTimers();
     }
 
     void Update()
     {
+        EnsureTimers();
         if (timers == null) return;
 
         for (int i = 0; i < timers.Length; i++)
@@ -56,8 +57,20 @@ public class OverchargeSystem : MonoBehaviour
         return sys.damageMultiplier;
     }
 
-    bool IsActive(int row)
+    public int RowCount
+    {
+        get
+        {
+            EnsureTimers();
+            return timers != null ? timers.Length : 0;
+        }
+    }
+
+    public bool IsActive(int row)
         => timers != null && row >= 0 && row < timers.Length && timers[row] > 0f;
+
+    public float GetRemaining(int row)
+        => timers != null && row >= 0 && row < timers.Length ? Mathf.Max(0f, timers[row]) : 0f;
 
     public void ApplyBalance(int newEnergyCost, float newDuration, float newFireRateMultiplier, float newDamageMultiplier)
     {
@@ -69,16 +82,12 @@ public class OverchargeSystem : MonoBehaviour
 
     public bool PointerOverPanel(float guiX, float guiY)
     {
-        if (timers == null) return false;
-
-        float x = Screen.width - 118f;
-        float y = 22f;
-        float h = 34f * timers.Length + 44f;
-        return guiX >= x && guiX <= x + 110f && guiY >= y && guiY <= y + h;
+        return GameUiController.Instance != null && GameUiController.Instance.PointerOverPanel(guiX, guiY);
     }
 
-    void TryActivate(int row)
+    public void TryActivate(int row)
     {
+        EnsureTimers();
         if (timers == null || row < 0 || row >= timers.Length) return;
         if (IsActive(row)) return;
         if (EnergySystem.Instance == null || !EnergySystem.Instance.TrySpend(energyCost)) return;
@@ -89,6 +98,7 @@ public class OverchargeSystem : MonoBehaviour
 
     void OnGUI()
     {
+        if (!showDebugImGui) return;
         if (timers == null) return;
 
         if (activeStyle == null)
@@ -109,5 +119,19 @@ public class OverchargeSystem : MonoBehaviour
             if (GUI.Button(rect, text, active ? activeStyle : inactiveStyle))
                 TryActivate(row);
         }
+    }
+
+    void EnsureTimers()
+    {
+        int rowCount = grid != null ? grid.rows : 5;
+        if (timers != null && timers.Length == rowCount) return;
+
+        float[] previous = timers;
+        timers = new float[rowCount];
+        if (previous == null) return;
+
+        int copyCount = Mathf.Min(previous.Length, timers.Length);
+        for (int i = 0; i < copyCount; i++)
+            timers[i] = previous[i];
     }
 }

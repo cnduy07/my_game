@@ -202,6 +202,10 @@ Audio sourcing note:
 
 ## 7. UI Art
 
+Runtime hien tai:
+- HUD da chuyen sang uGUI/TextMeshPro code-generated trong `GameUiController`.
+- Day la UI runtime that de gameplay dung duoc, nhung visual art van can polish bang icon/sprite rieng.
+
 Can co:
 - Seed packet icons.
 - Cooldown overlay.
@@ -210,6 +214,8 @@ Can co:
 - Pause button.
 - Win/Game Over panels.
 - Main menu sau vertical slice.
+- Icon/skin cho Overcharge row buttons.
+- Pause/settings modal background + button states.
 
 Can them cho mobile release:
 - Touch-friendly seed bar.

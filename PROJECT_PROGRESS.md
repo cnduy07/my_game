@@ -180,6 +180,18 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - `DamageFeedback` nhan `GameSettings.ReduceShake`.
 - AI QA check them `GameUiController`; balance report hien authored wave summary.
 
+### Runtime HUD rebuild — uGUI/TextMeshPro — 2026-06-22
+- Quyet dinh: dung **uGUI Canvas + CanvasScaler + TextMeshPro** cho runtime HUD thay cho IMGUI. UI Toolkit de danh cho editor/tooling sau nay, khong dung lam gameplay HUD chinh luc nay.
+- `GameUiController` duoc rebuild thanh runtime HUD builder:
+  - top status bar: energy, level name, wave status, pause button;
+  - seed tray nam phia duoi, co selected/disabled/cooldown overlay;
+  - overcharge panel tach ben phai, khong con de len pause/wave;
+  - modal pause/win/lose gom SFX slider, reduce shake, vibration, resume, restart.
+- `EnergySystem`, `SeedBar`, `OverchargeSystem`, `EnemySpawner`, `GameManager` van giu `OnGUI` nhung chi chay khi bat `showDebugImGui`; mac dinh tat de khong con UI chong cheo.
+- `SeedBar`, `OverchargeSystem`, `EnemySpawner` expose API nho de HUD doc state va goi action thay vi tu ve UI trong tung script.
+- `GameUiController` tu tao `EventSystem` neu scene chua co, va `PlacementController` van hoi `PointerOverPanel` de chan click UI xuyen xuong board.
+- **Can verify trong Unity:** mo scene, Play, xem HUD moi co hien; click seed khong dat unit xuyen; cooldown hien dung; OC button hoat dong; pause/resume/restart; win/lose modal; SFX slider/reduce shake con luu dung.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).
