@@ -166,6 +166,10 @@ Layout v1:
 - Top status bar: energy ben trai, level giua, wave ben phai, pause sat phai.
 - Seed tray: nam duoi man hinh de hop mobile/touch, moi card co selected/disabled/cooldown state.
 - Overcharge panel: ben phai, tach khoi pause/wave.
+- OC row buttons double as lane pressure indicators:
+  - `EnemyMover.CountInRow` va `EnemyMover.LanePressure01` tinh enemy count/proximity theo row;
+  - row button hien `{row}: {count} threat` khi co enemy va chua active;
+  - threat fill cam/do khong thay doi combat, chi tang readability.
 - Modal: pause/win/lose. Settings chi hien trong Pause; Victory/Defeat uu tien progress/reward/result actions.
 - Campaign map: hien mission node/status/detail tu `LevelDefinition`, enemy mix/tool recommendation tu `CampaignIntel`, va deploy action rieng sau khi select node.
 

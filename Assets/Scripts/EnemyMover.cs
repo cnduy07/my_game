@@ -155,6 +155,40 @@ public class EnemyMover : MonoBehaviour
     public float CurrentX => transform.position.x;
     public static int ActiveOrDyingCount => activeOrDyingCount;
 
+    public static int CountInRow(int row)
+    {
+        int count = 0;
+        foreach (EnemyMover enemy in All)
+            if (enemy != null && enemy.row == row)
+                count++;
+
+        return count;
+    }
+
+    public static float LanePressure01(int row, GridManager grid)
+    {
+        if (grid == null) return 0f;
+
+        float leftEdge = grid.origin.x - grid.cellSize * 0.5f;
+        float rightEdge = grid.origin.x + (grid.cols - 1) * grid.cellSize;
+        float pressure = 0f;
+        int count = 0;
+
+        foreach (EnemyMover enemy in All)
+        {
+            if (enemy == null || enemy.row != row) continue;
+
+            count++;
+            float enemyPressure = Mathf.InverseLerp(rightEdge, leftEdge, enemy.CurrentX);
+            pressure = Mathf.Max(pressure, enemyPressure);
+        }
+
+        if (count > 1)
+            pressure += Mathf.Min(0.35f, (count - 1) * 0.08f);
+
+        return Mathf.Clamp01(pressure);
+    }
+
     void EnsureTraits()
     {
         if (traits == null)

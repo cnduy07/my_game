@@ -84,6 +84,16 @@ public class OverchargeSystem : MonoBehaviour
     public float GetRemaining(int row)
         => timers != null && row >= 0 && row < timers.Length ? Mathf.Max(0f, timers[row]) : 0f;
 
+    public int EnemyCountInRow(int row)
+    {
+        return EnemyMover.CountInRow(row);
+    }
+
+    public float LanePressure01(int row)
+    {
+        return EnemyMover.LanePressure01(row, grid);
+    }
+
     public void ApplyBalance(int newEnergyCost, float newDuration, float newFireRateMultiplier, float newDamageMultiplier)
     {
         energyCost = Mathf.Max(0, newEnergyCost);

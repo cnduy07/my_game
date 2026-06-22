@@ -40,6 +40,7 @@ Upgrade Coreline Defense from a functional lane-defense prototype into a tactica
 - Done: replaced mission list implementation with campaign map nodes, route lines, mission detail panel, and explicit deploy action.
 - Done: added gameplay wave intel HUD fed by `EnemySpawner.WaveIntelText`.
 - Done: added gameplay command feedback strip for placement and Overcharge.
+- Done: added OC lane pressure indicators from live enemy rows.
 - Done: expanded balance report with campaign-wide pressure/mix/tool summaries.
 - Done: expanded AI QA with campaign map/catalog checks and campaign intel validations.
 - Done: updated `PROJECT_PROGRESS.md`, `TASKS.md`, `TECH_PLAN.md`, `PROJECT_CONTEXT.md`, and `CONTENT_PLAN.md`.

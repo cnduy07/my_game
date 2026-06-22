@@ -232,6 +232,10 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - selected seed status khi san sang dat;
   - thong bao thieu energy/cooldown/o bi chan/o da co unit;
   - thong bao Overcharge locked/thieu energy/row da active/activate thanh cong.
+- Them lane pressure readability tren OC panel:
+  - row button hien enemy count khi co threat;
+  - threat fill cam/do tinh theo enemy gan coreline va so luong trong lane;
+  - khong thay doi combat stat/rule.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.

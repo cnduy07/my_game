@@ -104,6 +104,7 @@ public class GameUiController : MonoBehaviour
     {
         public Button button;
         public Image frame;
+        public Image threatFill;
         public Image fill;
         public TextMeshProUGUI label;
     }
@@ -587,6 +588,12 @@ public class GameUiController : MonoBehaviour
                     OverchargeSystem.Instance.TryActivate(rowIndex);
             });
 
+            Image threatFill = CreateImage("ThreatFill", go.transform, new Color(1f, 0.42f, 0.14f, 0.28f));
+            threatFill.type = Image.Type.Filled;
+            threatFill.fillMethod = Image.FillMethod.Horizontal;
+            threatFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            SetAnchor(threatFill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
             Image fill = CreateImage("ActiveFill", go.transform, new Color(0.1f, 0.85f, 1f, 0.35f));
             fill.type = Image.Type.Filled;
             fill.fillMethod = Image.FillMethod.Horizontal;
@@ -596,7 +603,7 @@ public class GameUiController : MonoBehaviour
             TextMeshProUGUI label = CreateText("Label", go.transform, "", 19, FontStyle.Bold, TextAnchor.MiddleCenter);
             SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
 
-            rowButtons.Add(new RowButton { button = button, frame = frame, fill = fill, label = label });
+            rowButtons.Add(new RowButton { button = button, frame = frame, threatFill = threatFill, fill = fill, label = label });
         }
     }
 
@@ -815,11 +822,28 @@ public class GameUiController : MonoBehaviour
             bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(overcharge.energyCost);
             float remaining = overcharge.GetRemaining(row);
             float fill = overcharge.duration > 0f ? remaining / overcharge.duration : 0f;
+            int enemyCount = overcharge.EnemyCountInRow(row);
+            float pressure = overcharge.LanePressure01(row);
 
-            button.label.text = active ? $"{row + 1}: {remaining:0.0}s" : $"{row + 1}: OC";
+            if (active)
+                button.label.text = $"{row + 1}: {remaining:0.0}s";
+            else if (enemyCount > 0)
+                button.label.text = $"{row + 1}: {enemyCount} threat";
+            else
+                button.label.text = $"{row + 1}: OC";
+
+            if (button.threatFill != null)
+            {
+                button.threatFill.fillAmount = pressure;
+                button.threatFill.color = pressure >= 0.65f
+                    ? new Color(1f, 0.24f, 0.12f, 0.38f)
+                    : new Color(1f, 0.62f, 0.14f, 0.24f);
+                button.threatFill.gameObject.SetActive(pressure > 0.01f && !active);
+            }
+
             button.fill.fillAmount = Mathf.Clamp01(fill);
             button.fill.gameObject.SetActive(active);
-            button.frame.color = active ? accentColor : (afford ? panelSoftColor : disabledColor);
+            button.frame.color = active ? accentColor : (pressure >= 0.65f ? warningColor : (afford ? panelSoftColor : disabledColor));
             button.button.interactable = !active && afford;
         }
     }

@@ -23,10 +23,12 @@ public static class AiQaReportRunner
         CombatVfxSettings vfxSettings = UnityEngine.Object.FindAnyObjectByType<CombatVfxSettings>(FindObjectsInactive.Include);
         TutorialCoach tutorialCoach = UnityEngine.Object.FindAnyObjectByType<TutorialCoach>(FindObjectsInactive.Include);
         RuntimeQualitySettings runtimeQuality = UnityEngine.Object.FindAnyObjectByType<RuntimeQualitySettings>(FindObjectsInactive.Include);
+        OverchargeSystem overcharge = UnityEngine.Object.FindAnyObjectByType<OverchargeSystem>(FindObjectsInactive.Include);
 
         CheckGameBalance(balance, checks);
         CheckLevelManager(levelManager, balance, checks);
         CheckUi(ui, checks);
+        CheckOvercharge(overcharge, checks);
         CheckRuntimeFoundations(vfxSettings, tutorialCoach, runtimeQuality, checks);
         CheckAudio(audio, checks);
         CheckPrefabs(balance, checks);
@@ -46,6 +48,22 @@ public static class AiQaReportRunner
 
         if (!ui.enabled)
             checks.Add(CheckResult.Fail("UI", "GameUiController is disabled."));
+    }
+
+    static void CheckOvercharge(OverchargeSystem overcharge, List<CheckResult> checks)
+    {
+        if (overcharge == null)
+        {
+            checks.Add(CheckResult.Warn("Overcharge", "No OverchargeSystem found in loaded scene."));
+            return;
+        }
+
+        if (overcharge.grid == null)
+            checks.Add(CheckResult.Warn("Overcharge", "OverchargeSystem has no grid reference; lane pressure UI will stay inactive."));
+        if (overcharge.energyCost < 0)
+            checks.Add(CheckResult.Fail("Overcharge", "Energy cost cannot be negative."));
+        if (overcharge.duration <= 0f)
+            checks.Add(CheckResult.Fail("Overcharge", "Duration must be above 0."));
     }
 
     static void EnsureSceneLoaded()

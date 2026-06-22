@@ -155,6 +155,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `PlacementController` co feedback khi click sai/khong du energy/cooldown/o bi chan/o da co unit;
   - `OverchargeSystem` co feedback khi locked/khong du energy/row active/activate thanh cong;
   - HUD co command status strip phia tren seed tray, tu an khi pause/win/lose.
+- Lane pressure readability pass:
+  - `EnemyMover` expose enemy count/pressure theo row;
+  - OC row buttons hien threat count/fill de quyet dinh lane nao can Overcharge;
+  - AI QA warning neu `OverchargeSystem` thieu grid reference.
 
 ---
 
