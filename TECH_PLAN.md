@@ -428,7 +428,7 @@ AI QA v1 hien co:
 - Menu: `Tools > AI QA > Run Full Check`.
 - Batchmode method: `AiQaReportRunner.RunFullCheck`.
 - Output: `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
-- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity.
+- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract, `LevelCatalog` integrity, Build Settings enabled scene, PlayerSettings metadata, va orphan/duplicate `LevelDefinition` assets.
 
 ---
 

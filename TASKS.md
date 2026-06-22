@@ -134,6 +134,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `PlayerProgress` co save version;
   - completed count khong tang lai khi replay level cu;
   - selected/highest completed behavior giu nguyen.
+- AI QA release-readiness expansion:
+  - QA report check Build Settings enabled scene;
+  - QA report check productName/bundleVersion placeholder;
+  - QA report check duplicate/missing catalog level assets.
 
 ---
 

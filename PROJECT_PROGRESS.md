@@ -328,6 +328,14 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - `MarkLevelCompleted` khong tang duplicate count neu replay level da clear.
 - Muc tieu: chuan bi cho campaign/unlock/reward sau nay ma khong phai reset progress nguoi choi khi save schema lon hon.
 
+### AI QA release-readiness expansion — 2026-06-22
+- `AiQaReportRunner` ngoai gameplay/prefab checks nay kiem tra them:
+  - Build Settings co enabled scene va co `Assets/Scenes/SampleScene.unity`;
+  - `PlayerSettings.productName`/`bundleVersion` co gia tri hop le toi thieu;
+  - tat ca `LevelDefinition` assets trong `Assets/Levels` co id khong trung;
+  - level asset nam ngoai `LevelCatalog` se canh bao.
+- Muc tieu: giam loi cau hinh khi bat dau build Android/iOS dev build.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

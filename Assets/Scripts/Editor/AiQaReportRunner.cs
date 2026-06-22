@@ -31,6 +31,7 @@ public static class AiQaReportRunner
         CheckAudio(audio, checks);
         CheckPrefabs(balance, checks);
         CheckAnimatorContracts(balance, checks);
+        CheckProjectReadiness(levelManager, checks);
 
         WriteReports(balance, checks);
     }
@@ -330,6 +331,69 @@ public static class AiQaReportRunner
             if (parameter.name == name)
                 return true;
         return false;
+    }
+
+    static void CheckProjectReadiness(LevelManager levelManager, List<CheckResult> checks)
+    {
+        CheckBuildScenes(checks);
+        CheckPlayerMetadata(checks);
+        CheckLevelAssets(levelManager != null ? levelManager.levelCatalog : null, checks);
+    }
+
+    static void CheckBuildScenes(List<CheckResult> checks)
+    {
+        bool hasEnabledScene = false;
+        bool hasDefaultScene = false;
+
+        foreach (var scene in EditorBuildSettings.scenes)
+        {
+            if (!scene.enabled) continue;
+            hasEnabledScene = true;
+            if (string.Equals(scene.path, DefaultScenePath, StringComparison.OrdinalIgnoreCase))
+                hasDefaultScene = true;
+        }
+
+        if (!hasEnabledScene)
+            checks.Add(CheckResult.Fail("Build", "No enabled scenes in Build Settings."));
+        else if (!hasDefaultScene)
+            checks.Add(CheckResult.Warn("Build", $"{DefaultScenePath} is not enabled in Build Settings."));
+    }
+
+    static void CheckPlayerMetadata(List<CheckResult> checks)
+    {
+        if (string.IsNullOrWhiteSpace(PlayerSettings.productName))
+            checks.Add(CheckResult.Fail("Build", "PlayerSettings.productName is empty."));
+        else if (string.Equals(PlayerSettings.productName, "my_game", StringComparison.OrdinalIgnoreCase))
+            checks.Add(CheckResult.Warn("Build", "PlayerSettings.productName still looks like a project placeholder."));
+
+        if (string.IsNullOrWhiteSpace(PlayerSettings.bundleVersion))
+            checks.Add(CheckResult.Warn("Build", "PlayerSettings.bundleVersion is empty."));
+    }
+
+    static void CheckLevelAssets(LevelCatalog catalog, List<CheckResult> checks)
+    {
+        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var catalogLevels = new HashSet<LevelDefinition>();
+        if (catalog != null && catalog.levels != null)
+        {
+            foreach (LevelDefinition level in catalog.levels)
+                if (level != null)
+                    catalogLevels.Add(level);
+        }
+
+        string[] guids = AssetDatabase.FindAssets("t:LevelDefinition", new[] { "Assets/Levels" });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            LevelDefinition level = AssetDatabase.LoadAssetAtPath<LevelDefinition>(path);
+            if (level == null) continue;
+
+            if (!string.IsNullOrWhiteSpace(level.levelId) && !ids.Add(level.levelId))
+                checks.Add(CheckResult.Fail("Level", $"Duplicate LevelDefinition asset id '{level.levelId}' at {path}."));
+
+            if (catalog != null && !catalogLevels.Contains(level))
+                checks.Add(CheckResult.Warn("Level", $"{path} is not included in LevelCatalog."));
+        }
     }
 
     static void WriteReports(GameBalance balance, List<CheckResult> checks)
