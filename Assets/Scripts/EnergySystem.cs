@@ -25,6 +25,12 @@ public class EnergySystem : MonoBehaviour
         Energy = startEnergy;
     }
 
+    void Start()
+    {
+        if (GameBalance.Instance != null)
+            GameBalance.Instance.ApplyEnergySystem(this);
+    }
+
     void Update()
     {
         skyTimer += Time.deltaTime;
@@ -54,6 +60,19 @@ public class EnergySystem : MonoBehaviour
     }
 
     public void Add(int amount) => Energy += amount;
+
+    public void ApplyBalance(int newStartEnergy, int newSkyOrbValue, float newSkyInterval, bool resetEnergy = true)
+    {
+        startEnergy = Mathf.Max(0, newStartEnergy);
+        skyOrbValue = Mathf.Max(0, newSkyOrbValue);
+        skyInterval = Mathf.Max(0.1f, newSkyInterval);
+
+        if (resetEnergy)
+        {
+            Energy = startEnergy;
+            skyTimer = 0f;
+        }
+    }
 
     public bool CanAfford(int cost) => Energy >= cost;
 

@@ -28,6 +28,12 @@ public class SeedBar : MonoBehaviour
         cdTimer = new float[seeds != null ? seeds.Length : 0];
     }
 
+    void Start()
+    {
+        if (GameBalance.Instance != null)
+            GameBalance.Instance.ApplySeedBar(this);
+    }
+
     void Update()
     {
         for (int i = 0; i < cdTimer.Length; i++)

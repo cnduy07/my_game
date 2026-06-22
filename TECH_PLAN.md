@@ -22,6 +22,7 @@ Scripts chinh:
 - `GameManager`: lawnmower, win/lose.
 - `BombUnit`: EMP bomb.
 - `Lawnmower`: tuyen cuu cuoi.
+- `GameBalance`: central runtime config cho unit/enemy/energy/wave/Overcharge.
 
 ---
 
@@ -129,9 +130,27 @@ Can tuning sau Play Mode:
 
 ---
 
-## 8. Data Architecture de xuat
+## 8. Data Architecture
 
-Hien tai nhieu stats nam trong prefab Inspector. Khi gameplay on dinh, nen tach ra:
+Hien tai stats gameplay chinh da duoc gom ve `GameBalance` tren object `GameSystems` trong `SampleScene`.
+
+Contract hien tai:
+- Prefab giu default saner values.
+- Khi Play Mode, `GameBalance` apply cac stats chinh vao `SeedBar`, placed unit, spawned enemy, `EnergySystem`, `EnemySpawner`, va `OverchargeSystem`.
+- Khi edit `GameBalance` trong Play Mode, `OnValidate` goi runtime tuning de day thay doi sang `OverchargeSystem` va object dang song co `BalanceIdentity`.
+- Live tuning khong refill current HP; neu tang/giam maxHealth giua Play Mode thi object dang song chi clamp current HP.
+- Neu chi tune gameplay, uu tien sua `GameSystems > GameBalance` thay vi sua tung prefab.
+- Neu sua visual/reference/rig/MuzzlePoint thi van sua prefab.
+
+Dang gom trong `GameBalance`:
+- Unit: label, prefab, cost, cooldown, maxHealth, deathAnimTime.
+- Shooter: fireInterval, bulletSpeed, bulletDamage, bulletSlowFactor, bulletSlowDuration.
+- ArcReactor: energyAmount, energyInterval.
+- DroneEMP: empFuse, empRadius, empDamage.
+- Enemy: maxHealth, deathAnimTime, speed, attackDamage, attackSfxInterval.
+- Global: startEnergy, sky orb, wave setup, Overcharge cost/duration/multipliers.
+
+Buoc nang cap sau, khi co nhieu level, nen tach tiep thanh:
 
 ### UnitDefinition ScriptableObject
 - label

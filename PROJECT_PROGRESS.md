@@ -108,9 +108,24 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **Đã làm trong Unity:** chỉnh animation cho Unit; thêm rig cho SnowGun; thêm Animator cho SnowGun và dùng chung controller của Unit.
 - **Đã test OK:** Rail Cannon hoạt động; Overcharge hoạt động và có trừ energy.
 - **Cần tuning:** Overcharge hiện chưa làm tốc độ bắn tăng đủ rõ; cần tăng `fireRateMultiplier` hoặc giảm `energyCost`/tăng `duration` sau khi test thêm.
-- **Audio:** project chưa có audio asset; cần tải/gán SFX vào `AudioManager.clips`.
+- **Audio trước khi import:** project chưa có audio asset; sau đó đã thêm Kenney SFX và gán clips trong `AudioManager`.
 - **Audio bugfix:** clips trong `AudioManager` từng bị serialize với `volume/pitch = 0` nên im lặng; đã thêm default guard và chỉnh scene về volume 1.
 - **Audio hooks thêm:** click seed packet, đặt unit thành công, enemy đánh unit/bunker theo interval.
+
+### Audio + central balance config — 2026-06-22
+- **Đã commit audio/gameplay polish:** Kenney SFX + license, `AudioManager` hooks, MuzzlePoint, Rail Cannon, Overcharge.
+- **Central config:** thêm `GameBalance.cs` trên object `GameSystems` trong `SampleScene`.
+- `GameBalance` hiện là nơi tune chính cho:
+  - unit seed label/cost/cooldown/hp/death time;
+  - shooter fire interval, bullet speed/damage/slow;
+  - ArcReactor energy amount/interval;
+  - DroneEMP fuse/radius/damage;
+  - enemy hp/speed/attackDamage/attackSfxInterval/death time;
+  - start energy, sky orb, wave setup, Overcharge.
+- Runtime sẽ apply config khi game chạy: `SeedBar`, `PlacementController`, `EnemySpawner`, `EnergySystem`, `OverchargeSystem` đọc từ `GameBalance` nếu có.
+- Prefab vẫn giữ default để không bị phụ thuộc cứng; khi Play Mode thì `GameBalance` thắng các số gameplay chính.
+- **Cần verify trong Unity:** mở `GameSystems > GameBalance`, test 1-2 wave, chỉnh thử `overchargeFireRateMultiplier` hoặc `Turret.fireInterval` để xác nhận config đang có hiệu lực.
+- **Runtime tuning fix:** chỉnh field trên `GameBalance` trong Play Mode sẽ apply lại cho `OverchargeSystem`, seed/energy/wave config, và các unit/enemy runtime có `BalanceIdentity`; máu hiện tại không bị refill khi live-tune.
 
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.

@@ -63,6 +63,13 @@ public class Health : MonoBehaviour
 
     public bool IsAlive => !dead;
 
+    public void SetMaxHealth(float value, bool refill)
+    {
+        maxHealth = Mathf.Max(1f, value);
+        current = refill ? maxHealth : Mathf.Min(current, maxHealth);
+        Changed?.Invoke(this);
+    }
+
     public float Current => current;
 
     // Tỉ lệ máu còn lại 0..1 (cho DamageStages đổi sprite theo máu).

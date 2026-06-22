@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 53209491}
   - component: {fileID: 53209492}
   - component: {fileID: 53209493}
+  - component: {fileID: 53209494}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -338,6 +339,128 @@ MonoBehaviour:
   duration: 6
   fireRateMultiplier: 1.6
   damageMultiplier: 1.25
+--- !u!114 &53209494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5bb2b8e4234e7db4a1cc7e2b5f72ac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameBalance
+  units:
+  - label: ArcReactor
+    prefab: {fileID: 4599616862578025363, guid: 215ccb953a568483c886d8f40e4d2965, type: 3}
+    cost: 50
+    cooldown: 5
+    maxHealth: 100
+    deathAnimTime: 0.8
+    fireInterval: 1.2
+    bulletSpeed: 6
+    bulletDamage: 25
+    bulletSlowFactor: 1
+    bulletSlowDuration: 0
+    energyAmount: 25
+    energyInterval: 5
+    empFuse: 1.2
+    empRadius: 1.5
+    empDamage: 1000
+  - label: Turret
+    prefab: {fileID: 4599616862578025363, guid: f470b2310c119472da8ed7130b5bebcd, type: 3}
+    cost: 100
+    cooldown: 5
+    maxHealth: 100
+    deathAnimTime: 1
+    fireInterval: 1.2
+    bulletSpeed: 6
+    bulletDamage: 25
+    bulletSlowFactor: 1
+    bulletSlowDuration: 0
+    energyAmount: 25
+    energyInterval: 5
+    empFuse: 1.2
+    empRadius: 1.5
+    empDamage: 1000
+  - label: Bunker
+    prefab: {fileID: 4599616862578025363, guid: 9e7466b1bb1874ff8b4aefb743b83510, type: 3}
+    cost: 50
+    cooldown: 5
+    maxHealth: 400
+    deathAnimTime: 0.2
+    fireInterval: 1.2
+    bulletSpeed: 6
+    bulletDamage: 25
+    bulletSlowFactor: 1
+    bulletSlowDuration: 0
+    energyAmount: 25
+    energyInterval: 5
+    empFuse: 1.2
+    empRadius: 1.5
+    empDamage: 1000
+  - label: SnowGun
+    prefab: {fileID: 4599616862578025363, guid: 26d6927b7b2544836a66681b3d5510db, type: 3}
+    cost: 175
+    cooldown: 8
+    maxHealth: 100
+    deathAnimTime: 0.8
+    fireInterval: 1.2
+    bulletSpeed: 6
+    bulletDamage: 25
+    bulletSlowFactor: 0.5
+    bulletSlowDuration: 3
+    energyAmount: 25
+    energyInterval: 5
+    empFuse: 1.2
+    empRadius: 1.5
+    empDamage: 1000
+  - label: DroneEMP
+    prefab: {fileID: 4599616862578025363, guid: 0ea47f3611385498fb8ac9e2233b7c10, type: 3}
+    cost: 150
+    cooldown: 30
+    maxHealth: 100
+    deathAnimTime: 0.8
+    fireInterval: 1.2
+    bulletSpeed: 6
+    bulletDamage: 25
+    bulletSlowFactor: 1
+    bulletSlowDuration: 0
+    energyAmount: 25
+    energyInterval: 5
+    empFuse: 1.2
+    empRadius: 1.5
+    empDamage: 1000
+  enemies:
+  - label: Enemy
+    prefab: {fileID: 6305580585309829948, guid: 4e174d0ae721b4d2bb2042abb5d08b24, type: 3}
+    maxHealth: 100
+    deathAnimTime: 0.4
+    speed: 0.3
+    attackDamage: 25
+    attackSfxInterval: 1.1
+  - label: ArmorEnemy
+    prefab: {fileID: 6305580585309829948, guid: df5ea8454f9f947a484d25f8e1c35d03, type: 3}
+    maxHealth: 300
+    deathAnimTime: 2
+    speed: 0.3
+    attackDamage: 30
+    attackSfxInterval: 1.1
+  startEnergy: 75
+  skyOrbValue: 25
+  skyInterval: 8
+  waveCount: 5
+  baseEnemies: 3
+  enemiesIncreasePerWave: 2
+  finalWaveMultiplier: 2
+  startDelay: 8
+  timeBetweenSpawns: 2
+  timeBetweenWaves: 12
+  overchargeEnergyCost: 50
+  overchargeDuration: 6
+  overchargeFireRateMultiplier: 2.5
+  overchargeDamageMultiplier: 1.25
 --- !u!1 &60195754
 GameObject:
   m_ObjectHideFlags: 0

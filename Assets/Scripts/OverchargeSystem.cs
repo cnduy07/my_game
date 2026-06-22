@@ -23,6 +23,9 @@ public class OverchargeSystem : MonoBehaviour
 
     void Start()
     {
+        if (GameBalance.Instance != null)
+            GameBalance.Instance.ApplyOverchargeSystem(this);
+
         int rowCount = grid != null ? grid.rows : 5;
         timers = new float[rowCount];
     }
@@ -55,6 +58,14 @@ public class OverchargeSystem : MonoBehaviour
 
     bool IsActive(int row)
         => timers != null && row >= 0 && row < timers.Length && timers[row] > 0f;
+
+    public void ApplyBalance(int newEnergyCost, float newDuration, float newFireRateMultiplier, float newDamageMultiplier)
+    {
+        energyCost = Mathf.Max(0, newEnergyCost);
+        duration = Mathf.Max(0.1f, newDuration);
+        fireRateMultiplier = Mathf.Max(0.01f, newFireRateMultiplier);
+        damageMultiplier = Mathf.Max(0f, newDamageMultiplier);
+    }
 
     public bool PointerOverPanel(float guiX, float guiY)
     {

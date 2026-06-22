@@ -47,6 +47,9 @@ public class PlacementController : MonoBehaviour
                 shooter.row = row;
             }
 
+            if (GameBalance.Instance != null)
+                GameBalance.Instance.ApplyUnit(unit, bar.Selected.prefab);
+
             bar.OnPlacedSelected();   // trừ năng lượng + bật cooldown
             AudioManager.PlaySfx(SfxType.UiClick);
         }

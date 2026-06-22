@@ -62,6 +62,7 @@ Can than trong cac viec:
 - `CONTENT_PLAN.md`: danh sach sprite, rig, animation, VFX, SFX, UI asset can lam.
 - `TECH_PLAN.md`: systems, architecture, performance, testing.
 - `RELEASE_CHECKLIST.md`: App Store/Google Play checklist.
+- `GameSystems > GameBalance` trong `SampleScene`: source of truth tam thoi cho stats gameplay chinh.
 
 ---
 
@@ -82,5 +83,5 @@ Can than trong cac viec:
 - Gameplay chay dung bang ban xam/trang thai co ban truoc, polish sau.
 - Damage state tinh theo gameplay state; effect dong nhu no, khoi, spark nen tach thanh VFX prefab.
 - Mot prefab co Animator/SpriteSkin nen dung Animator; object tinh co SpriteRenderer nen dung component nhu `DamageStages`.
+- Tune gameplay stat tren `GameBalance`; tune visual/reference/rig/MuzzlePoint tren prefab.
 - Mobile first: doc duoc tren man hinh nho, touch de bam, FPS on dinh, build size hop ly.
-

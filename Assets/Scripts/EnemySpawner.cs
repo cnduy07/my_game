@@ -5,6 +5,8 @@ using UnityEngine;
 // Hết địch trong đợt -> chờ sạch màn -> đợt kế. Qua đợt cuối (huge wave) -> THẮNG.
 public class EnemySpawner : MonoBehaviour
 {
+    public static EnemySpawner Instance { get; private set; }
+
     [Header("Tham chiếu")]
     public GridManager grid;          // kéo GridManager vào
     public GameObject enemyPrefab;    // địch cơ bản
@@ -26,6 +28,22 @@ public class EnemySpawner : MonoBehaviour
     int toSpawn = 0;
     float timer = 0f;
     GUIStyle style;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    void Start()
+    {
+        if (GameBalance.Instance != null)
+            GameBalance.Instance.ApplyEnemySpawner(this);
+    }
 
     void Update()
     {
@@ -99,6 +117,27 @@ public class EnemySpawner : MonoBehaviour
         GameObject e = Instantiate(prefab, pos, Quaternion.identity);
         var mover = e.GetComponent<EnemyMover>();
         if (mover != null) { mover.grid = grid; mover.row = row; }
+
+        if (GameBalance.Instance != null)
+            GameBalance.Instance.ApplyEnemy(e, prefab);
+    }
+
+    public void ApplyWaveBalance(
+        int newWaveCount,
+        int newBaseEnemies,
+        int newEnemiesIncreasePerWave,
+        int newFinalWaveMultiplier,
+        float newStartDelay,
+        float newTimeBetweenSpawns,
+        float newTimeBetweenWaves)
+    {
+        waveCount = Mathf.Max(1, newWaveCount);
+        baseEnemies = Mathf.Max(0, newBaseEnemies);
+        enemiesIncreasePerWave = Mathf.Max(0, newEnemiesIncreasePerWave);
+        finalWaveMultiplier = Mathf.Max(1, newFinalWaveMultiplier);
+        startDelay = Mathf.Max(0f, newStartDelay);
+        timeBetweenSpawns = Mathf.Max(0.1f, newTimeBetweenSpawns);
+        timeBetweenWaves = Mathf.Max(0f, newTimeBetweenWaves);
     }
 
     void OnGUI()
