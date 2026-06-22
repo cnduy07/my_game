@@ -34,7 +34,13 @@ public static class AiQaReportRunner
     static void CheckUi(GameUiController ui, List<CheckResult> checks)
     {
         if (ui == null)
+        {
             checks.Add(CheckResult.Warn("UI", "No GameUiController found in loaded scene."));
+            return;
+        }
+
+        if (!ui.enabled)
+            checks.Add(CheckResult.Fail("UI", "GameUiController is disabled."));
     }
 
     static void EnsureSceneLoaded()

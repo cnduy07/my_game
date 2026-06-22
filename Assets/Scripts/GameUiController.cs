@@ -52,6 +52,7 @@ public class GameUiController : MonoBehaviour
 
     void OnGUI()
     {
+        GUI.depth = -100;
         EnsureStyles();
         DrawTopHud();
 
@@ -62,16 +63,17 @@ public class GameUiController : MonoBehaviour
     void DrawTopHud()
     {
         float margin = 8f;
-        pauseButtonRect = new Rect(Screen.width - 58f, margin, 50f, 32f);
+        pauseButtonRect = new Rect(Screen.width - 136f, margin, 128f, 38f);
         GUI.enabled = GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon);
-        if (GUI.Button(pauseButtonRect, isPaused ? "Play" : "II"))
+        GUI.Box(new Rect(pauseButtonRect.x - 4f, pauseButtonRect.y - 4f, pauseButtonRect.width + 8f, pauseButtonRect.height + 8f), GUIContent.none, panelStyle);
+        if (GUI.Button(pauseButtonRect, isPaused ? "RESUME" : "PAUSE"))
             TogglePause();
         GUI.enabled = true;
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         if (level != null)
         {
-            Rect levelRect = new Rect(Screen.width * 0.5f - 90f, 8f, 180f, 24f);
+            Rect levelRect = new Rect(Screen.width * 0.5f - 110f, 10f, 220f, 24f);
             GUI.Label(levelRect, level.displayName, smallStyle);
         }
     }
