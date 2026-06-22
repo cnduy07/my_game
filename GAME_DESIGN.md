@@ -143,3 +143,43 @@ Khong nen:
 - Dung sprite no tung tinh lam death effect.
 - Lam qua nhieu chi tiet nho khong doc duoc tren mobile.
 - Them content moi khi enemy/turret/bunker core chua polished.
+
+---
+
+## 9. Roadmap de thanh game hoan chinh
+
+Sau vertical slice, game can them cac lop sau:
+
+### Mobile UX
+- UI mobile that thay cho IMGUI.
+- Touch target lon, safe area, pause/restart/settings.
+- Seed card ro cooldown, cost, selected state.
+- Wave warning va feedback khi sap thua lane.
+
+### Tutorial
+- Level 1 day nhat energy orb.
+- Level 2 day dat Turret/ArcReactor.
+- Level 3 day Bunker/SnowGun.
+- Level 4 day DroneEMP/Rail Cannon.
+- Level 5 day Overcharge va wave lon.
+
+### Level va progression
+- Nhieu level ngan, moi level 2-5 phut.
+- Moi level co wave data rieng.
+- Unlock unit/enemy dan dan.
+- Save progress local.
+- Upgrade system chi them khi core loop da vui.
+
+### Enemy/unit expansion
+- Them enemy moi theo vai tro, khong chi tang mau:
+  - fast pressure;
+  - shield/armor counter;
+  - EMP-resistant;
+  - mini-boss.
+- Them projectile effects co chu dich: slow, knockback, stun, pierce, splash.
+
+### Release readiness
+- Device performance pass.
+- Audio/settings pass.
+- QA checklist va automated validators.
+- Store assets, privacy/compliance neu co ads/IAP/analytics.

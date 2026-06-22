@@ -210,3 +210,49 @@ Can co:
 - Pause button.
 - Win/Game Over panels.
 - Main menu sau vertical slice.
+
+Can them cho mobile release:
+- Touch-friendly seed bar.
+- Row Overcharge buttons hoac gesture/UI thay the.
+- Settings panel: music/SFX/vibration.
+- Tutorial callout/icon.
+- Level select/map tam thoi.
+- Store screenshots/title logo/app icon.
+
+---
+
+## 8. Level va Progression Content
+
+Vertical slice chi can 1 level dep. Sau do can:
+- Level 1-3 tutorial co wave rat ngan.
+- Level 4-10 mo khoa dan Bunker, SnowGun, DroneEMP, Overcharge.
+- Moi level co theme/tint nho hoac background variation de tranh lap.
+- Wave notes: enemy type, count, timing, huge wave.
+- Reward/unlock copy ngan gon.
+
+---
+
+## 9. Final VFX Direction
+
+`CombatVfx` hien tai la prototype. Ban final nen co:
+- Muzzle flash prefab rieng cho Turret/SnowGun.
+- Hit spark metal nho, doc ro tren mobile.
+- Bunker death: smoke + spark + metal debris nhe.
+- Enemy death: animation rig + small spark/smoke.
+- EMP: electric ring + screen shake nhe + crackle SFX.
+- Rail Cannon: warning line, charge glow, beam, impact sparks.
+
+Nguyen tac:
+- VFX phai ngan va ro.
+- Khong che mat gameplay cell.
+- Co option giam shake neu can.
+
+Hien tai da co VFX prototype:
+- `PlayMuzzleFlash`.
+- `PlayHitSpark`.
+- `PlayPulse`.
+- `PlayDeathBurst`.
+- `PlayStaticBreak`.
+- `PlayBunkerBreak`.
+
+Khi co prefab VFX dep, thay ruot cac ham nay hoac cho `DeathEffect` spawn prefab.

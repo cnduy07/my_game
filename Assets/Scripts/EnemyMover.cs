@@ -13,6 +13,7 @@ public class EnemyMover : MonoBehaviour
     // Trạng thái bị làm chậm (do súng băng).
     private float slowFactor = 1f;     // 1 = bình thường, <1 = chậm
     private float slowTimer = 0f;
+    private float stunTimer = 0f;
     public float attackSfxInterval = 0.65f;
     private float attackSfxTimer = 0f;
 
@@ -39,6 +40,17 @@ public class EnemyMover : MonoBehaviour
         slowTimer = Mathf.Max(slowTimer, duration);
     }
 
+    public void ApplyKnockback(float distance)
+    {
+        if (distance <= 0f) return;
+        transform.position += Vector3.right * distance;
+    }
+
+    public void ApplyStun(float duration)
+    {
+        stunTimer = Mathf.Max(stunTimer, duration);
+    }
+
     void Update()
     {
         if (grid == null) return;
@@ -48,6 +60,13 @@ public class EnemyMover : MonoBehaviour
         {
             slowTimer -= Time.deltaTime;
             if (slowTimer <= 0f) slowFactor = 1f;
+        }
+
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+            if (anim != null) anim.SetWalking(false);
+            return;
         }
 
         int col = grid.ColFromWorldX(transform.position.x);

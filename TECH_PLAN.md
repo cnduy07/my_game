@@ -57,9 +57,9 @@ Recommended:
 - Rigged character: `Health` -> `CharacterAnimator.TriggerDie()` -> destroy sau `deathAnimTime`.
 - Static object: `Health` + `DamageStages` -> sprite stage theo mau -> death VFX rieng -> destroy.
 - Projectile/EMP chi goi `TakeDamage`, khong tu dieu khien sprite/animation cua target.
+- `DeathEffect` co the override death VFX theo prefab; neu khong co, non-enemy se fallback sang static break/default burst.
 
 Can lam sau:
-- Them `DeathEffectSpawner` hoac field `deathEffectPrefab` vao `Health`.
 - Them hit flash/hit effect event.
 - Them damage numbers neu can.
 
@@ -147,6 +147,7 @@ Hooks:
 - Enemy chi flash khi bi damage, khong shake root transform vi enemy dang di chuyen.
 - `PlacementController` khong cho dat unit vao cell dang co enemy.
 - Knockback/freeze/stun nen la effect rieng theo loai dan/vu khi sau nay, khong nam trong damage feedback mac dinh.
+- `DeathEffect` + `CombatVfx.PlayStaticBreak/PlayBunkerBreak` la VFX death tam cho object tinh.
 
 Sau nay:
 - Doi `CombatVfx` sang spawn prefab VFX.
@@ -261,12 +262,80 @@ Co the tao Editor tools:
 - Balance table exporter.
 - Wave preview.
 - Sprite import preset checker.
+- AI QA report writer: markdown/json + screenshots.
+- Build validator: missing refs, null clips, large textures, Android/iOS settings.
 
 Codex co the viet cac tool nay khi project bat dau co nhieu prefab/asset.
 
+AI QA v1 hien co:
+- Menu: `Tools > AI QA > Run Full Check`.
+- Batchmode method: `AiQaReportRunner.RunFullCheck`.
+- Output: `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
+- Check hien tai: `GameBalance`, audio SFX entries, unit/enemy prefab components, animator parameter contract.
+
 ---
 
-## 12. Git/Version Control
+## 13. Mobile UI va Input
+
+IMGUI hien tai tot cho prototype, khong nen giu cho release.
+
+Can lam:
+- uGUI hoac UI Toolkit cho seed bar, energy, wave, pause, win/lose.
+- Safe area cho iPhone notch va Android cutout.
+- Touch target toi thieu ~44px logical.
+- Pointer/touch handling tach ro UI va world placement.
+- Haptic/vibration optional khi collect energy, EMP, Rail Cannon.
+
+---
+
+## 14. Level/Progression Architecture
+
+Khi co hon 1 level, can tach data:
+- LevelDefinition: grid/theme, startEnergy, available units, wave list.
+- WaveDefinition: enemy groups, timing, row policy.
+- UnlockDefinition: unit/enemy/tutorial gates.
+- SaveData: completed levels, unlocked units, settings.
+
+Uu tien:
+1. LevelDefinition ScriptableObject.
+2. Local save/load JSON hoac PlayerPrefs co version.
+3. Level select UI tam thoi.
+
+---
+
+## 15. Projectile Effect Architecture
+
+Slow cu van duoc giu de tuong thich trong `Projectile`, nhung da co effect list moi:
+- `ProjectileHitEffect[] hitEffects`.
+- `ProjectileEffectType.Slow`.
+- `ProjectileEffectType.Knockback`.
+- `ProjectileEffectType.Stun`.
+
+Sau nay co the mo rong them:
+- Damage.
+- Pierce/splash.
+- Armor modifier.
+
+Nguyen tac:
+- Hit feedback mac dinh khong di chuyen target.
+- Knockback/freeze chi xay ra khi projectile/effect type yeu cau.
+- Enemy resistance co the nam trong EnemyDefinition.
+
+---
+
+## 16. Build va Release Pipeline
+
+Can co truoc khi len store:
+- Android/iOS dev build reproducible.
+- Version number/build number workflow.
+- Release vs debug config.
+- Texture/audio compression settings.
+- Symbol/log/crash reporting neu them SDK.
+- Checklist khong co missing references va Console error.
+
+---
+
+## 17. Git/Version Control
 
 Nen commit:
 - `Assets/`

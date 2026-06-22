@@ -80,7 +80,7 @@ public class GameBalance : MonoBehaviour
 
         ApplyOverchargeSystem(OverchargeSystem.Instance);
 
-        var identities = Object.FindObjectsByType<BalanceIdentity>(FindObjectsSortMode.None);
+        var identities = Object.FindObjectsByType<BalanceIdentity>(FindObjectsInactive.Exclude);
         foreach (var identity in identities)
         {
             if (identity == null || identity.sourcePrefab == null) continue;

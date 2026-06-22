@@ -50,7 +50,7 @@ public class Health : MonoBehaviour
         if (shooter != null) shooter.enabled = false;
 
         AudioManager.PlaySfx(wasEnemy ? SfxType.EnemyDeath : SfxType.UnitBreak);
-        if (!wasEnemy) CombatVfx.PlayDeathBurst(transform.position);
+        PlayDeathFeedback(wasEnemy);
 
         bool shouldDelayDestroy = deathAnimTime > 0f && (anim != null || delayDestroyWithoutAnimator);
 
@@ -68,6 +68,23 @@ public class Health : MonoBehaviour
     }
 
     public bool IsAlive => !dead;
+
+    void PlayDeathFeedback(bool wasEnemy)
+    {
+        if (wasEnemy) return;
+
+        var deathEffect = GetComponent<DeathEffect>();
+        if (deathEffect != null)
+        {
+            deathEffect.Play();
+            return;
+        }
+
+        if (GetComponent<DamageStages>() != null)
+            CombatVfx.PlayBunkerBreak(transform.position);
+        else
+            CombatVfx.PlayDeathBurst(transform.position);
+    }
 
     public void SetMaxHealth(float value, bool refill)
     {

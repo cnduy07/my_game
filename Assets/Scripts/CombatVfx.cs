@@ -31,38 +31,38 @@ public static class CombatVfx
     public static void PlayDeathBurst(Vector3 position)
     {
         position.z = -3f;
-        GameObject go = new GameObject("DeathBurst");
-        go.transform.position = position;
+        CreateParticleBurst("DeathBurst", position, 18, 0.18f,
+            new ParticleSystem.MinMaxCurve(0.22f, 0.45f),
+            new ParticleSystem.MinMaxCurve(0.8f, 1.7f),
+            new ParticleSystem.MinMaxCurve(0.045f, 0.11f),
+            new ParticleSystem.MinMaxGradient(new Color(0.65f, 0.68f, 0.7f, 0.95f), new Color(1f, 0.42f, 0.08f, 0.95f)),
+            0.18f, 0.15f, 0.9f);
+    }
 
-        var ps = go.AddComponent<ParticleSystem>();
-        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    public static void PlayStaticBreak(Vector3 position)
+    {
+        position.z = -3f;
+        CreateParticleBurst("StaticBreakSmoke", position, 14, 0.24f,
+            new ParticleSystem.MinMaxCurve(0.35f, 0.75f),
+            new ParticleSystem.MinMaxCurve(0.25f, 0.8f),
+            new ParticleSystem.MinMaxCurve(0.08f, 0.18f),
+            new ParticleSystem.MinMaxGradient(new Color(0.35f, 0.36f, 0.37f, 0.8f), new Color(0.75f, 0.76f, 0.72f, 0.45f)),
+            0.22f, 0.05f, 1.2f);
+        PlayHitSpark(position + Vector3.up * 0.08f);
+    }
 
-        var main = ps.main;
-        main.duration = 0.18f;
-        main.loop = false;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(0.22f, 0.45f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 1.7f);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.045f, 0.11f);
-        main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(0.65f, 0.68f, 0.7f, 0.95f),
-            new Color(1f, 0.42f, 0.08f, 0.95f));
-        main.gravityModifier = 0.15f;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
+    public static void PlayBunkerBreak(Vector3 position)
+    {
+        position.z = -3f;
+        PlayStaticBreak(position);
 
-        var emission = ps.emission;
-        emission.rateOverTime = 0f;
-        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 18) });
-
-        var shape = ps.shape;
-        shape.shapeType = ParticleSystemShapeType.Circle;
-        shape.radius = 0.18f;
-
-        var renderer = ps.GetComponent<ParticleSystemRenderer>();
-        renderer.sortingOrder = 24;
-        renderer.material = GetLineMaterial();
-
-        Object.Destroy(go, 0.9f);
-        ps.Play();
+        for (int i = 0; i < 7; i++)
+        {
+            Vector2 dir = new Vector2(Random.Range(-0.7f, 0.9f), Random.Range(0.2f, 0.85f)).normalized;
+            float length = Random.Range(0.12f, 0.34f);
+            CreateLine("MetalDebris", position, position + (Vector3)(dir * length), 0.035f,
+                new Color(0.82f, 0.78f, 0.68f, 1f), new Color(0.35f, 0.36f, 0.38f, 0.15f), 0.22f);
+        }
     }
 
     public static void PlayPulse(Vector3 position, float radius, Color color)
@@ -113,6 +113,51 @@ public static class CombatVfx
         var fade = go.AddComponent<VfxFade>();
         fade.life = life;
         fade.scaleTo = 1f;
+    }
+
+    private static void CreateParticleBurst(
+        string name,
+        Vector3 position,
+        short count,
+        float duration,
+        ParticleSystem.MinMaxCurve lifetime,
+        ParticleSystem.MinMaxCurve speed,
+        ParticleSystem.MinMaxCurve size,
+        ParticleSystem.MinMaxGradient color,
+        float radius,
+        float gravity,
+        float destroyAfter)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.position = position;
+
+        var ps = go.AddComponent<ParticleSystem>();
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        var main = ps.main;
+        main.duration = duration;
+        main.loop = false;
+        main.startLifetime = lifetime;
+        main.startSpeed = speed;
+        main.startSize = size;
+        main.startColor = color;
+        main.gravityModifier = gravity;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+        var emission = ps.emission;
+        emission.rateOverTime = 0f;
+        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, count) });
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = radius;
+
+        var renderer = ps.GetComponent<ParticleSystemRenderer>();
+        renderer.sortingOrder = 24;
+        renderer.material = GetLineMaterial();
+
+        Object.Destroy(go, destroyAfter);
+        ps.Play();
     }
 
     private static Material GetLineMaterial()

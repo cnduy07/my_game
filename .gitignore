@@ -38,6 +38,7 @@ Desktop.ini
 
 # Crash reports
 sysinfo.txt
+AIReports/
 
 # Unity addressables / build cache
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*

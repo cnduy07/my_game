@@ -32,11 +32,23 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Ho tro tinh chinh `GameBalance`, Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
 - Tinh chinh combat feedback pass sau Play Mode: flash strength, shake amount, VFX duration/color.
 - Nang cap VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon khi co art/VFX prefab.
+- Chay/cai tien AI QA report khi Unity Editor dong hoac qua menu trong Editor.
 - Sau khi vertical slice on, danh gia co nen nang `GameBalance` len ScriptableObject/level config hay giu MonoBehaviour tren scene.
 
 ---
 
 ## Next
+
+### Roadmap uu tien sau combat feedback
+
+1. Bunker/object death VFX pass.
+2. Projectile effect architecture: slow/knockback/stun/EMP theo tung loai dan.
+3. Balance pass bang `GameBalance`.
+4. AI QA harness v1.
+5. Mobile UI/input pass: thay IMGUI bang UI mobile that, safe area, touch target.
+6. Tutorial/onboarding pass: day nguoi choi energy, dat unit, Overcharge, Rail Cannon.
+7. Level/progression pass: level data, unlock unit/enemy, save/load.
+8. Performance/device pass: pooling, texture/audio compression, test tren dien thoai.
 
 ### Gameplay/Tech
 
@@ -45,10 +57,15 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - DroneEMP: EMP pulse.
   - Enemy death: co the giu animation rig truoc, VFX sau.
 - Thay code-generated VFX bang prefab VFX dep hon khi visual direction on dinh.
+- Test `ProjectileHitEffect` cho knockback/stun tren mot bullet rieng khi can them weapon moi.
+- Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
 - Them hit flash/hit sound cho enemy va bunker.
 - Lam UI mobile thay cho IMGUI khi gameplay core on.
+- Them pause/resume, restart, speed control neu can.
+- Them save/load progress va settings volume/vibration.
+- Them level definition va wave authoring workflow.
 
 ### Art/Content
 
@@ -60,6 +77,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - 1 ArcReactor co idle/pulse.
 - Lam VFX co ban: muzzle flash, hit spark, death smoke.
 - Chon SFX tam thoi cho shoot, hit, death, collect energy.
+- Lam UI art: seed cards, icons, energy counter, wave banner, pause/settings.
+- Lam menu/title/icon tam thoi khi bat dau build mobile.
 
 ---
 
@@ -71,11 +90,16 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Boss/mini-boss.
 - Level select.
 - Upgrade system.
+- Level pack 1: 5-10 level dau voi do kho tang dan.
+- Economy/progression meta: unlock unit, upgrade, reward currency.
 - Daily reward/progression.
 - Ads/IAP sau khi core gameplay da vui.
 - Save/load progress.
 - Settings: music, SFX, vibration, language.
 - Tutorial/onboarding.
+- Accessibility: text size, color contrast, reduce shake neu can.
+- Localization pipeline: tieng Viet/tieng Anh truoc.
+- Build automation: Android/iOS dev build, version bump, release notes.
 - App Store/Google Play store assets.
 
 ---

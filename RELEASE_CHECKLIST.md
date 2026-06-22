@@ -22,6 +22,7 @@ File nay la checklist dai han de dua game len iOS App Store va Google Play.
 - VFX/SFX co ban.
 - UI mobile co ban.
 - Choi tren dien thoai that.
+- Tutorial toi thieu cho energy/dat unit.
 
 ### Milestone 3: Content Expansion
 
@@ -30,6 +31,8 @@ File nay la checklist dai han de dua game len iOS App Store va Google Play.
 - Tutorial.
 - Save/load progress.
 - Settings.
+- Level select/unlock flow.
+- Projectile effects va enemy counters co vai tro ro.
 
 ### Milestone 4: Mobile Optimization
 
@@ -38,6 +41,8 @@ File nay la checklist dai han de dua game len iOS App Store va Google Play.
 - Build size hop ly.
 - Texture/audio compression.
 - Crash-free internal testing.
+- Safe area/touch target pass.
+- Battery/thermal sanity check.
 
 ### Milestone 5: Store Release
 
@@ -48,6 +53,14 @@ File nay la checklist dai han de dua game len iOS App Store va Google Play.
 - Release build signed.
 - Internal/closed testing.
 - Submit review.
+
+### Milestone 6: Post-launch Readiness
+
+- Crash/feedback monitoring.
+- Balance updates nho.
+- Content update plan.
+- Store page A/B notes neu co.
+- Monetization chi them khi core retention on.
 
 ---
 
@@ -156,6 +169,13 @@ Build:
 - Build cai duoc tren device.
 - Khong co missing reference.
 
+Automation nen co:
+- Prefab/reference validator.
+- Animator parameter validator.
+- GameBalance sanity check.
+- Audio clip/null/volume validator.
+- Basic PlayMode smoke test.
+
 ---
 
 ## 7. Launch Strategy
@@ -172,4 +192,3 @@ Can theo doi:
 - Level fail rate.
 - Ad/IAP impact neu co.
 - User feedback ve do kho va ro rang UI.
-

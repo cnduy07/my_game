@@ -140,6 +140,27 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **Cần verify trong Unity:** chờ script compile, Play test bắn/trúng/bunker bị đánh/EMP/Rail Cannon; xem có Console error hay VFX quá sáng/rối không.
 - **Feedback bugfix:** enemy không còn shake transform khi bị bắn để tránh cảm giác bị knockback/giật X; placement chặn đặt unit vào ô đang có enemy.
 
+### Roadmap expansion — 2026-06-22
+- Bo sung roadmap ngoai 4 buoc gan nhat:
+  - mobile UI/input pass;
+  - tutorial/onboarding;
+  - level/progression/save;
+  - content expansion co vai tro ro;
+  - performance/device optimization;
+  - build/release pipeline;
+  - store/compliance/post-launch readiness.
+- Quyet dinh: knockback/freeze/stun se la projectile effects rieng sau nay, khong nam trong hit feedback mac dinh.
+
+### Systems v1 — death VFX, projectile effects, balance report, AI QA — 2026-06-22
+- Them `DeathEffect` optional va VFX code-generated cho static break/bunker break.
+- Them `ProjectileHitEffect[]` voi effect type `Slow`, `Knockback`, `Stun`; slow cu van giu de tuong thich.
+- Them `BalanceReportGenerator` de xuat metrics markdown/json tu `GameBalance`.
+- Them `AiQaReportRunner` trong Editor:
+  - menu `Tools > AI QA > Run Full Check`;
+  - batchmode method `AiQaReportRunner.RunFullCheck`;
+  - output vao `AIReports/latest_ai_qa_report.md` va `AIReports/latest_balance_metrics.json`.
+- Them `AIReports/` vao `.gitignore`.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).
