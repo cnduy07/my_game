@@ -57,6 +57,7 @@ public class DamageFeedback : MonoBehaviour
     {
         float total = Mathf.Max(flashTime, shakeTime, 0.01f);
         float currentShakeAmount = isEnemy ? 0f : shakeAmount;
+        if (GameSettings.ReduceShake) currentShakeAmount *= 0.35f;
 
         if (currentShakeAmount > 0f)
         {

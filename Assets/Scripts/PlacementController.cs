@@ -23,6 +23,8 @@ public class PlacementController : MonoBehaviour
         if (bar != null && bar.PointerOverBar(Input.mousePosition.x, guiY)) return;
         if (OverchargeSystem.Instance != null &&
             OverchargeSystem.Instance.PointerOverPanel(Input.mousePosition.x, guiY)) return;
+        if (GameUiController.Instance != null &&
+            GameUiController.Instance.PointerOverPanel(Input.mousePosition.x, guiY)) return;
 
         Vector3 world = cam.ScreenToWorldPoint(Input.mousePosition);
         world.z = 0f;

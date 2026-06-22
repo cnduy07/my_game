@@ -30,7 +30,7 @@ MonoBehaviour:
     overchargeDuration: 6
     overchargeFireRateMultiplier: 2.5
     overchargeDamageMultiplier: 1.25
-  useAuthoredWaves: 0
+  useAuthoredWaves: 1
   waves:
   - label: Opening Contact
     timeBetweenSpawns: 2

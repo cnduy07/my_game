@@ -168,6 +168,18 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - AI QA v1 check them `LevelManager.currentLevel`.
 - Them authored wave data vao `LevelDefinition` va `Level_01.asset`; hien tai `useAuthoredWaves` dang tat de giu gameplay formula cu cho an toan.
 
+### Mobile UI/settings/progression UI v1 — 2026-06-22
+- Bat `Level_01.useAuthoredWaves` mac dinh sau khi playtest OK.
+- Them `GameSettings` luu SFX volume, reduce shake, vibration bang PlayerPrefs.
+- Them `GameUiController` tren `GameSystems`:
+  - nut pause/resume;
+  - panel settings tam thoi;
+  - hien current level va highest completed;
+  - chan click UI xuyen xuong placement.
+- `AudioManager` nhan `GameSettings.SfxVolume`.
+- `DamageFeedback` nhan `GameSettings.ReduceShake`.
+- AI QA check them `GameUiController`; balance report hien authored wave summary.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

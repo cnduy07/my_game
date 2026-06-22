@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     public void GameOver(int row)
     {
         if (IsGameOver || IsWon) return;
+        if (GameUiController.Instance != null && GameUiController.Instance.isPaused) Time.timeScale = 1f;
         IsGameOver = true;
         Debug.Log($"GAME OVER — địch vượt hàng {row}");
         AudioManager.PlaySfx(SfxType.GameOver);
@@ -64,6 +65,7 @@ public class GameManager : MonoBehaviour
     public void Win()
     {
         if (IsGameOver || IsWon) return;
+        if (GameUiController.Instance != null && GameUiController.Instance.isPaused) Time.timeScale = 1f;
         IsWon = true;
         Debug.Log("YOU WIN!");
         if (LevelManager.Instance != null) LevelManager.Instance.MarkCurrentLevelCompleted();

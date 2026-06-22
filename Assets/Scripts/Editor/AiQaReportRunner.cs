@@ -19,14 +19,22 @@ public static class AiQaReportRunner
         GameBalance balance = UnityEngine.Object.FindAnyObjectByType<GameBalance>(FindObjectsInactive.Include);
         AudioManager audio = UnityEngine.Object.FindAnyObjectByType<AudioManager>(FindObjectsInactive.Include);
         LevelManager levelManager = UnityEngine.Object.FindAnyObjectByType<LevelManager>(FindObjectsInactive.Include);
+        GameUiController ui = UnityEngine.Object.FindAnyObjectByType<GameUiController>(FindObjectsInactive.Include);
 
         CheckGameBalance(balance, checks);
         CheckLevelManager(levelManager, checks);
+        CheckUi(ui, checks);
         CheckAudio(audio, checks);
         CheckPrefabs(balance, checks);
         CheckAnimatorContracts(balance, checks);
 
         WriteReports(balance, checks);
+    }
+
+    static void CheckUi(GameUiController ui, List<CheckResult> checks)
+    {
+        if (ui == null)
+            checks.Add(CheckResult.Warn("UI", "No GameUiController found in loaded scene."));
     }
 
     static void EnsureSceneLoaded()

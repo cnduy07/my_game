@@ -80,7 +80,7 @@ public class AudioManager : MonoBehaviour
         if (cue == null) return;
 
         sfxSource.pitch = Random.Range(cue.pitchMin, cue.pitchMax);
-        sfxSource.PlayOneShot(cue.clip, cue.volume);
+        sfxSource.PlayOneShot(cue.clip, cue.volume * GameSettings.SfxVolume);
     }
 
     void ApplyClipDefaults()

@@ -8,6 +8,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
+- Test UI/settings/progression v1:
+  - nut pause/resume khong lam dat unit sau UI;
+  - SFX volume thay doi am luong;
+  - Reduce shake lam bunker rung nhe hon;
+  - win game van mark level complete.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -69,6 +74,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Mo rong `LevelDefinition` de chua wave list that thay vi formula wave.
 - Lam level select UI tam thoi doc tu danh sach `LevelDefinition`.
 - Test thu `Level_01.useAuthoredWaves = true` sau khi gameplay hien tai on dinh de so sanh nhịp wave authored voi formula cu.
+- Sau UI/settings v1 on dinh, thay IMGUI bang UI mobile that theo tung man hinh.
 
 ### Art/Content
 

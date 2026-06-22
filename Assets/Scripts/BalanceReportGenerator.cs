@@ -18,6 +18,7 @@ public static class BalanceReportGenerator
         AppendGlobal(sb, balance);
         AppendCombat(sb, balance);
         AppendEconomy(sb, balance);
+        AppendLevel(sb);
         return sb.ToString();
     }
 
@@ -112,6 +113,29 @@ public static class BalanceReportGenerator
             float reactorPerSecond = reactor.energyAmount / reactor.energyInterval;
             float payback = reactorPerSecond > 0f ? reactor.cost / reactorPerSecond : 0f;
             sb.AppendLine($"- ArcReactor income: ~`{Format(reactorPerSecond)}` energy/sec, payback ~`{Format(payback)}s`");
+        }
+
+        sb.AppendLine();
+    }
+
+    static void AppendLevel(StringBuilder sb)
+    {
+        var levelManager = Object.FindAnyObjectByType<LevelManager>(FindObjectsInactive.Include);
+        var level = levelManager != null ? levelManager.currentLevel : null;
+        if (level == null) return;
+
+        sb.AppendLine("## Level");
+        sb.AppendLine($"- Current level: `{level.displayName}` (`{level.levelId}`)");
+        sb.AppendLine($"- Authored waves: `{(level.useAuthoredWaves ? "on" : "off")}`");
+
+        if (level.waves != null && level.waves.Length > 0)
+        {
+            for (int i = 0; i < level.waves.Length; i++)
+            {
+                var wave = level.waves[i];
+                if (wave == null) continue;
+                sb.AppendLine($"- Wave {i + 1}: `{wave.label}`, `{wave.TotalCount}` enemies");
+            }
         }
 
         sb.AppendLine();

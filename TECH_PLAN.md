@@ -279,6 +279,12 @@ AI QA v1 hien co:
 
 IMGUI hien tai tot cho prototype, khong nen giu cho release.
 
+Hien tai v1:
+- `GameUiController` ve pause/settings/progression panel bang IMGUI.
+- `GameSettings` luu SFX volume/reduce shake/vibration bang PlayerPrefs.
+- `PlacementController` hoi `GameUiController.PointerOverPanel` de chan click xuyen UI.
+- Day la UI tam thoi, khong phai final mobile UI.
+
 Can lam:
 - uGUI hoac UI Toolkit cho seed bar, energy, wave, pause, win/lose.
 - Safe area cho iPhone notch va Android cutout.
@@ -303,11 +309,12 @@ Hien tai v1:
 - `Assets/Levels/Level_01.asset` la level data dau tien.
 - `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
 - `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
+- `Level_01.useAuthoredWaves` hien bat mac dinh sau playtest OK.
 
 Uu tien tiep:
-1. Bat `useAuthoredWaves` sau khi test nhịp wave list trong `Level_01`.
-2. Level select UI tam thoi.
-3. SaveData co version khi progression phuc tap hon.
+1. Level select UI tam thoi.
+2. SaveData co version khi progression phuc tap hon.
+3. Tach UI prototype sang uGUI/UI Toolkit.
 
 ---
 
