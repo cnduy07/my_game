@@ -20,6 +20,11 @@ public class GameUiController : MonoBehaviour
 
     const float ReferenceWidth = 1920f;
     const float ReferenceHeight = 1080f;
+    const float SeedCardWidth = 226f;
+    const float SeedTraySpacing = 12f;
+    const float SeedTrayHorizontalPadding = 36f;
+    const float SeedTrayMinWidth = 540f;
+    const float SeedTrayMaxWidth = 1320f;
 
     Canvas canvas;
 
@@ -235,7 +240,7 @@ public class GameUiController : MonoBehaviour
         layout.childAlignment = TextAnchor.MiddleCenter;
         layout.childControlWidth = true;
         layout.childControlHeight = true;
-        layout.childForceExpandWidth = true;
+        layout.childForceExpandWidth = false;
         layout.childForceExpandHeight = true;
     }
 
@@ -365,6 +370,7 @@ public class GameUiController : MonoBehaviour
             if (card.button != null) Destroy(card.button.gameObject);
         seedCards.Clear();
         lastSeedCount = seedCount;
+        ResizeSeedTray(seedCount);
 
         for (int i = 0; i < seedCount; i++)
         {
@@ -376,7 +382,7 @@ public class GameUiController : MonoBehaviour
             frame.color = panelSoftColor;
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
-            layout.preferredWidth = 226f;
+            layout.preferredWidth = SeedCardWidth;
             layout.preferredHeight = 112f;
             layout.minHeight = 112f;
 
@@ -411,6 +417,17 @@ public class GameUiController : MonoBehaviour
                 cost = cost
             });
         }
+    }
+
+    void ResizeSeedTray(int seedCount)
+    {
+        if (seedTray == null) return;
+
+        float contentWidth = seedCount * SeedCardWidth +
+                             Mathf.Max(0, seedCount - 1) * SeedTraySpacing +
+                             SeedTrayHorizontalPadding;
+        float width = Mathf.Clamp(contentWidth, SeedTrayMinWidth, SeedTrayMaxWidth);
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 18f), new Vector2(width * 0.5f, 166f));
     }
 
     void RebuildRowButtons(int rowCount)

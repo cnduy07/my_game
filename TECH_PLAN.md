@@ -165,6 +165,8 @@ Layout v1:
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.
 - TMP warning da fix bang `textWrappingMode` thay cho obsolete `enableWordWrapping`.
+- Seed tray width tu co theo active seed count; khong force-expand cards.
+- Board/cell screen size duoc tang bang camera orthographic size `3.6`, khong doi `GridManager.cellSize`.
 - Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
 
 Can polish sau:

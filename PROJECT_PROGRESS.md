@@ -298,6 +298,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - Level 3 van kho hon nhung wave dau cham hon de kip dung full toolkit.
 - Ly do: sau khi level 1/2 khoa bot unit va OC, authored waves cu tro nen de thuong nha qua som.
 
+### Board framing + adaptive command deck — 2026-06-22
+- Phong to board/cell tren man hinh bang camera framing:
+  - camera orthographic size `4` -> `3.6`;
+  - khong doi `GridManager.cellSize` de tranh anh huong placement/spawn/projectile math.
+- Seed command deck tu co theo so unit da unlock:
+  - level 1/2 khong con tray rong thua qua nhieu khi chi co 2-3 seed;
+  - level 3 van du cho 5 seed.
+- `HorizontalLayoutGroup.childForceExpandWidth` tat de seed cards giu kich thuoc thiet ke, khong bi keo gian bat thuong.
+- Muc tieu: board nhin full-screen hon, command UI gon hon va gan voi game surface hon.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

@@ -18,6 +18,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Seed cards lon hon, de bam hon, bot cam giac tach roi khoi game.
   - Top bar/pause/mission button khong che noi dung va khong tran text.
   - OC panel level 3 lon hon nhung khong che board qua muc.
+  - Board/cell trong world lon hon nhe sau camera framing.
+  - Seed tray co theo so seed unlock, level 1/2 khong con panel rong thua qua nhieu.
   - Level 1 wave dau cho du thoi gian dat ArcReactor/Turret.
   - Level 2 wave dau khong thung nha qua som khi moi mo Bunker.
   - Level 3 kho hon nhung khong ep ngay khi bat dau.
@@ -113,6 +115,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - TMP wrapping warning fixed;
   - top bar/seed tray/OC panel scaled up;
   - level 1-3 early waves slowed/tuned after unlock gating.
+- Board framing + adaptive command deck:
+  - camera zoom nhe de board/cells lon hon;
+  - seed tray width tu tinh theo seed count;
+  - seed cards khong bi force-expand.
 
 ---
 
