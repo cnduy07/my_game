@@ -127,6 +127,19 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **Cần verify trong Unity:** mở `GameSystems > GameBalance`, test 1-2 wave, chỉnh thử `overchargeFireRateMultiplier` hoặc `Turret.fireInterval` để xác nhận config đang có hiệu lực.
 - **Runtime tuning fix:** chỉnh field trên `GameBalance` trong Play Mode sẽ apply lại cho `OverchargeSystem`, seed/energy/wave config, và các unit/enemy runtime có `BalanceIdentity`; máu hiện tại không bị refill khi live-tune.
 
+### Combat feedback pass — 2026-06-22
+- **Đang triển khai:** VFX tạm bằng code để tăng cảm giác va chạm trước khi có prefab VFX art riêng.
+- Thêm `CombatVfx`: muzzle flash, hit spark, EMP pulse, death burst code-generated.
+- Thêm `DamageFeedback`: object có `Health` tự flash/rung nhẹ khi nhận damage.
+- Hook hiện có:
+  - `Shooter.Fire()` -> muzzle flash tại `muzzlePoint`.
+  - `Projectile` hit -> hit spark.
+  - `BombUnit` explode -> EMP pulse + spark trên enemy trong vùng.
+  - `Lawnmower`/Rail Cannon hit -> spark trên enemy trong row.
+  - `Health` non-enemy death -> death burst cơ bản.
+- **Cần verify trong Unity:** chờ script compile, Play test bắn/trúng/bunker bị đánh/EMP/Rail Cannon; xem có Console error hay VFX quá sáng/rối không.
+- **Feedback bugfix:** enemy không còn shake transform khi bị bắn để tránh cảm giác bị knockback/giật X; placement chặn đặt unit vào ô đang có enemy.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

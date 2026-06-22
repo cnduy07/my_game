@@ -23,6 +23,7 @@ public class Projectile : MonoBehaviour
             if (e.row != row) continue;
             if (Mathf.Abs(e.CurrentX - transform.position.x) <= hitDistance)
             {
+                CombatVfx.PlayHitSpark(transform.position);
                 var hp = e.GetComponent<Health>();
                 if (hp != null) hp.TakeDamage(damage);
                 if (slowDuration > 0f) e.ApplySlow(slowFactor, slowDuration);

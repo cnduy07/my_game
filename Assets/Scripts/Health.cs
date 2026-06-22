@@ -15,12 +15,16 @@ public class Health : MonoBehaviour
     private CharacterAnimator anim;
 
     public event System.Action<Health> Changed;
+    public event System.Action<Health> Damaged;
     public event System.Action<Health> Died;
 
     void Awake()
     {
         current = maxHealth;
         anim = GetComponent<CharacterAnimator>();
+
+        if (GetComponent<DamageFeedback>() == null)
+            gameObject.AddComponent<DamageFeedback>();
     }
 
     public void TakeDamage(float amount)
@@ -28,6 +32,7 @@ public class Health : MonoBehaviour
         if (dead) return;
         current = Mathf.Max(0f, current - amount);
         Changed?.Invoke(this);
+        Damaged?.Invoke(this);
 
         if (current <= 0f) Die();
     }
@@ -45,6 +50,7 @@ public class Health : MonoBehaviour
         if (shooter != null) shooter.enabled = false;
 
         AudioManager.PlaySfx(wasEnemy ? SfxType.EnemyDeath : SfxType.UnitBreak);
+        if (!wasEnemy) CombatVfx.PlayDeathBurst(transform.position);
 
         bool shouldDelayDestroy = deathAnimTime > 0f && (anim != null || delayDestroyWithoutAnimator);
 

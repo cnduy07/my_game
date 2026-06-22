@@ -53,6 +53,7 @@ public class Lawnmower : MonoBehaviour
         foreach (var e in list)
         {
             if (e == null || e.row != row) continue;
+            CombatVfx.PlayHitSpark(e.transform.position);
             var hp = e.GetComponent<Health>();
             if (hp != null) hp.TakeDamage(damage);
         }

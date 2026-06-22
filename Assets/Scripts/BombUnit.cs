@@ -23,6 +23,8 @@ public class BombUnit : MonoBehaviour
     void Explode()
     {
         Vector2 center = transform.position;
+        CombatVfx.PlayPulse(transform.position, radius, new Color(0.35f, 0.95f, 1f, 0.9f));
+
         // Lặp bản sao vì TakeDamage có thể Destroy -> đổi danh sách All.
         var list = EnemyMover.All.ToArray();
         foreach (var e in list)
@@ -31,6 +33,7 @@ public class BombUnit : MonoBehaviour
             Vector2 p = e.transform.position;
             if ((p - center).sqrMagnitude <= radius * radius)
             {
+                CombatVfx.PlayHitSpark(e.transform.position);
                 var hp = e.GetComponent<Health>();
                 if (hp != null) hp.TakeDamage(damage);
             }

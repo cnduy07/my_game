@@ -23,6 +23,8 @@ Scripts chinh:
 - `BombUnit`: EMP bomb.
 - `Lawnmower`: tuyen cuu cuoi.
 - `GameBalance`: central runtime config cho unit/enemy/energy/wave/Overcharge.
+- `CombatVfx`: code-generated prototype VFX cho muzzle/hit/death/pulse.
+- `DamageFeedback`: auto flash/shake khi `Health` nhan damage.
 
 ---
 
@@ -130,7 +132,30 @@ Can tuning sau Play Mode:
 
 ---
 
-## 8. Data Architecture
+## 8. Combat Feedback
+
+Hien tai VFX la code-generated de prototype nhanh, chua phai final art.
+
+Hooks:
+- `Shooter.Fire()` -> muzzle flash tai `muzzlePoint`.
+- `Projectile` hit -> hit spark.
+- `BombUnit` -> EMP pulse + hit spark.
+- `Lawnmower` Rail Cannon -> hit spark tren enemy bi quet.
+- `Health.TakeDamage()` -> `Damaged` event.
+- `DamageFeedback` tu duoc gan runtime cho object co `Health`, flash/rung nhe khi damage.
+- `Health.Die()` -> non-enemy death burst co ban.
+- Enemy chi flash khi bi damage, khong shake root transform vi enemy dang di chuyen.
+- `PlacementController` khong cho dat unit vao cell dang co enemy.
+- Knockback/freeze/stun nen la effect rieng theo loai dan/vu khi sau nay, khong nam trong damage feedback mac dinh.
+
+Sau nay:
+- Doi `CombatVfx` sang spawn prefab VFX.
+- Them hit flash rieng cho enemy rig neu flash root lam animation bi rung qua nhieu.
+- Them screen shake nhe cho EMP/Rail Cannon.
+
+---
+
+## 9. Data Architecture
 
 Hien tai stats gameplay chinh da duoc gom ve `GameBalance` tren object `GameSystems` trong `SampleScene`.
 
@@ -185,7 +210,7 @@ Loi ich:
 
 ---
 
-## 9. Performance Plan
+## 10. Performance Plan
 
 Mobile priority:
 - Object pooling cho projectile, enemy, orb, VFX.
@@ -202,7 +227,7 @@ Can audit sau:
 
 ---
 
-## 10. Testing Plan
+## 11. Testing Plan
 
 Manual Play Mode:
 - Spawn wave 1-3.
@@ -228,7 +253,7 @@ Automated/Editor checks sau nay:
 
 ---
 
-## 11. Tooling de xuat
+## 12. Tooling de xuat
 
 Co the tao Editor tools:
 - ValidatePrefabReferences.

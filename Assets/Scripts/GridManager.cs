@@ -46,6 +46,19 @@ public class GridManager : MonoBehaviour
     public bool IsEmpty(int col, int row)
         => IsInside(col, row) && units[col, row] == null;
 
+    public bool HasEnemyAt(int col, int row)
+    {
+        if (!IsInside(col, row)) return false;
+
+        foreach (var enemy in EnemyMover.All)
+        {
+            if (enemy == null || enemy.row != row) continue;
+            if (ColFromWorldX(enemy.CurrentX) == col) return true;
+        }
+
+        return false;
+    }
+
     public void RegisterUnit(int col, int row, GameObject unit)
     {
         if (IsInside(col, row)) units[col, row] = unit;

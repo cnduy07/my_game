@@ -33,7 +33,9 @@ public class PlacementController : MonoBehaviour
         // 2. Đặt unit đang chọn.
         if (bar == null || !bar.CanPlaceSelected()) return;
 
-        if (grid.WorldToCell(world, out int col, out int row) && grid.IsEmpty(col, row))
+        if (grid.WorldToCell(world, out int col, out int row) &&
+            grid.IsEmpty(col, row) &&
+            !grid.HasEnemyAt(col, row))
         {
             Vector3 pos = grid.CellToWorld(col, row);
             pos.z = -1f;   // đẩy ra trước Tile để không bị che

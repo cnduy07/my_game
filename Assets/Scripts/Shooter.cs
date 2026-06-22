@@ -54,6 +54,8 @@ public class Shooter : MonoBehaviour
         if (anim != null) anim.TriggerAttack();
 
         Vector3 spawnPos = muzzlePoint != null ? muzzlePoint.position : transform.position;
+        CombatVfx.PlayMuzzleFlash(spawnPos);
+
         GameObject b = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
         var proj = b.GetComponent<Projectile>();
         if (proj != null)

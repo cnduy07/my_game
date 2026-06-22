@@ -8,6 +8,13 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
+- Play test combat feedback pass:
+  - Turret/SnowGun ban co muzzle flash.
+  - Dan trung enemy co hit spark.
+  - Bunker/unit bi danh co flash/rung nhe.
+  - DroneEMP co pulse.
+  - Rail Cannon hit enemy co spark.
+  - Console khong co error.
 - Test SnowGun sau khi rig + animator dung chung Unit controller.
 - Test lai gameplay sau khi them `GameBalance`:
   - seed cost/cooldown hien dung;
@@ -23,7 +30,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
 - Ho tro tinh chinh `GameBalance`, Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
-- De xuat VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon.
+- Tinh chinh combat feedback pass sau Play Mode: flash strength, shake amount, VFX duration/color.
+- Nang cap VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon khi co art/VFX prefab.
 - Sau khi vertical slice on, danh gia co nen nang `GameBalance` len ScriptableObject/level config hay giu MonoBehaviour tren scene.
 
 ---
@@ -36,6 +44,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Bunker death: smoke puff, sparks, metal bits, sound.
   - DroneEMP: EMP pulse.
   - Enemy death: co the giu animation rig truoc, VFX sau.
+- Thay code-generated VFX bang prefab VFX dep hon khi visual direction on dinh.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
 - Them hit flash/hit sound cho enemy va bunker.
@@ -58,6 +67,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 - Fast Alien.
 - Shield Alien.
+- Projectile effects: knockback, freeze/slow variants, stun/EMP variants.
 - Boss/mini-boss.
 - Level select.
 - Upgrade system.
