@@ -62,7 +62,74 @@ Can lam sau:
 
 ---
 
-## 4. Data Architecture de xuat
+## 4. Weapon Socket / MuzzlePoint
+
+Shooter khong spawn bullet tu root transform nua.
+
+Contract:
+- `Shooter.muzzlePoint` la empty child dat o dung dau nong.
+- Neu `muzzlePoint` trong, code fallback ve `transform.position`.
+- Root/pivot dung cho grid placement.
+- MuzzlePoint dung cho projectile spawn.
+- Visual sprite/rig khong can bi dich chuyen chi de dan ra dung vi tri.
+
+`Unit.prefab` va `SnowGun.prefab` da co child `MuzzlePoint`; can tinh chinh bang mat trong Unity.
+
+---
+
+## 5. Rail Cannon Last Defense
+
+Script/class van ten `Lawnmower` de giu prefab reference, nhung hanh vi gameplay la Rail Cannon.
+
+Contract:
+- Moi row co mot rail cannon dung mot lan.
+- Khi enemy breach, `EnemyMover` goi `GameManager.TryLawnmower(row)` nhu cu.
+- `Lawnmower.Activate()` hien beam va gay damage lon cho tat ca enemy trong row.
+- Sau `beamDuration`, row defense bi clear va object destroy.
+
+Sau nay co the doi ten script/prefab sang `RailCannon` khi da san sang migrate reference.
+
+---
+
+## 6. Audio
+
+`AudioManager` tren `GameSystems` la singleton null-safe.
+
+Hooks hien co:
+- Shoot
+- Hit
+- EnemyDeath
+- UnitBreak
+- EnergyCollect
+- EmpBurst
+- RailCannon
+- UiClick
+- Win
+- GameOver
+
+Chua co clip thi game van chay im lang. Khi co SFX, them vao `AudioManager.clips`.
+
+---
+
+## 7. Overcharge
+
+`OverchargeSystem` la mechanic chu dong dau tien de game khac PvZ hon.
+
+Contract:
+- Gan tren `GameSystems`.
+- Ton `energyCost` de buff mot row trong `duration` giay.
+- Shooter cung row doc multiplier qua `OverchargeSystem.FireRateMultiplierForRow(row)` va `DamageMultiplierForRow(row)`.
+- UI tam thoi la IMGUI nut `OC` ben phai va phim so 1-5.
+
+Can tuning sau Play Mode:
+- energyCost
+- duration
+- fireRateMultiplier
+- damageMultiplier
+
+---
+
+## 8. Data Architecture de xuat
 
 Hien tai nhieu stats nam trong prefab Inspector. Khi gameplay on dinh, nen tach ra:
 
@@ -99,7 +166,7 @@ Loi ich:
 
 ---
 
-## 5. Performance Plan
+## 9. Performance Plan
 
 Mobile priority:
 - Object pooling cho projectile, enemy, orb, VFX.
@@ -116,7 +183,7 @@ Can audit sau:
 
 ---
 
-## 6. Testing Plan
+## 10. Testing Plan
 
 Manual Play Mode:
 - Spawn wave 1-3.
@@ -142,7 +209,7 @@ Automated/Editor checks sau nay:
 
 ---
 
-## 7. Tooling de xuat
+## 11. Tooling de xuat
 
 Co the tao Editor tools:
 - ValidatePrefabReferences.
@@ -155,7 +222,7 @@ Codex co the viet cac tool nay khi project bat dau co nhieu prefab/asset.
 
 ---
 
-## 8. Git/Version Control
+## 12. Git/Version Control
 
 Nen commit:
 - `Assets/`
@@ -175,4 +242,3 @@ Khong commit:
 Quan trong:
 - Luon commit asset va `.meta` cung nhau.
 - Dung Git LFS cho PNG/PSD/PSB/Aseprite/audio/video/FBX.
-

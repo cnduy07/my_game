@@ -320,6 +320,7 @@ MonoBehaviour:
   row: 0
   speed: 0.3
   attackDamage: 30
+  attackSfxInterval: 0.65
 --- !u!114 &3650351322682123694
 MonoBehaviour:
   m_ObjectHideFlags: 0

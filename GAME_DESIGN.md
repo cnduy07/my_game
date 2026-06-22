@@ -83,9 +83,17 @@ Nguyen tac:
 - Dat xuong, doi fuse, gay damage trong radius.
 - Can VFX charge + EMP burst.
 
-### Lawnmower/Laser Sweeper
+### Rail Cannon
 - Vai tro: tuyen cuu cuoi moi hang, dung mot lan.
 - Kich hoat khi enemy vuot tuyen.
+- Ban beam xuyen row thay vi xe chay ngang, de giam cam giac clone PvZ.
+- Can warning glow, beam VFX, SFX rail shot.
+
+### Overcharge
+- Vai tro: mechanic chu dong cua nguoi choi.
+- Ton energy de buff mot row trong thoi gian ngan.
+- Shooter trong row do ban nhanh hon va gay damage cao hon.
+- Hop theme energy grid/sci-fi, tang quyet dinh trong combat.
 
 ---
 
@@ -135,4 +143,3 @@ Khong nen:
 - Dung sprite no tung tinh lam death effect.
 - Lam qua nhieu chi tiet nho khong doc duoc tren mobile.
 - Them content moi khi enemy/turret/bunker core chua polished.
-

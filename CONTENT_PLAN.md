@@ -52,6 +52,7 @@ Can co:
 - Idle.
 - Attack recoil.
 - Death/hit reaction neu rigged.
+- MuzzlePoint dat dung dau nong.
 - Muzzle flash VFX.
 - Bullet sprite/trail.
 - SFX shoot.
@@ -105,16 +106,16 @@ Can co:
 - Electric spark.
 - SFX charge + burst.
 
-### Lawnmower / Laser Sweeper
+### Rail Cannon
 
-Status: can polish.
+Status: thay the last-defense kieu lawnmower.
 
 Can co:
-- Idle.
-- Activate movement.
-- Laser/speed trail.
-- Hit/kill VFX.
-- SFX activation.
+- Rail cannon device/marker ben trai moi row.
+- Warning glow ngan khi enemy breach.
+- Beam xuyen row.
+- Spark/explosion nho tren enemy bi hit.
+- SFX rail shot.
 
 ---
 
@@ -177,9 +178,11 @@ Nice-to-have:
 Must-have:
 - Shoot.
 - Hit metal.
+- Enemy attack/metal bite loop ngan theo interval.
 - Enemy death.
 - Bunker break.
 - Energy collect.
+- Seed select / unit place UI click.
 - EMP burst.
 - UI click.
 - Game over/win sting.
@@ -187,6 +190,13 @@ Must-have:
 Mobile note:
 - SFX phai ngan, ro, khong qua day.
 - Co settings rieng music/SFX.
+
+Audio sourcing note:
+- Uu tien CC0/royalty-free commercial-safe.
+- Tot nhat cho placeholder: Kenney audio packs.
+- Tot cho tim tung am rieng: Freesound, nhung chi dung CC0 hoac CC BY va luu attribution neu can.
+- Tot cho thu vien lon/pro hon: Sonniss GDC bundles.
+- Tranh CC BY-NC/NonCommercial neu game co kha nang len store/monetize.
 
 ---
 
@@ -200,4 +210,3 @@ Can co:
 - Pause button.
 - Win/Game Over panels.
 - Main menu sau vertical slice.
-

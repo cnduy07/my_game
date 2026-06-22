@@ -77,7 +77,11 @@ public class SeedBar : MonoBehaviour
             string label = $"{s.label}\n{s.cost}{cd}";
 
             GUI.color = (i == selectedIndex) ? Color.cyan : Color.white;
-            if (GUI.Button(r, label)) selectedIndex = i;
+            if (GUI.Button(r, label))
+            {
+                selectedIndex = i;
+                AudioManager.PlaySfx(SfxType.UiClick);
+            }
             GUI.color = Color.white;
             GUI.enabled = true;
         }

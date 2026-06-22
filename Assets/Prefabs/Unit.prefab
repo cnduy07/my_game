@@ -67,6 +67,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7530138016587495006}
+  - {fileID: 5911423012585311002}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2617603157166847889
@@ -143,6 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
   deathAnimTime: 1
+  delayDestroyWithoutAnimator: 0
 --- !u!114 &2251609510970072896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +160,7 @@ MonoBehaviour:
   grid: {fileID: 0}
   row: 0
   bulletPrefab: {fileID: 2636908543398791439, guid: 0ad338b4ce43a434191531e80ae41551, type: 3}
+  muzzlePoint: {fileID: 5911423012585311002}
   fireInterval: 1.2
   bulletSpeed: 6
   bulletDamage: 25
@@ -173,7 +176,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
   m_RootBone: {fileID: 7530138016587495006}
   m_BoneTransforms:
@@ -205,7 +208,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -224,6 +227,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimator
   animator: {fileID: 2489212780594602485}
   spriteToFlip: {fileID: 2617603157166847889}
+--- !u!1 &5911423012585311001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5911423012585311002}
+  m_Layer: 0
+  m_Name: MuzzlePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5911423012585311002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5911423012585311001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.372, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6761579691551288635}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6549237262121466937
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +282,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6549237262121466937}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.6768536, w: 0.73611766}
+  m_LocalRotation: {x: -0, y: -0, z: 0.6671926, w: 0.7448854}
   m_LocalPosition: {x: -0.123283416, y: -0.0031210482, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -258,7 +292,7 @@ Transform:
   - {fileID: 9166092356029265320}
   - {fileID: 5889178907964465129}
   m_Father: {fileID: 6761579691551288635}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 83.702}
 --- !u!1 &8233906293238554590
 GameObject:
   m_ObjectHideFlags: 0

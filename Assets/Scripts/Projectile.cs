@@ -26,6 +26,7 @@ public class Projectile : MonoBehaviour
                 var hp = e.GetComponent<Health>();
                 if (hp != null) hp.TakeDamage(damage);
                 if (slowDuration > 0f) e.ApplySlow(slowFactor, slowDuration);
+                AudioManager.PlaySfx(SfxType.Hit);
                 Destroy(gameObject);
                 return;
             }

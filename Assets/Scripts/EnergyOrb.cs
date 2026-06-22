@@ -36,6 +36,7 @@ public class EnergyOrb : MonoBehaviour
     void Collect()
     {
         if (EnergySystem.Instance != null) EnergySystem.Instance.Add(value);
+        AudioManager.PlaySfx(SfxType.EnergyCollect);
         Destroy(gameObject);
     }
 

@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
         if (IsGameOver || IsWon) return;
         IsGameOver = true;
         Debug.Log($"GAME OVER — địch vượt hàng {row}");
+        AudioManager.PlaySfx(SfxType.GameOver);
         Time.timeScale = 0f;
     }
 
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour
         if (IsGameOver || IsWon) return;
         IsWon = true;
         Debug.Log("YOU WIN!");
+        AudioManager.PlaySfx(SfxType.Win);
         Time.timeScale = 0f;
     }
 
@@ -80,6 +82,7 @@ public class GameManager : MonoBehaviour
 
         if (GUI.Button(new Rect(Screen.width / 2f - 70, Screen.height / 2f + 40, 140, 40), "Chơi lại"))
         {
+            AudioManager.PlaySfx(SfxType.UiClick);
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }

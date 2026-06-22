@@ -21,6 +21,8 @@ public class PlacementController : MonoBehaviour
         // Bỏ qua nếu con trỏ đang ở trên thanh seed (click chọn packet, không phải đặt unit).
         float guiY = Screen.height - Input.mousePosition.y;
         if (bar != null && bar.PointerOverBar(Input.mousePosition.x, guiY)) return;
+        if (OverchargeSystem.Instance != null &&
+            OverchargeSystem.Instance.PointerOverPanel(Input.mousePosition.x, guiY)) return;
 
         Vector3 world = cam.ScreenToWorldPoint(Input.mousePosition);
         world.z = 0f;
@@ -46,6 +48,7 @@ public class PlacementController : MonoBehaviour
             }
 
             bar.OnPlacedSelected();   // trừ năng lượng + bật cooldown
+            AudioManager.PlaySfx(SfxType.UiClick);
         }
     }
 }

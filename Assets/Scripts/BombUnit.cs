@@ -16,6 +16,7 @@ public class BombUnit : MonoBehaviour
         if (timer < fuse) return;
 
         Explode();
+        AudioManager.PlaySfx(SfxType.EmpBurst);
         Destroy(gameObject);
     }
 

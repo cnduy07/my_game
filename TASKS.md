@@ -8,21 +8,19 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Test lai enemy animation sau khi `Enemy.controller` da chuan hoa parameter `Walking`, `Attack`, `Die`.
-- Kiem tra trong Unity Inspector:
-  - `Enemy.controller` co dung parameter viet hoa.
-  - Enemy runtime sinh tu wave chuyen `idle -> walk`.
-  - Khi bi giet, enemy vao `death` truoc khi destroy.
-- Hoan thien bunker damage art:
-  - Dung 3 sprite stage: `bunker_1`, `bunker_2`, `bunker_3`.
-  - Bo cach dung `bunker_4` nhu anh no tinh.
-- Choi thu wave 1-3 va ghi cam giac: enemy nhanh/cham, turret manh/yeu, bunker co song du lau khong.
+- Tai/chon bo SFX tam thoi cho vertical slice.
+- Import audio vao `Assets/Audio/` va gan vao `AudioManager.clips`.
+- Test SnowGun sau khi rig + animator dung chung Unit controller.
+- Test lai Overcharge sau khi Codex tuning multiplier: toc do ban phai thay doi ro hon.
+- Ghi cam giac: Rail Cannon co du thoa man khong, audio nao can thay/giu.
 
 ### Codex
 
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
-- De xuat VFX death rieng cho bunker/object tinh.
+- Ho tro tinh chinh Rail Cannon/Overcharge/audio sau khi co feedback Play Mode.
+- De xuat VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon.
+- Tuning Overcharge de buff toc do ban ro hon.
 - Sau khi animation core on, de xuat buoc chuyen stats sang ScriptableObject config.
 
 ---
@@ -85,4 +83,3 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Neu co animation: parameter/transition khop voi code.
 - Neu co asset: sprite/meta duoc commit cung nhau.
 - `TASKS.md` hoac file plan lien quan duoc cap nhat neu thay doi huong di.
-

@@ -13,6 +13,8 @@ public class EnemyMover : MonoBehaviour
     // Trạng thái bị làm chậm (do súng băng).
     private float slowFactor = 1f;     // 1 = bình thường, <1 = chậm
     private float slowTimer = 0f;
+    public float attackSfxInterval = 0.65f;
+    private float attackSfxTimer = 0f;
 
     private bool caught = false;       // true khi đã bị lawnmower "nhận" — đứng im chờ bị huỷ
     private CharacterAnimator anim;    // null trên bản xám -> mọi lệnh anim tự bỏ qua
@@ -57,11 +59,18 @@ public class EnemyMover : MonoBehaviour
             if (hp != null && hp.IsAlive)
             {
                 if (anim != null) { anim.SetWalking(false); anim.TriggerAttack(); }
+                attackSfxTimer -= Time.deltaTime;
+                if (attackSfxTimer <= 0f)
+                {
+                    AudioManager.PlaySfx(SfxType.Hit);
+                    attackSfxTimer = attackSfxInterval;
+                }
                 hp.TakeDamage(attackDamage * Time.deltaTime);
                 return; // đang đập Unit thì đứng yên
             }
         }
 
+        attackSfxTimer = 0f;
         if (anim != null) anim.SetWalking(true);
         transform.position += Vector3.left * speed * slowFactor * Time.deltaTime;
 

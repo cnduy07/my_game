@@ -97,6 +97,21 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - **Bunker:** dùng `DamageStages` theo phần trăm máu với 3 stage `bunker_1` → `bunker_2` → `bunker_3`; death effect nên tách thành VFX động, không dùng sprite nổ tĩnh.
 - **Cần verify trong Unity:** Play Mode, enemy spawn từ wave phải `idle → walk`; khi HP về 0 phải vào `death` trước khi Destroy; turret attack/death trigger phải chạy nếu prefab có controller đúng.
 
+### Feature pass — muzzle, audio, Rail Cannon, Overcharge — 2026-06-21
+- **MuzzlePoint:** `Shooter` bắn từ `muzzlePoint` nếu có, fallback về root nếu trống. `Unit.prefab` và `SnowGun.prefab` đã có child `MuzzlePoint` để chỉnh đúng đầu nòng trong Prefab/Scene view.
+- **Audio:** thêm `AudioManager` null-safe với hooks cơ bản: shoot, hit, enemy death, unit break, energy collect, EMP, Rail Cannon, UI click, win/game over. Chưa gán clip thì game vẫn chạy im lặng.
+- **Rail Cannon:** script cũ `Lawnmower` đổi hành vi thành rail cannon một phát quét hàng, giữ tên class để prefab cũ không bị missing script. Không còn xe chạy ngang kiểu PvZ.
+- **Overcharge:** thêm `OverchargeSystem` trên `GameSystems`; tốn energy để buff một row trong thời gian ngắn, tăng fire rate và damage cho shooter cùng row.
+- **Cần verify trong Unity:** chỉnh `MuzzlePoint` bằng mắt; gán audio clips vào `AudioManager`; test Rail Cannon khi enemy breach; test nút `OC`/phím số 1-5.
+
+### Unity verify — 2026-06-22
+- **Đã làm trong Unity:** chỉnh animation cho Unit; thêm rig cho SnowGun; thêm Animator cho SnowGun và dùng chung controller của Unit.
+- **Đã test OK:** Rail Cannon hoạt động; Overcharge hoạt động và có trừ energy.
+- **Cần tuning:** Overcharge hiện chưa làm tốc độ bắn tăng đủ rõ; cần tăng `fireRateMultiplier` hoặc giảm `energyCost`/tăng `duration` sau khi test thêm.
+- **Audio:** project chưa có audio asset; cần tải/gán SFX vào `AudioManager.clips`.
+- **Audio bugfix:** clips trong `AudioManager` từng bị serialize với `volume/pitch = 0` nên im lặng; đã thêm default guard và chỉnh scene về volume 1.
+- **Audio hooks thêm:** click seed packet, đặt unit thành công, enemy đánh unit/bunker theo interval.
+
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).

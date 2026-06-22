@@ -255,8 +255,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMover
   grid: {fileID: 0}
   row: 0
-  speed: 0.5
-  attackDamage: 30
+  speed: 0.3
+  attackDamage: 25
+  attackSfxInterval: 1.1
 --- !u!114 &102739001621520893
 MonoBehaviour:
   m_ObjectHideFlags: 0

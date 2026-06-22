@@ -133,6 +133,8 @@ GameObject:
   - component: {fileID: 53209490}
   - component: {fileID: 53209489}
   - component: {fileID: 53209491}
+  - component: {fileID: 53209492}
+  - component: {fileID: 53209493}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -165,7 +167,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec9178cdf58cc4d728ad7f84af94046a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   grid: {fileID: 60195756}
   enemyPrefab: {fileID: 6305580585309829948, guid: 4e174d0ae721b4d2bb2042abb5d08b24, type: 3}
@@ -187,7 +189,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74b36352bf0c749c79f9b5f757aa4b3b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlacementController
   grid: {fileID: 60195756}
 --- !u!114 &53209489
@@ -200,7 +202,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba3e84b4274cf41028825407b7df3fe8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnergySystem
   startEnergy: 75
   orbPrefab: {fileID: 2636908543398791439, guid: 5931ef304f00b4879b77d02ec258ebd1, type: 3}
@@ -217,7 +219,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43cf967d5fdee44d19f987d34b569d0e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SeedBar
   seeds:
   - label: ArcReactor
@@ -251,10 +253,91 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1d0934ac3f4f434192e21a30125784f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   grid: {fileID: 60195756}
   lawnmowerPrefab: {fileID: 4599616862578025363, guid: a3d85821c2d9f4a6fb5224a9c8364baf, type: 3}
+--- !u!114 &53209492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89e6dad2fbae4388803b6572d91c712f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  sfxSource: {fileID: 0}
+  clips:
+  - type: 0
+    clip: {fileID: 8300000, guid: c00b1a1c219414a4c896dce0578b7330, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 1
+    clip: {fileID: 8300000, guid: eae47776fc8f647079926e97e514d2d7, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 2
+    clip: {fileID: 8300000, guid: ef09a16451e9046088a2070b2e18cd74, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 3
+    clip: {fileID: 8300000, guid: fb37fd6d178034483ab45b4efc218403, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 4
+    clip: {fileID: 8300000, guid: 3a399ed5a6e1d4fb785bcac652264765, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 5
+    clip: {fileID: 8300000, guid: 54245278e82d44a4b9148b8023b8491e, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 6
+    clip: {fileID: 8300000, guid: df259bfee2e52486c8996a7e60e808aa, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 7
+    clip: {fileID: 8300000, guid: cd2b2bb3d9d5c48d3bcda258dd6fb3f7, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 8
+    clip: {fileID: 8300000, guid: 8cd5f532c78d84c73967668cd3a700bd, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+  - type: 9
+    clip: {fileID: 8300000, guid: aefefd4b6ab27431499e6c0ab27dcb6c, type: 3}
+    volume: 1
+    pitchMin: 0.96
+    pitchMax: 1.04
+--- !u!114 &53209493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53209485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc35b516410b48f596c001797539fc06, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::OverchargeSystem
+  grid: {fileID: 60195756}
+  energyCost: 50
+  duration: 6
+  fireRateMultiplier: 1.6
+  damageMultiplier: 1.25
 --- !u!1 &60195754
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +380,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7df8c9cdb181444309c011edb22670ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   cols: 9
   rows: 5
@@ -341,7 +424,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -468,7 +551,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   m_ComponentVersion: 4
   m_LightType: 4
