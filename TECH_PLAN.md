@@ -160,6 +160,7 @@ Contract:
 - `EnemyMover.All` chi dai dien enemy dang song/co the bi target; `EnemyMover.ActiveOrDyingCount` dai dien enemy con ton tai trong scene, gom ca death animation pending. Wave clear/victory phai dung `ActiveOrDyingCount`.
 - `GameManager` expose win/lose state, HUD hien modal va restart scene.
 - `PlacementController` phai chan click khi `GameUiController.PointerOverPanel` tra ve true.
+- `PlacementController.CurrentFeedback` va `OverchargeSystem.CurrentFeedback` cap message ngan cho HUD command status strip; thao tac sai khong nen fail im lang.
 
 Layout v1:
 - Top status bar: energy ben trai, level giua, wave ben phai, pause sat phai.
@@ -184,6 +185,10 @@ Current scale pass:
   - route/node UI runtime-generated de test flow nhanh;
   - final art sau nay nen thay node icon/route/panel sprite bang UI skin rieng;
   - `CampaignIntel.DefaultMapPositions` phai du so vi tri so voi `LevelCatalog.levels`.
+- Command status strip nam tren seed tray:
+  - hien selected seed/passive placement instruction khi khong co loi;
+  - hien transient warning/success tu placement/Overcharge;
+  - panel raycast false de khong chan click board.
 
 Can polish sau:
 - Safe area/notch cho mobile that.

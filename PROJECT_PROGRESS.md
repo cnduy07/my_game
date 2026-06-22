@@ -228,6 +228,10 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - click node chi select, nut `DEPLOY` moi reload mission.
 - Them wave intel HUD nho duoi top bar: doc wave hien tai/ke tiep tu `EnemySpawner` va `CampaignIntel`.
 - Balance/AI QA duoc mo rong de report campaign pressure, enemy mix, tool recommendation va canh bao map position/catalog mismatch.
+- Them command feedback strip tren seed tray:
+  - selected seed status khi san sang dat;
+  - thong bao thieu energy/cooldown/o bi chan/o da co unit;
+  - thong bao Overcharge locked/thieu energy/row da active/activate thanh cong.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.

@@ -151,6 +151,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Overnight sprint plan snapshot:
   - `OVERNIGHT_SPRINT.md` da ghi objective, constraint va work blocks cho phien lam viec tu chu.
   - `CampaignIntel` da duoc them de dung chung cho UI/report/QA, tranh hardcode enemy mix rieng trong HUD.
+- Gameplay command clarity pass:
+  - `PlacementController` co feedback khi click sai/khong du energy/cooldown/o bi chan/o da co unit;
+  - `OverchargeSystem` co feedback khi locked/khong du energy/row active/activate thanh cong;
+  - HUD co command status strip phia tren seed tray, tu an khi pause/win/lose.
 
 ---
 
@@ -199,6 +203,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Save/progress/settings baseline da co; chi nang len JSON/full SaveData khi co currency/upgrades/inventory.
 - Level definition va authored wave workflow baseline da co.
 - Polish campaign map UI: node icon art, route art, sector preview, reward text, lock/current/cleared states.
+- Polish command feedback UI: icon warning/success, color state rieng, mobile touch feedback/audio nhe.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
 

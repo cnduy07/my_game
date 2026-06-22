@@ -49,6 +49,8 @@ public class GameUiController : MonoBehaviour
 
     RectTransform tutorialPanel;
     TextMeshProUGUI tutorialText;
+    RectTransform commandStatusPanel;
+    TextMeshProUGUI commandStatusText;
 
     GameObject modalOverlay;
     RectTransform modalCard;
@@ -208,6 +210,7 @@ public class GameUiController : MonoBehaviour
         BuildSeedTray(safeAreaRoot);
         BuildOverchargePanel(safeAreaRoot);
         BuildTutorialPanel(safeAreaRoot);
+        BuildCommandStatusPanel(safeAreaRoot);
         BuildModal(safeAreaRoot);
         BuildLevelSelectOverlay(safeAreaRoot);
         RebuildDynamicUiIfNeeded();
@@ -265,7 +268,7 @@ public class GameUiController : MonoBehaviour
     {
         tutorialPanel = CreatePanel("TutorialHint", parent, new Color(0.035f, 0.05f, 0.075f, 0.86f));
         tutorialPanel.GetComponent<Image>().raycastTarget = false;
-        SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(34f, 174f), new Vector2(560f, 238f));
+        SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(34f, 184f), new Vector2(540f, 248f));
 
         tutorialText = CreateText("Text", tutorialPanel, "", 22, FontStyle.Bold, TextAnchor.MiddleLeft);
         tutorialText.color = new Color(0.86f, 0.96f, 1f, 1f);
@@ -284,6 +287,19 @@ public class GameUiController : MonoBehaviour
         waveIntelText.color = new Color(0.82f, 0.95f, 1f, 1f);
         SetAnchor(waveIntelText.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 2f), new Vector2(-14f, -2f));
         waveIntelPanel.gameObject.SetActive(false);
+    }
+
+    void BuildCommandStatusPanel(Transform parent)
+    {
+        commandStatusPanel = CreatePanel("CommandStatus", parent, new Color(0.035f, 0.048f, 0.07f, 0.88f));
+        commandStatusPanel.GetComponent<Image>().raycastTarget = false;
+        AddFrame(commandStatusPanel, new Color(0.08f, 0.2f, 0.27f, 0.78f));
+        SetAnchor(commandStatusPanel, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-380f, 132f), new Vector2(380f, 176f));
+
+        commandStatusText = CreateText("Text", commandStatusPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        commandStatusText.color = new Color(0.86f, 0.96f, 1f, 1f);
+        SetAnchor(commandStatusText.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 2f), new Vector2(-14f, -2f));
+        commandStatusPanel.gameObject.SetActive(false);
     }
 
     void BuildSeedTray(Transform parent)
@@ -683,6 +699,7 @@ public class GameUiController : MonoBehaviour
         RefreshRowButtons();
         RefreshLevelButtons();
         RefreshTutorial();
+        RefreshCommandStatus();
     }
 
     void RefreshWaveIntel()
@@ -710,6 +727,51 @@ public class GameUiController : MonoBehaviour
 
         tutorialPanel.gameObject.SetActive(show);
         if (show) tutorialText.text = hint;
+    }
+
+    void RefreshCommandStatus()
+    {
+        if (commandStatusPanel == null || commandStatusText == null) return;
+
+        bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
+        if (isPaused || terminal)
+        {
+            commandStatusPanel.gameObject.SetActive(false);
+            return;
+        }
+
+        string message = PlacementController.Instance != null ? PlacementController.Instance.CurrentFeedback : "";
+        if (string.IsNullOrWhiteSpace(message) && OverchargeSystem.Instance != null)
+            message = OverchargeSystem.Instance.CurrentFeedback;
+        bool transient = !string.IsNullOrWhiteSpace(message);
+        if (!transient)
+            message = BuildSelectedSeedStatus();
+
+        bool show = !string.IsNullOrWhiteSpace(message);
+        commandStatusPanel.gameObject.SetActive(show);
+        if (!show) return;
+
+        commandStatusText.text = message;
+        commandStatusText.color = transient ? warningColor : new Color(0.86f, 0.96f, 1f, 1f);
+    }
+
+    string BuildSelectedSeedStatus()
+    {
+        SeedBar seedBar = SeedBar.Instance;
+        if (seedBar == null || seedBar.Selected == null) return "";
+
+        UnitType seed = seedBar.Selected;
+        bool ready = seedBar.IsReady(seedBar.selectedIndex);
+        bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(seed.cost);
+        if (!ready)
+            return $"{seed.label} selected | cooldown {seedBar.GetCooldownRemaining(seedBar.selectedIndex):0.0}s";
+        if (!afford)
+        {
+            int currentEnergy = EnergySystem.Instance != null ? EnergySystem.Instance.Energy : 0;
+            return $"{seed.label} selected | need {Mathf.Max(0, seed.cost - currentEnergy)} energy";
+        }
+
+        return $"{seed.label} selected | place on an open grid cell";
     }
 
     void RefreshSeedCards()

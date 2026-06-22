@@ -13,10 +13,13 @@ public class OverchargeSystem : MonoBehaviour
     public float damageMultiplier = 1.25f;
     public bool unlocked = true;
     public bool showDebugImGui;
+    public float feedbackDuration = 2.2f;
 
     private float[] timers;
     private GUIStyle activeStyle;
     private GUIStyle inactiveStyle;
+    string feedbackText = "";
+    float feedbackUntil;
 
     void Awake()
     {
@@ -72,6 +75,8 @@ public class OverchargeSystem : MonoBehaviour
     }
 
     public bool IsUnlocked => unlocked;
+    public string CurrentFeedback =>
+        !string.IsNullOrWhiteSpace(feedbackText) && Time.unscaledTime <= feedbackUntil ? feedbackText : "";
 
     public bool IsActive(int row)
         => timers != null && row >= 0 && row < timers.Length && timers[row] > 0f;
@@ -104,14 +109,42 @@ public class OverchargeSystem : MonoBehaviour
 
     public void TryActivate(int row)
     {
-        if (!unlocked) return;
+        if (!unlocked)
+        {
+            SetFeedback("Overcharge locked for this mission.");
+            return;
+        }
         EnsureTimers();
-        if (timers == null || row < 0 || row >= timers.Length) return;
-        if (IsActive(row)) return;
-        if (EnergySystem.Instance == null || !EnergySystem.Instance.TrySpend(energyCost)) return;
+        if (timers == null || row < 0 || row >= timers.Length)
+        {
+            SetFeedback("Invalid Overcharge lane.");
+            return;
+        }
+
+        if (IsActive(row))
+        {
+            SetFeedback($"Lane {row + 1} Overcharge already active.");
+            return;
+        }
+
+        if (EnergySystem.Instance == null || !EnergySystem.Instance.CanAfford(energyCost))
+        {
+            int currentEnergy = EnergySystem.Instance != null ? EnergySystem.Instance.Energy : 0;
+            SetFeedback($"Need {Mathf.Max(0, energyCost - currentEnergy)} more energy for Overcharge.");
+            return;
+        }
+
+        EnergySystem.Instance.TrySpend(energyCost);
 
         timers[row] = duration;
         AudioManager.PlaySfx(SfxType.UiClick);
+        SetFeedback($"Lane {row + 1} Overcharged.");
+    }
+
+    void SetFeedback(string message)
+    {
+        feedbackText = message;
+        feedbackUntil = Time.unscaledTime + Mathf.Max(0.2f, feedbackDuration);
     }
 
     void OnGUI()
