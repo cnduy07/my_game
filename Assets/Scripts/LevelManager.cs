@@ -37,6 +37,12 @@ public class LevelManager : MonoBehaviour
         var spawner = FindAnyObjectByType<EnemySpawner>(FindObjectsInactive.Include);
         if (spawner != null)
             spawner.ApplyLevelDefinition(currentLevel);
+
+        if (SeedBar.Instance != null)
+            SeedBar.Instance.ApplyLevelUnlocks(currentLevel);
+
+        if (OverchargeSystem.Instance != null)
+            OverchargeSystem.Instance.SetUnlocked(currentLevel.overchargeUnlocked);
     }
 
     public void MarkCurrentLevelCompleted()

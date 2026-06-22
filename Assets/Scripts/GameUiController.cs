@@ -520,6 +520,9 @@ public class GameUiController : MonoBehaviour
         if (pauseButton != null)
             pauseButton.interactable = GameManager.Instance == null || (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsWon);
 
+        if (overchargePanel != null)
+            overchargePanel.gameObject.SetActive(OverchargeSystem.Instance != null && OverchargeSystem.Instance.IsUnlocked);
+
         RefreshSeedCards();
         RefreshRowButtons();
         RefreshLevelButtons();
@@ -837,7 +840,8 @@ public class GameUiController : MonoBehaviour
 
     bool IsScreenPointIn(RectTransform rect, Vector2 screenPoint)
     {
-        return rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, null);
+        return rect != null && rect.gameObject.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, null);
     }
 
     FontStyles ToTmpFontStyle(FontStyle style)

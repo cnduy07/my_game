@@ -261,10 +261,14 @@ Hien tai:
 - Level 3: Signal Siege.
 - 3 level nay dung chung scene/board, khac authored waves va balance.
 - Unlock rule: win level truoc de mo level tiep theo.
+- Unit/OC unlock:
+  - Level 1: ArcReactor + Turret.
+  - Level 2: mo Bunker.
+  - Level 3: mo SnowGun + DroneEMP + Overcharge.
 
 Can lam tiep:
 - Level 1-3 can duoc tune thanh tutorial/co difficulty ramp ro rang.
-- Level 4-10 mo khoa dan Bunker, SnowGun, DroneEMP, Overcharge.
+- Level 4-10 them enemy/unit/upgrade moi thay vi lap lai unlock da co.
 - Moi level co theme/tint nho hoac background variation de tranh lap.
 - Wave notes: enemy type, count, timing, huge wave.
 - Reward/unlock copy ngan gon.

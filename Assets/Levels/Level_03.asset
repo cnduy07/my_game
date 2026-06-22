@@ -30,6 +30,13 @@ MonoBehaviour:
     overchargeDuration: 6
     overchargeFireRateMultiplier: 3
     overchargeDamageMultiplier: 1.35
+  allowedUnitLabels:
+  - ArcReactor
+  - Turret
+  - Bunker
+  - SnowGun
+  - DroneEMP
+  overchargeUnlocked: 1
   useAuthoredWaves: 1
   waves:
   - label: Signal Trace

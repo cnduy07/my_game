@@ -11,6 +11,7 @@ public class OverchargeSystem : MonoBehaviour
     public float duration = 6f;
     public float fireRateMultiplier = 1.6f;
     public float damageMultiplier = 1.25f;
+    public bool unlocked = true;
     public bool showDebugImGui;
 
     private float[] timers;
@@ -26,6 +27,9 @@ public class OverchargeSystem : MonoBehaviour
     {
         if (GameBalance.Instance != null)
             GameBalance.Instance.ApplyOverchargeSystem(this);
+
+        if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+            SetUnlocked(LevelManager.Instance.currentLevel.overchargeUnlocked);
 
         EnsureTimers();
     }
@@ -46,14 +50,14 @@ public class OverchargeSystem : MonoBehaviour
     public static float FireRateMultiplierForRow(int row)
     {
         var sys = Instance;
-        if (sys == null || !sys.IsActive(row)) return 1f;
+        if (sys == null || !sys.unlocked || !sys.IsActive(row)) return 1f;
         return sys.fireRateMultiplier;
     }
 
     public static float DamageMultiplierForRow(int row)
     {
         var sys = Instance;
-        if (sys == null || !sys.IsActive(row)) return 1f;
+        if (sys == null || !sys.unlocked || !sys.IsActive(row)) return 1f;
         return sys.damageMultiplier;
     }
 
@@ -61,10 +65,13 @@ public class OverchargeSystem : MonoBehaviour
     {
         get
         {
+            if (!unlocked) return 0;
             EnsureTimers();
             return timers != null ? timers.Length : 0;
         }
     }
+
+    public bool IsUnlocked => unlocked;
 
     public bool IsActive(int row)
         => timers != null && row >= 0 && row < timers.Length && timers[row] > 0f;
@@ -80,6 +87,16 @@ public class OverchargeSystem : MonoBehaviour
         damageMultiplier = Mathf.Max(0f, newDamageMultiplier);
     }
 
+    public void SetUnlocked(bool value)
+    {
+        unlocked = value;
+        if (!unlocked && timers != null)
+        {
+            for (int i = 0; i < timers.Length; i++)
+                timers[i] = 0f;
+        }
+    }
+
     public bool PointerOverPanel(float guiX, float guiY)
     {
         return GameUiController.Instance != null && GameUiController.Instance.PointerOverPanel(guiX, guiY);
@@ -87,6 +104,7 @@ public class OverchargeSystem : MonoBehaviour
 
     public void TryActivate(int row)
     {
+        if (!unlocked) return;
         EnsureTimers();
         if (timers == null || row < 0 || row >= timers.Length) return;
         if (IsActive(row)) return;
@@ -99,6 +117,7 @@ public class OverchargeSystem : MonoBehaviour
     void OnGUI()
     {
         if (!showDebugImGui) return;
+        if (!unlocked) return;
         if (timers == null) return;
 
         if (activeStyle == null)

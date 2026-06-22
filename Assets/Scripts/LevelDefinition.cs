@@ -7,8 +7,26 @@ public class LevelDefinition : ScriptableObject
     public string displayName = "Level 1";
     public int levelNumber = 1;
     public LevelBalanceSettings balance = new LevelBalanceSettings();
+    public string[] allowedUnitLabels;
+    public bool overchargeUnlocked = true;
     public bool useAuthoredWaves = false;
     public LevelWaveDefinition[] waves;
+
+    public bool HasUnitRestrictions => allowedUnitLabels != null && allowedUnitLabels.Length > 0;
+
+    public bool AllowsUnit(string label)
+    {
+        if (!HasUnitRestrictions) return true;
+        if (string.IsNullOrWhiteSpace(label)) return false;
+
+        foreach (string allowed in allowedUnitLabels)
+        {
+            if (string.Equals(allowed, label, System.StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
 
     public void ApplyTo(GameBalance gameBalance)
     {

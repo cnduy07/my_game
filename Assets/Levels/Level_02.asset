@@ -30,6 +30,11 @@ MonoBehaviour:
     overchargeDuration: 6
     overchargeFireRateMultiplier: 2.75
     overchargeDamageMultiplier: 1.3
+  allowedUnitLabels:
+  - ArcReactor
+  - Turret
+  - Bunker
+  overchargeUnlocked: 0
   useAuthoredWaves: 1
   waves:
   - label: Probe Line

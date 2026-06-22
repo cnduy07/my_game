@@ -22,17 +22,21 @@ public class SeedBar : MonoBehaviour
     public bool showDebugImGui;
 
     private float[] cdTimer;
+    private UnitType[] allSeeds;
 
     void Awake()
     {
         Instance = this;
-        cdTimer = new float[seeds != null ? seeds.Length : 0];
+        EnsureAllSeedsSnapshot();
+        ResetCooldowns();
     }
 
     void Start()
     {
         if (GameBalance.Instance != null)
-            GameBalance.Instance.ApplySeedBar(this);
+            GameBalance.Instance.ApplySeedList(allSeeds);
+
+        ApplyLevelUnlocks(LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null);
     }
 
     void Update()
@@ -89,6 +93,38 @@ public class SeedBar : MonoBehaviour
         cdTimer[selectedIndex] = t.cooldown;
     }
 
+    public void ApplyLevelUnlocks(LevelDefinition level)
+    {
+        EnsureAllSeedsSnapshot();
+
+        if (level == null || !level.HasUnitRestrictions)
+        {
+            seeds = allSeeds;
+        }
+        else
+        {
+            int count = 0;
+            foreach (var seed in allSeeds)
+                if (seed != null && level.AllowsUnit(seed.label))
+                    count++;
+
+            UnitType[] filtered = new UnitType[count];
+            int write = 0;
+            foreach (var seed in allSeeds)
+                if (seed != null && level.AllowsUnit(seed.label))
+                    filtered[write++] = seed;
+
+            seeds = filtered;
+        }
+
+        if (selectedIndex >= SeedCount)
+            selectedIndex = SeedCount > 0 ? 0 : -1;
+        else if (selectedIndex < 0 && SeedCount > 0)
+            selectedIndex = 0;
+
+        ResetCooldowns();
+    }
+
     // Chặn click "đặt unit" khi con trỏ đang nằm trên thanh seed (tránh vừa bấm nút vừa đặt).
     public bool PointerOverBar(float guiX, float guiY)
     {
@@ -117,5 +153,16 @@ public class SeedBar : MonoBehaviour
             GUI.color = Color.white;
             GUI.enabled = true;
         }
+    }
+
+    void EnsureAllSeedsSnapshot()
+    {
+        if (allSeeds != null && allSeeds.Length > 0) return;
+        allSeeds = seeds != null ? (UnitType[])seeds.Clone() : new UnitType[0];
+    }
+
+    void ResetCooldowns()
+    {
+        cdTimer = new float[seeds != null ? seeds.Length : 0];
     }
 }

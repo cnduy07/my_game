@@ -373,16 +373,24 @@ Hien tai v1:
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level.
 - `Assets/Levels/Level_01.asset`, `Level_02.asset`, `Level_03.asset` la level pack dau tien.
 - `LevelCatalog.asset` dang chua 3 level; level unlock theo rule `levelNumber <= highestCompleted + 1`.
+- `LevelDefinition.allowedUnitLabels` filter seed packet theo label hien co trong `GameBalance.units`.
+- `LevelDefinition.overchargeUnlocked` bat/tat `OverchargeSystem` theo mission.
+- `SeedBar` giu seed list goc va tao active seed list theo level; HUD tu rebuild khi seed count doi.
+- Unlock hien tai:
+  - Level 1: ArcReactor, Turret.
+  - Level 2: ArcReactor, Turret, Bunker.
+  - Level 3: ArcReactor, Turret, Bunker, SnowGun, DroneEMP, Overcharge.
 - `LevelDefinition` da co optional authored waves: `useAuthoredWaves`, `LevelWaveDefinition`, `LevelSpawnGroup`.
 - `EnemySpawner` van fallback ve formula wave cu neu authored waves tat hoac rong.
 - `Level_01.useAuthoredWaves` hien bat mac dinh sau playtest OK.
 - `GameUiController` co level select overlay va nut next level trong win modal.
 
 Uu tien tiep:
-1. Them reward/unlock copy cho tung level.
-2. SaveData co version khi progression phuc tap hon.
-3. Level select art/icon/preview.
-4. Tach level progression sang main menu scene neu can.
+1. Tune level 1-3 sau khi unit unlock lam thay doi difficulty.
+2. Them reward/unlock copy cho tung level.
+3. SaveData co version khi progression phuc tap hon.
+4. Level select art/icon/preview.
+5. Tach level progression sang main menu scene neu can.
 
 ---
 

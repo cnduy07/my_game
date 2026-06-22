@@ -230,6 +230,20 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - trang thai level: dang choi, da xong, mo khoa, khoa.
 - AI QA kiem tra them catalog: slot null, trung `levelId`, sai thu tu `levelNumber`, authored waves rong.
 - Muc tieu: chuyen game tu single scene prototype sang loop co progression co ban, van giu mot scene duy nhat de it rui ro asset/scene management.
+- **Unity verify:** chu project da test 7 buoc progression loop, tat ca hoat dong OK.
+
+### Mission unlock/gating v1 — 2026-06-22
+- `LevelDefinition` co them:
+  - `allowedUnitLabels`;
+  - `overchargeUnlocked`.
+- `SeedBar` giu seed list goc va filter active seeds theo level hien tai.
+- Unlock hien tai:
+  - Level 1 / First Contact: `ArcReactor`, `Turret`, khong OC.
+  - Level 2 / Armor Probe: them `Bunker`, khong OC.
+  - Level 3 / Signal Siege: them `SnowGun`, `DroneEMP`, bat OC.
+- `OverchargeSystem` co state `unlocked`; khi khoa se an panel OC, chan phim so, clear timers va khong chan click board.
+- `TutorialCoach` khong goi y OC neu level chua mo OC; level co Bunker se goi y dung Bunker khi bi ep.
+- AI QA kiem tra `allowedUnitLabels` co khop voi `GameBalance.units`.
 
 - `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
 - `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.

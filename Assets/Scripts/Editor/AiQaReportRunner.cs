@@ -25,7 +25,7 @@ public static class AiQaReportRunner
         RuntimeQualitySettings runtimeQuality = UnityEngine.Object.FindAnyObjectByType<RuntimeQualitySettings>(FindObjectsInactive.Include);
 
         CheckGameBalance(balance, checks);
-        CheckLevelManager(levelManager, checks);
+        CheckLevelManager(levelManager, balance, checks);
         CheckUi(ui, checks);
         CheckRuntimeFoundations(vfxSettings, tutorialCoach, runtimeQuality, checks);
         CheckAudio(audio, checks);
@@ -74,7 +74,7 @@ public static class AiQaReportRunner
             checks.Add(CheckResult.Fail("GameBalance", "Sky interval must be above 0."));
     }
 
-    static void CheckLevelManager(LevelManager levelManager, List<CheckResult> checks)
+    static void CheckLevelManager(LevelManager levelManager, GameBalance balance, List<CheckResult> checks)
     {
         if (levelManager == null)
         {
@@ -106,14 +106,22 @@ public static class AiQaReportRunner
         }
         else
         {
-            CheckLevelCatalog(levelManager.levelCatalog, checks);
+            CheckLevelCatalog(levelManager.levelCatalog, balance, checks);
         }
     }
 
-    static void CheckLevelCatalog(LevelCatalog catalog, List<CheckResult> checks)
+    static void CheckLevelCatalog(LevelCatalog catalog, GameBalance balance, List<CheckResult> checks)
     {
         var ids = new HashSet<string>();
+        var unitLabels = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         int expectedNumber = 1;
+
+        if (balance != null && balance.units != null)
+        {
+            foreach (var unit in balance.units)
+                if (unit != null && !string.IsNullOrWhiteSpace(unit.label))
+                    unitLabels.Add(unit.label);
+        }
 
         for (int i = 0; i < catalog.levels.Length; i++)
         {
@@ -138,6 +146,17 @@ public static class AiQaReportRunner
 
             if (level.useAuthoredWaves && (level.waves == null || level.waves.Length == 0))
                 checks.Add(CheckResult.Fail("Level", $"{level.name} uses authored waves but has no waves."));
+
+            if (level.allowedUnitLabels != null)
+            {
+                foreach (string label in level.allowedUnitLabels)
+                {
+                    if (string.IsNullOrWhiteSpace(label))
+                        checks.Add(CheckResult.Fail("Level", $"{level.name} has an empty allowed unit label."));
+                    else if (unitLabels.Count > 0 && !unitLabels.Contains(label))
+                        checks.Add(CheckResult.Fail("Level", $"{level.name} allows unknown unit label '{label}'."));
+                }
+            }
 
             expectedNumber++;
         }

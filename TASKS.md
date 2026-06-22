@@ -8,14 +8,14 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Chu project
 
-- Kiem tra mission progression loop v1:
+- Kiem tra mission unlock/gating v1:
   - Play Mode khong co compile/Console error.
-  - Bam nut `LVL`, thay 3 mission: First Contact, Armor Probe, Signal Siege.
-  - Khi chua win level 1, chi level 1 mo khoa.
-  - Win level 1 xong, modal hien nut `MAN 2`; bam vao load level 2.
-  - Vao `LVL` sau khi win level 1, level 2 mo khoa, level 3 van khoa.
-  - Restart level giu dung selected level hien tai.
-  - Pause/resume/settings/seed tray/OC van hoat dong.
+  - Level 1 chi hien seed `ArcReactor`, `Turret`; panel OC khong hien va phim so 1-5 khong kich hoat OC.
+  - Win level 1 -> level 2: seed co them `Bunker`, OC van khoa.
+  - Win level 2 -> level 3: seed co `ArcReactor`, `Turret`, `Bunker`, `SnowGun`, `DroneEMP`; panel OC hien lai.
+  - Khi OC bi khoa, click vung ben phai board khong bi panel OC an click.
+  - Tutorial hint khong bao dung OC truoc level 3.
+  - Pause/resume/settings/level select/next level/restart van hoat dong.
 - Play test combat feedback pass:
   - Turret/SnowGun ban co muzzle flash.
   - Dan trung enemy co hit spark.
@@ -69,6 +69,13 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `PlayerProgress` luu selected/unlocked/completed;
   - HUD co level select overlay va next level button;
   - AI QA check catalog integrity.
+- Mission progression loop v1 da duoc chu project test OK trong Unity.
+- Mission unlock/gating v1:
+  - level data co `allowedUnitLabels` va `overchargeUnlocked`;
+  - `SeedBar` filter seed theo level;
+  - `OverchargeSystem` co lock state;
+  - tutorial hint ton trong unlock state;
+  - AI QA check unknown allowed unit labels.
 
 ---
 

@@ -95,9 +95,16 @@ public class GameBalance : MonoBehaviour
     public void ApplySeedBar(SeedBar seedBar)
     {
         if (seedBar == null || seedBar.seeds == null || units == null) return;
+        ApplySeedList(seedBar.seeds);
+    }
 
-        foreach (var seed in seedBar.seeds)
+    public void ApplySeedList(UnitType[] seedList)
+    {
+        if (seedList == null || units == null) return;
+
+        foreach (var seed in seedList)
         {
+            if (seed == null) continue;
             UnitBalance balance = FindUnit(seed.prefab);
             if (balance == null) continue;
 
