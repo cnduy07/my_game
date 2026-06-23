@@ -42,7 +42,7 @@ AI QA outputs:
 - `AIReports/latest_playtest_checklist.md`: manual Unity playtest checklist generated from current systems.
 
 Editor production helpers:
-- `Tools > VFX > Rebuild Core VFX Prefabs` tao prefab ParticleSystem trong `Assets/Prefabs/VFX` va gan vao `CombatVfxSettings` cua `SampleScene`.
+- `Tools > VFX > Rebuild Core VFX Prefabs` tao prefab ParticleSystem trong `Assets/Prefabs/VFX` va gan vao `CombatVfxSettings` cua `GameScene`.
 - `VfxAutoDestroy` gan tren prefab VFX de tranh object ton tai mai sau khi effect chay xong.
 
 ---
@@ -185,10 +185,11 @@ Layout v1:
 - Campaign map: hien mission node/status/detail tu `LevelDefinition`, enemy mix/tool recommendation tu `CampaignIntel`, va deploy action rieng sau khi select node.
 - Campaign map dung horizontal `ScrollRect` + content width theo so level; node/route dat trong content coordinates, khong bi gioi han 10 level.
 - Mission detail hien dev badge `TEST MODE: ALL MISSIONS UNLOCKED` khi `unlockAllLevelsForTesting` dang bat.
-- Main menu runtime overlay la mot phan cua `GameUiController`, hien mot lan moi process/session bang static `mainMenuShownThisSession`.
-- Main menu direction: full-screen sci-fi command interface, khong con popup nho de gameplay HUD lo ro phia sau. Direction lay tu reference "Menu for 2D Shooter Game": nen toi, title lon, command panel, scanline/rail accents. Dieu chinh cho Coreline Defense bang cyan primary, red chi dung danger/threat.
-- Main menu action set hien tai: `CONTINUE`, `CAMPAIGN`, `SETTINGS`, `RESTART MISSION`; `SETTINGS` mo pause/settings modal co san va giu game paused.
-- Pause semantics: pause chi dong bang `Time.timeScale = 0` va giu nguyen board state. `MAIN MENU` trong pause modal la action rieng, reload scene de huy van dang choi va mo main menu sach; persistent data chi gom selected level/progress/settings.
+- Frontend scenes hien tai: `MainMenuScene`, `SettingsScene`, `HowToPlayScene`, `MissionMapScene`, `GameScene`.
+- `FrontendUiController` ve menu/settings/how-to/mission map bang runtime uGUI/TMP; main menu khong hien mission map backdrop nua; moi frontend scene co camera rieng va runtime camera fallback.
+- Flow frontend hien tai: `START GAME` -> `MissionMapScene`; `DEPLOY` -> `GameScene`; `SETTING`/`HOW TO PLAY` la scene rieng; frontend `BACK` quay ve scene goi truoc do, fallback `MainMenuScene`.
+- Flow gameplay hien tai: `MISSION` trong HUD/pause modal mo mission map overlay trong `GameScene`; `BACK` dong overlay va khoi phuc pause/resume state truoc do; `MAIN MENU` trong gameplay load `MainMenuScene`.
+- Pause semantics: pause chi dong bang `Time.timeScale = 0` va giu nguyen board state. `MAIN MENU` trong pause modal huy van dang choi va quay ve frontend; persistent data chi gom selected level/progress/settings.
 - `GameUiController` da la partial:
   - main-menu UI/navigation nam trong `GameUiController.MainMenu.cs`;
   - campaign map/mission navigation nam trong `GameUiController.Campaign.cs`;
@@ -306,7 +307,7 @@ Next:
 
 ## 9. Data Architecture
 
-Hien tai stats gameplay chinh da duoc gom ve `GameBalance` tren object `GameSystems` trong `SampleScene`.
+Hien tai stats gameplay chinh da duoc gom ve `GameBalance` tren object `GameSystems` trong `GameScene`.
 
 Contract hien tai:
 - Prefab giu default saner values.
@@ -532,7 +533,7 @@ Uu tien tiep:
 1. Playtest level 4-10 ve pacing/fairness; stat identity Fast/Shield da duoc AI QA kiem tra bang multiplier.
 2. Level select art/icon/preview.
 3. Chuyen sang JSON/full SaveData khi them currency/upgrades/inventory.
-4. Tach level progression sang main menu scene khi campaign/menu flow ro hon.
+4. Sau khi frontend scene flow duoc test OK, co the tach UI runtime thanh prefab/skinning pipeline neu can.
 
 ---
 

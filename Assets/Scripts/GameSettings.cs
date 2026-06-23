@@ -2,9 +2,20 @@ using UnityEngine;
 
 public static class GameSettings
 {
+    const string MusicVolumeKey = "settings.musicVolume";
     const string SfxVolumeKey = "settings.sfxVolume";
     const string ReduceShakeKey = "settings.reduceShake";
     const string VibrationKey = "settings.vibration";
+
+    public static float MusicVolume
+    {
+        get => PlayerPrefs.GetFloat(MusicVolumeKey, 0.55f);
+        set
+        {
+            PlayerPrefs.SetFloat(MusicVolumeKey, Mathf.Clamp01(value));
+            PlayerPrefs.Save();
+        }
+    }
 
     public static float SfxVolume
     {

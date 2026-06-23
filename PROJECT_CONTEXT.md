@@ -63,7 +63,7 @@ Can than trong cac viec:
 - `TECH_PLAN.md`: systems, architecture, performance, testing.
 - `RELEASE_CHECKLIST.md`: App Store/Google Play checklist.
 - `OVERNIGHT_SPRINT.md`: snapshot objective/constraint/work blocks cho phien nang cap tu chu 2026-06-23.
-- `GameSystems > GameBalance` trong `SampleScene`: source of truth tam thoi cho stats gameplay chinh.
+- `GameSystems > GameBalance` trong `GameScene`: source of truth tam thoi cho stats gameplay chinh.
 - `GameUiController` tren `GameSystems`: source of truth tam thoi cho runtime HUD uGUI/TextMeshPro. Cac IMGUI cu chi la debug khi bat `showDebugImGui`.
 - `CampaignIntel`: source of truth code-side cho campaign map node positions/types, enemy mix, threat label, recommended tools va pressure score.
 
@@ -73,10 +73,18 @@ Can than trong cac viec:
 
 1. Doc `PROJECT_CONTEXT.md`, `TASKS.md`, va file lien quan den task.
 2. Kiem tra `git status --short`; khong revert thay doi khong phai cua Codex.
-3. Neu task lien quan animation/prefab, kiem tra ca code C# va Unity YAML.
-4. Sua nho, verify bang `git diff --check`; neu co the thi verify trong Unity.
-5. Cap nhat `TASKS.md`/file planning khi co thay doi huong di ro rang.
-6. Bao lai ngan gon: da sua gi, can chu project lam gi trong Unity.
+3. Hieu ro yeu cau, context, code path, scene/prefab/data lien quan truoc khi code. Neu yeu cau mo ho hoac co rui ro sai huong, hoi lai chu project truoc.
+4. Dua ra plan ngan: muc tieu, phuong an kha thi, tradeoff, va phuong an Codex tu chon la toi uu theo codebase hien tai.
+5. Neu task lien quan animation/prefab, kiem tra ca code C# va Unity YAML.
+6. Sau khi code, verify bang build/static check/QA san co neu kha thi; toi thieu chay `git diff --check`.
+7. Cap nhat `TASKS.md`/`PROJECT_PROGRESS.md`/file planning phu hop khi co feature, quyet dinh, task moi, hoac thay doi trang thai.
+8. Bao lai ngan gon: da sua gi, da verify gi, viec con ton dong, va can chu project test gi trong Unity.
+
+Workflow bat buoc cho feature lon:
+- Khong nhay vao code khi chua doc docs/context va file lien quan.
+- Khong lan man sang refactor ngoai pham vi neu khong can de dat muc tieu.
+- Uu tien cong nghe/pattern da co trong project: Unity uGUI/TMP runtime UI, ScriptableObject/scene config hien hanh, QA/editor tooling co san.
+- Neu co nhieu huong, Codex phai tu danh gia va chon huong tot nhat, sau do moi implement.
 
 ---
 

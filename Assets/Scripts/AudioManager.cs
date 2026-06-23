@@ -30,6 +30,13 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    [Header("Music")]
+    public AudioSource musicSource;
+    public AudioClip backgroundMusic;
+    [Range(0f, 1f)] public float backgroundMusicVolume = 0.55f;
+    public bool playMusicOnStart = true;
+
+    [Header("SFX")]
     public AudioSource sfxSource;
     public SfxClip[] clips;
 
@@ -48,13 +55,21 @@ public class AudioManager : MonoBehaviour
 
         Instance = this;
 
-        if (sfxSource == null)
-            sfxSource = GetComponent<AudioSource>();
-
-        if (sfxSource == null)
-            sfxSource = gameObject.AddComponent<AudioSource>();
+        EnsureSources();
 
         ApplyClipDefaults();
+        ConfigureMusicSource();
+    }
+
+    void Start()
+    {
+        if (playMusicOnStart)
+            PlayMusic();
+    }
+
+    void Update()
+    {
+        RefreshMusicVolume();
     }
 
     public static void PlaySfx(SfxType type)
@@ -81,6 +96,54 @@ public class AudioManager : MonoBehaviour
 
         sfxSource.pitch = Random.Range(cue.pitchMin, cue.pitchMax);
         sfxSource.PlayOneShot(cue.clip, cue.volume * GameSettings.SfxVolume);
+    }
+
+    public static void RefreshMusic()
+    {
+        if (Instance != null)
+            Instance.RefreshMusicVolume();
+    }
+
+    public void PlayMusic()
+    {
+        if (musicSource == null || backgroundMusic == null) return;
+
+        ConfigureMusicSource();
+        if (!musicSource.isPlaying)
+            musicSource.Play();
+    }
+
+    void EnsureSources()
+    {
+        if (sfxSource == null)
+            sfxSource = GetComponent<AudioSource>();
+
+        if (sfxSource == null)
+            sfxSource = gameObject.AddComponent<AudioSource>();
+
+        if (musicSource == null)
+            musicSource = gameObject.AddComponent<AudioSource>();
+
+        sfxSource.loop = false;
+        sfxSource.playOnAwake = false;
+        sfxSource.spatialBlend = 0f;
+        musicSource.spatialBlend = 0f;
+    }
+
+    void ConfigureMusicSource()
+    {
+        if (musicSource == null) return;
+
+        musicSource.clip = backgroundMusic;
+        musicSource.loop = true;
+        musicSource.playOnAwake = false;
+        RefreshMusicVolume();
+    }
+
+    void RefreshMusicVolume()
+    {
+        if (musicSource != null)
+            musicSource.volume = backgroundMusicVolume * GameSettings.MusicVolume;
     }
 
     void ApplyClipDefaults()

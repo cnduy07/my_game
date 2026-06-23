@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   musicSource: {fileID: 0}
-  backgroundMusic: {fileID: 8300000, guid: 419ea51380006407eac25eac515582e3, type: 3}
+  backgroundMusic: {fileID: 8300000, guid: ff0830c6d241347278e7c3cffdc9ab74, type: 3}
   backgroundMusicVolume: 0.28
   playMusicOnStart: 1
   sfxSource: {fileID: 0}
@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameUiController
   isPaused: 0
-  showMainMenuOnLaunch: 1
+  showMainMenuOnLaunch: 0
   backgroundColor: {r: 0.035, g: 0.05, b: 0.075, a: 0.94}
   panelColor: {r: 0.09, g: 0.13, b: 0.18, a: 0.92}
   panelSoftColor: {r: 0.13, g: 0.18, b: 0.24, a: 0.9}

@@ -7,13 +7,8 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 **Game title:** Coreline Defense.
 **Store listing name target:** Coreline Defense: Robot Siege.
 
-## Working protocol — 2026-06-22
-- Truoc moi feature lon, Codex phai:
-  - phan tich boi canh hien tai;
-  - neu cac phuong an kha thi va tradeoff;
-  - chon phuong an toi uu theo codebase hien co;
-  - cap nhat `.md` lien quan trong cung pass;
-  - commit thanh checkpoint ro rang.
+## Project protocol snapshot — 2026-06-22
+- Workflow source-of-truth hien tai nam trong `PROJECT_CONTEXT.md`; file nay chi ghi lai lich su tien do/quyet dinh.
 - Runtime player-facing UI/copy dung **English-first**.
 - Vietnamese, Chinese, French se them sau bang localization table khi gameplay/menu flow on dinh.
 - Khong them Vietnamese khong dau vao UI runtime nua.
@@ -268,6 +263,25 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` cua `SampleScene`.
 - AI QA sau VFX generation: `0` fail, `1` expected warning do `LevelManager.unlockAllLevelsForTesting` dang bat.
 
+### Frontend scene split + settings redesign — 2026-06-23
+- Them scene rieng: `MainMenuScene`, `SettingsScene`, `HowToPlayScene`, `MissionMapScene`, `GameScene`.
+- Them `FrontendUiController` de ve frontend bang runtime uGUI/TMP, dung chung `LevelCatalog`, `CampaignIntel`, `PlayerProgress`.
+- Flow moi:
+  - `START GAME` trong main menu -> `MissionMapScene`;
+  - `DEPLOY` trong mission map -> `GameScene`;
+  - `SETTING` va `HOW TO PLAY` vao scene rieng;
+  - `MAIN MENU` trong gameplay -> `MainMenuScene`.
+- Main menu khong hien mission map backdrop nua; mission map la man rieng.
+- Settings scene duoc thiet ke lai thanh card rong, row slider/toggle tach khoang cach lon de tranh text chong len nhau.
+- `EditorBuildSettings` chay tu `MainMenuScene`; AI QA/VFX editor helper doi default gameplay scene sang `GameScene`.
+- Follow-up UX fix:
+  - them `Frontend Camera` cho cac frontend scene va runtime camera fallback de tranh `Display 1 No cameras rendering`;
+  - frontend `BACK` dung navigation history nhe, fallback ve `MainMenuScene`;
+  - trong `GameScene`, nut `MISSION` mo mission map overlay trong cung scene, `BACK` dong overlay va giu state/pause state thay vi load `MissionMapScene`.
+- UI overlap fix:
+  - mission detail `Recommended tools` xuong dong theo tung tool va co vung text cao hon;
+  - pause modal duoc noi card, tach progress/music/SFX/toggle thanh cac hang rieng de tranh chong chu.
+
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.
 - Them `ObjectPooler` + `PooledObject`, da ap dung cho projectile va energy orb de giam Instantiate/Destroy lap lai.
@@ -388,7 +402,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 
 ### AI QA release-readiness expansion — 2026-06-22
 - `AiQaReportRunner` ngoai gameplay/prefab checks nay kiem tra them:
-  - Build Settings co enabled scene va co `Assets/Scenes/SampleScene.unity`;
+  - Build Settings co enabled scene va co gameplay scene;
   - `PlayerSettings.productName`/`bundleVersion` co gia tri hop le toi thieu;
   - tat ca `LevelDefinition` assets trong `Assets/Levels` co id khong trung;
   - level asset nam ngoai `LevelCatalog` se canh bao.

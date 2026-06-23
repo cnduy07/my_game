@@ -18,8 +18,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Khi co thiet bi that: test safe area/notch/touch target.
   - Test level 4-10 ve pacing/fairness; enemy/stat identity do AI QA kiem tra bang so lieu.
   - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
-  - Test campaign map moi bang cach mo `MISSIONS`, drag/pan map ngang, click mission 1/5/10 va sau nay 20+ level khi co data.
-  - Kiem tra main menu co phu hop flow mong muon khong: hien mot lan moi session, `CAMPAIGN` mo map, `CONTINUE` vao game.
+  - Test frontend scene flow: `MainMenuScene` -> `MissionMapScene` -> `GameScene`, va `SETTING`/`HOW TO PLAY` quay ve menu dung.
+  - Test frontend scene moi khong con `Display 1 No cameras rendering`.
+  - Test `BACK` tu `SettingsScene`/`HowToPlayScene`/`MissionMapScene` ve dung scene goi truoc do, fallback la `MainMenuScene`.
+  - Test nut `MISSION` trong `GameScene` chi mo mission map overlay va `BACK` dong overlay, giu nguyen state/pause state cua tran.
+  - Test mission detail `Recommended tools` khong con de chu; test pause modal audio/progress/toggles khong con chong chu.
+  - Kiem tra settings scene moi khong con chong chu, slider/toggle bam duoc tren desktop/mobile aspect.
 
 ### Codex
 
@@ -29,11 +33,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - mo rong balance report/AI QA bang campaign pressure va enemy mix;
   - chay static check + Unity batchmode QA neu licensing/editor state cho phep;
   - commit checkpoint sau khi check pass.
-- Truoc moi feature lon:
-  - phan tich boi canh va constraint hien co;
-  - neu co nhieu huong, neu ro tradeoff;
-  - chon huong toi uu theo codebase hien tai;
-  - cap nhat `.md` lien quan truoc/kem commit feature.
+- Follow Codex workflow source-of-truth trong `PROJECT_CONTEXT.md` truoc moi feature lon; `TASKS.md` chi giu current work/next work de tranh duplicate rule.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
@@ -178,9 +178,24 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - board procedural polish;
   - enemy type color badges;
   - VFX prefab builder/editor automation.
+- Main menu/music/reward polish pass:
+  - main menu action set doi thanh `START GAME`, `SETTING`, `HOW TO PLAY`;
+  - pause settings co Music volume rieng va `AudioManager` co BGM loop;
+  - `GameScene` gan ambient sci-fi loop tam thoi lam background music;
+  - Armored enemy co 20% co hoi roi energy orb 25 energy khi bi ha;
+  - Victory/Defeat modal co terminal scene backdrop rieng.
+- Frontend scene split pass:
+  - them `MainMenuScene`, `SettingsScene`, `HowToPlayScene`, `MissionMapScene`, `GameScene`;
+  - `START GAME` vao mission map scene rieng, khong con lo mission map tren main menu;
+  - `FrontendUiController` dung runtime uGUI/TMP de ve menu/settings/how-to/mission map;
+  - moi frontend scene co `Frontend Camera` va runtime camera fallback;
+  - frontend `BACK` dung navigation history nhe;
+  - trong `GameScene`, nut `MISSION` mo mission map overlay thay vi load `MissionMapScene`;
+  - Build Settings chay tu `MainMenuScene`, gameplay dung `GameScene`;
+  - QA/editor helpers doi default gameplay scene sang `GameScene`.
 - VFX prefab generation status:
   - Code builder da co: `Tools > VFX > Rebuild Core VFX Prefabs`.
-  - DONE: da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` trong `SampleScene`.
+  - DONE: da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` trong `GameScene`.
   - AI QA sau khi generate: `0` fail, `1` expected release warning (`unlockAllLevelsForTesting`).
 
 ---
@@ -198,11 +213,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
    - UI skin/icon set replacing code-generated rectangles;
    - VFX prefab replacements for generated effects;
    - animation polish for core unit/enemy set;
-   - audio layering / music pass.
+   - PARTIAL: BGM support + music settings slider + placeholder ambient loop.
+   - Remaining: final music track and richer audio layering.
 3. Phase 3 — Campaign content:
    - DONE baseline: level 1-10 data pack;
-   - IN PROGRESS: campaign map UI thay scroll mission list;
-   - level select polish with preview/rewards;
+   - DONE baseline: campaign map UI thay scroll mission list;
+   - PARTIAL: dedicated mission-map scene and level preview/rewards;
    - tutorial callouts;
    - unlock/reward copy.
 4. Phase 4 — Mobile/release hardening:

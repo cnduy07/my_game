@@ -60,6 +60,14 @@ public class EnergySystem : MonoBehaviour
         if (orb != null) { orb.value = value; orb.targetY = targetY; }
     }
 
+    public void SpawnRewardOrb(Vector3 pos, int value)
+    {
+        Vector3 spawn = pos + new Vector3(Random.Range(-0.18f, 0.18f), 0.42f, 0f);
+        spawn.z = -2f;
+        float targetY = pos.y + Random.Range(-0.1f, 0.12f);
+        SpawnOrb(spawn, value, targetY);
+    }
+
     public void Add(int amount) => Energy += amount;
 
     public void ApplyBalance(int newStartEnergy, int newSkyOrbValue, float newSkyInterval, bool resetEnergy = true)

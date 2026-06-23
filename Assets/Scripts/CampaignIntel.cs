@@ -144,6 +144,11 @@ public static class CampaignIntel
         return sb.Length > 0 ? sb.ToString() : "Turret";
     }
 
+    public static string BuildRecommendedToolsStack(EnemyMix mix)
+    {
+        return BuildRecommendedTools(mix).Replace(", ", "\n");
+    }
+
     public static string BuildThreatLabel(EnemyMix mix)
     {
         if (mix.Total <= 0) return "No threat";

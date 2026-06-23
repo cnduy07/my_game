@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public partial class GameUiController
@@ -14,7 +15,7 @@ public partial class GameUiController
 
         RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
         AddFrame(card, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
-        SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-780f, -420f), new Vector2(780f, 420f));
+        SetAnchor(card, new Vector2(0.035f, 0.08f), new Vector2(0.965f, 0.92f), Vector2.zero, Vector2.zero);
 
         TextMeshProUGUI title = CreateText("Title", card, "CAMPAIGN MAP", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -76f), new Vector2(-30f, -22f));
@@ -53,7 +54,7 @@ public partial class GameUiController
 
         BuildMissionDetailPanel(card);
 
-        Button closeButton = CreateButton("CloseButton", card, "CLOSE", 20, panelSoftColor, Color.white);
+        Button closeButton = CreateButton("CloseButton", card, "BACK", 20, panelSoftColor, Color.white);
         closeButton.onClick.AddListener(CloseLevelSelect);
         SetAnchor((RectTransform)closeButton.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-398f, 30f), new Vector2(-210f, 82f));
 
@@ -87,11 +88,11 @@ public partial class GameUiController
 
         missionEnemyMixText = CreateText("EnemyMix", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.UpperLeft);
         missionEnemyMixText.color = Color.white;
-        SetAnchor(missionEnemyMixText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -320f), new Vector2(-24f, -248f));
+        SetAnchor(missionEnemyMixText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -314f), new Vector2(-24f, -248f));
 
         missionToolsText = CreateText("Tools", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.UpperLeft);
         missionToolsText.color = new Color(0.78f, 0.95f, 1f, 1f);
-        SetAnchor(missionToolsText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -398f), new Vector2(-24f, -324f));
+        SetAnchor(missionToolsText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -440f), new Vector2(-24f, -322f));
 
         missionPressureText = CreateText("Pressure", missionDetailPanel, "", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionPressureText.color = warningColor;
@@ -409,7 +410,7 @@ public partial class GameUiController
         missionTypeText.text = CampaignIntel.NodeTypeLabel(nodeType);
         missionBriefingText.text = BuildLevelDetail(level, unlocked, completed);
         missionEnemyMixText.text = $"Enemy mix\n{CampaignIntel.BuildMixLabel(mix)}";
-        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedTools(mix)}";
+        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedToolsStack(mix)}";
         missionPressureText.text = $"Pressure score: {CampaignIntel.PressureScore(level)}";
         missionRewardText.text = completed && !string.IsNullOrWhiteSpace(level.completionReward)
             ? level.completionReward
@@ -423,20 +424,26 @@ public partial class GameUiController
     void OpenLevelSelect()
     {
         AudioManager.PlaySfx(SfxType.UiClick);
-        RebuildDynamicUiIfNeeded();
-        if (selectedCampaignLevel == null && LevelManager.Instance != null)
-            selectedCampaignLevel = LevelManager.Instance.currentLevel;
-        RefreshLevelButtons();
+        if (levelSelectOverlay == null) return;
 
         wasPausedBeforeLevelSelect = isPaused;
+
+        if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+            selectedCampaignLevel = LevelManager.Instance.currentLevel;
+
         bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
         if (!terminal)
-            SetPaused(true);
+        {
+            isPaused = true;
+            Time.timeScale = 0f;
+        }
 
-        if (levelSelectOverlay != null)
-            levelSelectOverlay.SetActive(true);
-
+        RebuildDynamicUiIfNeeded();
+        RefreshLevelButtons();
+        levelSelectOverlay.SetActive(true);
+        levelSelectOverlay.transform.SetAsLastSibling();
         FocusCampaignLevel(selectedCampaignLevel);
+        RefreshModalState();
     }
 
     void CloseLevelSelect()
@@ -449,6 +456,8 @@ public partial class GameUiController
         bool terminal = GameManager.Instance != null && (GameManager.Instance.IsGameOver || GameManager.Instance.IsWon);
         if (!terminal)
             SetPaused(wasPausedBeforeLevelSelect);
+        else
+            RefreshModalState();
     }
 
     void SelectLevel(LevelDefinition level)

@@ -61,6 +61,11 @@ public partial class GameUiController : MonoBehaviour
     TextMeshProUGUI modalTitleText;
     TextMeshProUGUI modalSubtitleText;
     TextMeshProUGUI progressText;
+    RectTransform terminalSceneBackdrop;
+    TextMeshProUGUI terminalSceneText;
+    Image terminalSceneTint;
+    TextMeshProUGUI musicText;
+    Slider musicSlider;
     TextMeshProUGUI sfxText;
     Slider sfxSlider;
     Toggle reduceShakeToggle;
@@ -74,6 +79,7 @@ public partial class GameUiController : MonoBehaviour
 
     GameObject mainMenuOverlay;
     TextMeshProUGUI mainMenuSubtitleText;
+    GameObject howToPlayOverlay;
     bool mainMenuOpen;
     bool wasPausedBeforeMainMenu;
     static bool mainMenuShownThisSession;
@@ -159,6 +165,18 @@ public partial class GameUiController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
+            if (levelSelectOverlay != null && levelSelectOverlay.activeSelf)
+            {
+                CloseLevelSelect();
+                return;
+            }
+
+            if (howToPlayOverlay != null && howToPlayOverlay.activeSelf)
+            {
+                CloseHowToPlay();
+                return;
+            }
+
             if (mainMenuOpen)
             {
                 CloseMainMenu();
@@ -183,6 +201,7 @@ public partial class GameUiController : MonoBehaviour
         return IsScreenPointIn(seedTray, screenPoint) ||
                IsScreenPointIn(overchargePanel, screenPoint) ||
                (mainMenuOverlay != null && mainMenuOverlay.activeSelf && IsScreenPointIn((RectTransform)mainMenuOverlay.transform, screenPoint)) ||
+               (howToPlayOverlay != null && howToPlayOverlay.activeSelf && IsScreenPointIn((RectTransform)howToPlayOverlay.transform, screenPoint)) ||
                (pauseButton != null && IsScreenPointIn((RectTransform)pauseButton.transform, screenPoint)) ||
                (levelSelectTopButton != null && IsScreenPointIn((RectTransform)levelSelectTopButton.transform, screenPoint)) ||
                (modalOverlay != null && modalOverlay.activeSelf && IsScreenPointIn((RectTransform)modalOverlay.transform, screenPoint)) ||
@@ -236,6 +255,7 @@ public partial class GameUiController : MonoBehaviour
         BuildTutorialPanel(safeAreaRoot);
         BuildCommandStatusPanel(safeAreaRoot);
         BuildMainMenu(safeAreaRoot);
+        BuildHowToPlayOverlay(safeAreaRoot);
         BuildModal(safeAreaRoot);
         BuildLevelSelectOverlay(safeAreaRoot);
         RebuildDynamicUiIfNeeded();
@@ -277,7 +297,7 @@ public partial class GameUiController : MonoBehaviour
         waveText = CreateText("WaveText", waveBox, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(waveText.rectTransform, Vector2.zero, Vector2.one, new Vector2(10f, 0f), new Vector2(-10f, 0f));
 
-        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSIONS", 19, panelSoftColor, accentColor);
+        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSION", 19, panelSoftColor, accentColor);
         levelSelectTopButton.onClick.AddListener(OpenLevelSelect);
         AddFrame((RectTransform)levelSelectTopButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
         SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-338f, -26f), new Vector2(-196f, 26f));
@@ -363,7 +383,7 @@ public partial class GameUiController : MonoBehaviour
 
         modalCard = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.06f, 0.072f, 0.095f, 0.98f));
         AddFrame(modalCard, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
-        SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-340f, -220f), new Vector2(340f, 220f));
+        SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -286f), new Vector2(430f, 286f));
 
         modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 36, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -76f), new Vector2(-28f, -22f));
@@ -374,21 +394,37 @@ public partial class GameUiController : MonoBehaviour
 
         progressText = CreateText("ProgressText", modalCard, "", 19, FontStyle.Normal, TextAnchor.MiddleCenter);
         progressText.color = new Color(0.86f, 0.91f, 0.95f, 1f);
-        SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -166f), new Vector2(-42f, -122f));
+        SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -166f), new Vector2(-52f, -126f));
+
+        terminalSceneBackdrop = CreatePanel("TerminalSceneBackdrop", modalOverlay.transform, new Color(0.02f, 0.034f, 0.045f, 0.88f));
+        terminalSceneBackdrop.SetSiblingIndex(0);
+        SetAnchor(terminalSceneBackdrop, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        BuildTerminalScene(terminalSceneBackdrop);
+
+        musicText = CreateText("MusicText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        SetAnchor(musicText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -214f), new Vector2(-52f, -178f));
+
+        musicSlider = CreateSlider("MusicSlider", modalCard, GameSettings.MusicVolume);
+        SetAnchor((RectTransform)musicSlider.transform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(110f, -248f), new Vector2(-110f, -224f));
+        musicSlider.onValueChanged.AddListener(value =>
+        {
+            GameSettings.MusicVolume = value;
+            AudioManager.RefreshMusic();
+        });
 
         sfxText = CreateText("SfxText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
-        SetAnchor(sfxText.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(40f, 34f), new Vector2(-40f, 70f));
+        SetAnchor(sfxText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -296f), new Vector2(-52f, -260f));
 
-        sfxSlider = CreateSlider("SfxSlider", modalCard);
-        SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(96f, 4f), new Vector2(-96f, 28f));
+        sfxSlider = CreateSlider("SfxSlider", modalCard, GameSettings.SfxVolume);
+        SetAnchor((RectTransform)sfxSlider.transform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(110f, -330f), new Vector2(-110f, -306f));
         sfxSlider.onValueChanged.AddListener(value => GameSettings.SfxVolume = value);
 
         reduceShakeToggle = CreateToggle("ReduceShakeToggle", modalCard, "Reduce shake");
-        SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(96f, -48f), new Vector2(-10f, -12f));
+        SetAnchor((RectTransform)reduceShakeToggle.transform, new Vector2(0f, 1f), new Vector2(0.5f, 1f), new Vector2(110f, -388f), new Vector2(-18f, -348f));
         reduceShakeToggle.onValueChanged.AddListener(value => GameSettings.ReduceShake = value);
 
         vibrationToggle = CreateToggle("VibrationToggle", modalCard, "Vibration");
-        SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(10f, -48f), new Vector2(-96f, -12f));
+        SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 1f), new Vector2(1f, 1f), new Vector2(18f, -388f), new Vector2(-110f, -348f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
         resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 22, accentColor, Color.white);
@@ -399,7 +435,7 @@ public partial class GameUiController : MonoBehaviour
         restartButton.onClick.AddListener(RestartLevel);
         AddFrame((RectTransform)restartButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSIONS", 22, panelSoftColor, Color.white);
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSION", 22, panelSoftColor, Color.white);
         modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
         AddFrame((RectTransform)modalLevelSelectButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
@@ -414,6 +450,51 @@ public partial class GameUiController : MonoBehaviour
 
         modalBuilt = true;
         modalOverlay.SetActive(false);
+    }
+
+    void BuildTerminalScene(RectTransform parent)
+    {
+        terminalSceneTint = CreateImage("TerminalTint", parent, new Color(0.05f, 0.42f, 0.28f, 0.22f));
+        terminalSceneTint.raycastTarget = false;
+        SetAnchor(terminalSceneTint.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform horizon = CreatePanel("Horizon", parent, new Color(0.02f, 0.05f, 0.06f, 0.72f));
+        horizon.GetComponent<Image>().raycastTarget = false;
+        SetAnchor(horizon, new Vector2(0f, 0.18f), new Vector2(1f, 0.46f), Vector2.zero, Vector2.zero);
+
+        for (int i = 0; i < 8; i++)
+        {
+            float x = 0.08f + i * 0.12f;
+            Image pillar = CreateImage($"TerminalPillar_{i}", horizon, new Color(0.08f, 0.22f, 0.25f, 0.34f));
+            pillar.raycastTarget = false;
+            SetAnchor(pillar.rectTransform, new Vector2(x, 0f), new Vector2(x + 0.025f, 1f), Vector2.zero, Vector2.zero);
+        }
+
+        RectTransform map = CreatePanel("TerminalMap", parent, new Color(0.015f, 0.026f, 0.034f, 0.64f));
+        map.GetComponent<Image>().raycastTarget = false;
+        AddFrame(map, new Color(0.08f, 0.32f, 0.38f, 0.46f));
+        SetAnchor(map, new Vector2(0.08f, 0.58f), new Vector2(0.92f, 0.84f), Vector2.zero, Vector2.zero);
+
+        for (int i = 0; i < 6; i++)
+        {
+            float y = 0.12f + i * 0.15f;
+            Image route = CreateImage($"TerminalRoute_{i}", map, new Color(0.14f, 0.7f, 0.82f, 0.16f));
+            route.raycastTarget = false;
+            SetAnchor(route.rectTransform, new Vector2(0.06f, y), new Vector2(0.94f, y), new Vector2(0f, -2f), new Vector2(0f, 2f));
+        }
+
+        terminalSceneText = CreateText("TerminalSceneText", parent, "", 28, FontStyle.Bold, TextAnchor.MiddleCenter);
+        terminalSceneText.color = new Color(0.8f, 0.97f, 1f, 0.62f);
+        terminalSceneText.characterSpacing = 5f;
+        SetAnchor(terminalSceneText.rectTransform, new Vector2(0f, 0.84f), new Vector2(1f, 0.94f), new Vector2(24f, 0f), new Vector2(-24f, 0f));
+
+        for (int i = 0; i < 10; i++)
+        {
+            float y = 0.04f + i * 0.095f;
+            Image scan = CreateImage($"TerminalScanline_{i}", parent, new Color(1f, 1f, 1f, 0.025f));
+            scan.raycastTarget = false;
+            SetAnchor(scan.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
+        }
     }
 
     void RebuildDynamicUiIfNeeded()
@@ -741,7 +822,8 @@ public partial class GameUiController : MonoBehaviour
 
         bool gameOver = GameManager.Instance != null && GameManager.Instance.IsGameOver;
         bool won = GameManager.Instance != null && GameManager.Instance.IsWon;
-        bool show = !mainMenuOpen && (isPaused || gameOver || won);
+        bool missionMapOpen = levelSelectOverlay != null && levelSelectOverlay.activeSelf;
+        bool show = !mainMenuOpen && !missionMapOpen && (isPaused || gameOver || won);
         modalOverlay.SetActive(show);
         if (!show) return;
 
@@ -752,17 +834,31 @@ public partial class GameUiController : MonoBehaviour
         else
             modalTitleText.text = "PAUSED";
 
+        bool terminal = gameOver || won;
+        if (terminalSceneBackdrop != null)
+            terminalSceneBackdrop.gameObject.SetActive(terminal);
+        if (terminalSceneText != null)
+            terminalSceneText.text = won ? "SECTOR SECURED" : "CORELINE BREACHED";
+        if (terminalSceneTint != null)
+            terminalSceneTint.color = won ? new Color(0.05f, 0.42f, 0.28f, 0.22f) : new Color(0.62f, 0.04f, 0.02f, 0.24f);
+        Image modalImage = modalCard != null ? modalCard.GetComponent<Image>() : null;
+        if (modalImage != null)
+            modalImage.color = won
+                ? new Color(0.035f, 0.095f, 0.088f, 0.98f)
+                : (gameOver ? new Color(0.105f, 0.048f, 0.048f, 0.98f) : new Color(0.06f, 0.072f, 0.095f, 0.98f));
+        modalTitleText.color = won ? new Color(0.73f, 1f, 0.82f, 1f) : (gameOver ? new Color(1f, 0.72f, 0.62f, 1f) : Color.white);
+
         if (gameOver || won)
-            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -196f), new Vector2(-42f, -122f));
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -220f), new Vector2(-52f, -126f));
         else
-            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(42f, -166f), new Vector2(-42f, -122f));
+            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -166f), new Vector2(-52f, -126f));
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         modalSubtitleText.text = level != null ? level.displayName : "";
         if (level != null)
         {
             bool completed = PlayerProgress.IsLevelCompleted(level);
-            string progress = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest cleared: {PlayerProgress.HighestCompletedLevel}";
+            string progress = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest: {PlayerProgress.HighestCompletedLevel}";
             if (won && !string.IsNullOrWhiteSpace(level.completionReward))
                 progress += $"\n{level.completionReward}";
             progressText.text = progress;
@@ -773,13 +869,17 @@ public partial class GameUiController : MonoBehaviour
         }
 
         bool showSettings = !gameOver && !won;
+        musicText.gameObject.SetActive(showSettings);
+        musicSlider.gameObject.SetActive(showSettings);
         sfxText.gameObject.SetActive(showSettings);
         sfxSlider.gameObject.SetActive(showSettings);
         reduceShakeToggle.gameObject.SetActive(showSettings);
         vibrationToggle.gameObject.SetActive(showSettings);
         if (showSettings)
         {
-            sfxText.text = $"SFX: {GameSettings.SfxVolume:0.00}";
+            musicText.text = $"Music {Mathf.RoundToInt(GameSettings.MusicVolume * 100f)}%";
+            musicSlider.SetValueWithoutNotify(GameSettings.MusicVolume);
+            sfxText.text = $"SFX {Mathf.RoundToInt(GameSettings.SfxVolume * 100f)}%";
             sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume);
             reduceShakeToggle.SetIsOnWithoutNotify(GameSettings.ReduceShake);
             vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
@@ -844,7 +944,7 @@ public partial class GameUiController : MonoBehaviour
     {
         AudioManager.PlaySfx(SfxType.UiClick);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneNames.Game);
     }
 
 }

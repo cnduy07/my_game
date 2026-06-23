@@ -7,7 +7,7 @@ public static class VfxPrefabBuilder
 {
     const string VfxFolder = "Assets/Prefabs/VFX";
     const string MaterialPath = VfxFolder + "/VFX_SpriteParticle.mat";
-    const string ScenePath = "Assets/Scenes/SampleScene.unity";
+    const string ScenePath = "Assets/Scenes/GameScene.unity";
 
     [MenuItem("Tools/VFX/Rebuild Core VFX Prefabs")]
     public static void RebuildCoreVfxPrefabs()

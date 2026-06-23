@@ -47,6 +47,9 @@ public partial class GameUiController
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
         label.text = text;
         label.fontSize = size;
+        label.enableAutoSizing = true;
+        label.fontSizeMax = size;
+        label.fontSizeMin = Mathf.Max(11f, size * 0.62f);
         label.fontStyle = ToTmpFontStyle(style);
         label.alignment = ToTmpAlignment(alignment);
         label.color = Color.white;
@@ -95,12 +98,17 @@ public partial class GameUiController
 
     Slider CreateSlider(string name, Transform parent)
     {
+        return CreateSlider(name, parent, GameSettings.SfxVolume);
+    }
+
+    Slider CreateSlider(string name, Transform parent, float initialValue)
+    {
         GameObject root = new GameObject(name, typeof(RectTransform), typeof(Slider));
         root.transform.SetParent(parent, false);
         Slider slider = root.GetComponent<Slider>();
         slider.minValue = 0f;
         slider.maxValue = 1f;
-        slider.value = GameSettings.SfxVolume;
+        slider.value = Mathf.Clamp01(initialValue);
 
         RectTransform background = CreatePanel("Background", root.transform, new Color(0.23f, 0.27f, 0.32f, 1f));
         SetAnchor(background, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);

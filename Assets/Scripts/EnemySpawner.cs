@@ -26,6 +26,10 @@ public class EnemySpawner : MonoBehaviour
     public int maxSameRowStreak = 2;
     public bool showEnemyTypeBadges = true;
 
+    [Header("Rewards")]
+    [Range(0f, 1f)] public float armoredEnergyDropChance = 0.2f;
+    public int armoredEnergyDropValue = 25;
+
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
     Phase phase = Phase.PreStart;
 
@@ -203,6 +207,7 @@ public class EnemySpawner : MonoBehaviour
         if (GameBalance.Instance != null)
             GameBalance.Instance.ApplyEnemy(e, prefab);
         ApplyEnemyTypeModifiers(e, enemyType);
+        ApplyEnemyReward(e, enemyType);
         ApplyEnemyTypeVisualFallback(e, enemyType);
     }
 
@@ -511,6 +516,17 @@ public class EnemySpawner : MonoBehaviour
             traits.knockbackMultiplier *= modifier.knockbackMultiplier;
             traits.stunDurationMultiplier *= modifier.stunDurationMultiplier;
         }
+    }
+
+    void ApplyEnemyReward(GameObject enemy, LevelEnemyType enemyType)
+    {
+        if (enemy == null || enemyType != LevelEnemyType.Armored) return;
+
+        EnemyRewardDropper dropper = enemy.GetComponent<EnemyRewardDropper>();
+        if (dropper == null)
+            dropper = enemy.AddComponent<EnemyRewardDropper>();
+
+        dropper.Initialize(armoredEnergyDropChance, armoredEnergyDropValue);
     }
 
     void ApplyEnemyTypeVisualFallback(GameObject enemy, LevelEnemyType enemyType)

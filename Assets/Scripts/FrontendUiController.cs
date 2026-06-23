@@ -1,0 +1,861 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public enum FrontendScreenMode
+{
+    Auto,
+    MainMenu,
+    Settings,
+    HowToPlay,
+    MissionMap
+}
+
+public class FrontendUiController : MonoBehaviour
+{
+    const float ReferenceWidth = 1920f;
+    const float ReferenceHeight = 1080f;
+    const float NodeStep = 190f;
+    const float NodeSidePadding = 150f;
+    const float MapMinWidth = 1160f;
+
+    public FrontendScreenMode screenMode = FrontendScreenMode.Auto;
+    public LevelCatalog levelCatalog;
+    public bool unlockAllLevelsForTesting = true;
+
+    readonly Color bg = new Color(0.012f, 0.018f, 0.03f, 1f);
+    readonly Color panel = new Color(0.035f, 0.05f, 0.075f, 0.94f);
+    readonly Color panelSoft = new Color(0.08f, 0.115f, 0.155f, 0.95f);
+    readonly Color accent = new Color(0.12f, 0.82f, 0.95f, 1f);
+    readonly Color hot = new Color(1f, 0.28f, 0.22f, 1f);
+    readonly Color dim = new Color(0.38f, 0.45f, 0.52f, 0.85f);
+
+    Canvas canvas;
+    RectTransform root;
+    TextMeshProUGUI musicValueText;
+    TextMeshProUGUI sfxValueText;
+    Toggle reduceShakeToggle;
+    Toggle vibrationToggle;
+    RectTransform mapPanel;
+    RectTransform mapContent;
+    RectTransform routeLayer;
+    RectTransform nodeLayer;
+    ScrollRect mapScroll;
+    RectTransform detailPanel;
+    TextMeshProUGUI missionStatusText;
+    TextMeshProUGUI missionDevModeText;
+    TextMeshProUGUI missionTitleText;
+    TextMeshProUGUI missionTypeText;
+    TextMeshProUGUI missionBriefingText;
+    TextMeshProUGUI missionEnemyMixText;
+    TextMeshProUGUI missionToolsText;
+    TextMeshProUGUI missionPressureText;
+    TextMeshProUGUI missionRewardText;
+    Button deployButton;
+    TextMeshProUGUI deployButtonText;
+    LevelDefinition selectedLevel;
+
+    void Start()
+    {
+        EnsureRenderCamera();
+        EnsureEventSystem();
+        BuildCanvas();
+        BuildBackground();
+
+        switch (ResolveMode())
+        {
+            case FrontendScreenMode.Settings:
+                BuildSettings();
+                break;
+            case FrontendScreenMode.HowToPlay:
+                BuildHowToPlay();
+                break;
+            case FrontendScreenMode.MissionMap:
+                BuildMissionMap();
+                break;
+            default:
+                BuildMainMenu();
+                break;
+        }
+    }
+
+    FrontendScreenMode ResolveMode()
+    {
+        if (screenMode != FrontendScreenMode.Auto)
+            return screenMode;
+
+        string scene = SceneManager.GetActiveScene().name;
+        if (scene == SceneNames.Settings) return FrontendScreenMode.Settings;
+        if (scene == SceneNames.HowToPlay) return FrontendScreenMode.HowToPlay;
+        if (scene == SceneNames.MissionMap) return FrontendScreenMode.MissionMap;
+        return FrontendScreenMode.MainMenu;
+    }
+
+    void BuildCanvas()
+    {
+        GameObject go = new GameObject("FrontendCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        go.transform.SetParent(transform, false);
+        canvas = go.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        CanvasScaler scaler = go.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(ReferenceWidth, ReferenceHeight);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        root = new GameObject("SafeAreaRoot", typeof(RectTransform), typeof(SafeAreaFitter)).GetComponent<RectTransform>();
+        root.SetParent(go.transform, false);
+        SetAnchor(root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+    }
+
+    void BuildBackground()
+    {
+        Image baseImage = CreateImage("Background", root, bg);
+        SetAnchor(baseImage.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        Image leftBand = CreateImage("LeftCommandBand", root, new Color(0.03f, 0.12f, 0.16f, 0.18f));
+        SetAnchor(leftBand.rectTransform, new Vector2(0f, 0f), new Vector2(0.32f, 1f), Vector2.zero, Vector2.zero);
+
+        Image redBand = CreateImage("ThreatBand", root, new Color(0.55f, 0.05f, 0.04f, 0.12f));
+        SetAnchor(redBand.rectTransform, new Vector2(0.74f, 0f), Vector2.one, Vector2.zero, Vector2.zero);
+
+        for (int i = 0; i < 10; i++)
+        {
+            float y = 0.06f + i * 0.095f;
+            Image scan = CreateImage($"Scanline_{i}", root, new Color(1f, 1f, 1f, 0.018f));
+            scan.raycastTarget = false;
+            SetAnchor(scan.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
+        }
+
+        Image rail = CreateImage("DiagonalRail", root, new Color(0.08f, 0.24f, 0.28f, 0.3f));
+        rail.raycastTarget = false;
+        RectTransform railRect = rail.rectTransform;
+        railRect.anchorMin = new Vector2(0.5f, 0.5f);
+        railRect.anchorMax = new Vector2(0.5f, 0.5f);
+        railRect.sizeDelta = new Vector2(2300f, 18f);
+        railRect.anchoredPosition = new Vector2(80f, -120f);
+        railRect.localRotation = Quaternion.Euler(0f, 0f, 16f);
+    }
+
+    void BuildMainMenu()
+    {
+        RectTransform title = CreatePanel("TitleBlock", root, new Color(0.02f, 0.035f, 0.052f, 0.78f));
+        AddFrame(title, new Color(0.06f, 0.3f, 0.38f, 0.85f), new Vector2(2f, -2f));
+        SetAnchor(title, new Vector2(0.08f, 0.56f), new Vector2(0.58f, 0.8f), Vector2.zero, Vector2.zero);
+        AddAccent(title);
+
+        TextMeshProUGUI name = CreateText("Title", title, "CORELINE DEFENSE", 74, FontStyle.Bold, TextAnchor.MiddleLeft);
+        name.characterSpacing = 6f;
+        SetAnchor(name.rectTransform, new Vector2(0f, 0.36f), Vector2.one, new Vector2(44f, 0f), new Vector2(-24f, -12f));
+
+        TextMeshProUGUI sub = CreateText("Subtitle", title, "ROBOT SIEGE  /  TACTICAL GRID DEFENSE", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+        sub.color = new Color(0.66f, 0.9f, 0.96f, 1f);
+        sub.characterSpacing = 3f;
+        SetAnchor(sub.rectTransform, Vector2.zero, new Vector2(1f, 0.36f), new Vector2(48f, 8f), new Vector2(-24f, 0f));
+
+        RectTransform command = CreatePanel("CommandPanel", root, new Color(0.025f, 0.034f, 0.052f, 0.96f));
+        AddFrame(command, new Color(0.09f, 0.33f, 0.4f, 0.95f), new Vector2(2f, -2f));
+        AddAccent(command);
+        SetAnchor(command, new Vector2(0.62f, 0.2f), new Vector2(0.91f, 0.78f), Vector2.zero, Vector2.zero);
+
+        TextMeshProUGUI header = CreateText("Header", command, "COMMAND", 27, FontStyle.Bold, TextAnchor.MiddleLeft);
+        header.characterSpacing = 5f;
+        SetAnchor(header.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -76f), new Vector2(-24f, -22f));
+
+        RectTransform buttons = new GameObject("Buttons", typeof(RectTransform), typeof(VerticalLayoutGroup)).GetComponent<RectTransform>();
+        buttons.SetParent(command, false);
+        SetAnchor(buttons, new Vector2(0f, 0.18f), new Vector2(1f, 0.72f), new Vector2(36f, 0f), new Vector2(-36f, 0f));
+        VerticalLayoutGroup layout = buttons.GetComponent<VerticalLayoutGroup>();
+        layout.spacing = 16f;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = true;
+
+        CreateMenuButton("StartGame", buttons, "START GAME", true, () => Load(SceneNames.MissionMap));
+        CreateMenuButton("Settings", buttons, "SETTING", false, () => Load(SceneNames.Settings));
+        CreateMenuButton("HowToPlay", buttons, "HOW TO PLAY", false, () => Load(SceneNames.HowToPlay));
+        CreateMenuButton("Exit", buttons, "EXIT", false, Quit);
+
+        TextMeshProUGUI footer = CreateText("Footer", command, "v0.1  /  FRONTEND ROUTE READY", 13, FontStyle.Bold, TextAnchor.MiddleLeft);
+        footer.color = new Color(0.48f, 0.75f, 0.82f, 0.74f);
+        footer.characterSpacing = 2f;
+        SetAnchor(footer.rectTransform, Vector2.zero, new Vector2(1f, 0.16f), new Vector2(36f, 8f), new Vector2(-20f, 0f));
+
+        RectTransform signal = CreatePanel("SignalPanel", root, new Color(0.012f, 0.026f, 0.036f, 0.5f));
+        AddFrame(signal, new Color(0.05f, 0.22f, 0.27f, 0.5f));
+        SetAnchor(signal, new Vector2(0.09f, 0.2f), new Vector2(0.55f, 0.48f), Vector2.zero, Vector2.zero);
+        TextMeshProUGUI signalText = CreateText("SignalText", signal, "CORELINE NET ONLINE\nSELECT AN OPERATION", 21, FontStyle.Bold, TextAnchor.MiddleLeft);
+        signalText.color = new Color(0.7f, 0.94f, 1f, 0.86f);
+        signalText.characterSpacing = 2f;
+        SetAnchor(signalText.rectTransform, Vector2.zero, Vector2.one, new Vector2(34f, 0f), new Vector2(-24f, 0f));
+    }
+
+    void BuildSettings()
+    {
+        BuildHeader("SETTING", "Tune audio and comfort options.");
+
+        RectTransform card = CreatePanel("SettingsCard", root, new Color(0.032f, 0.046f, 0.068f, 0.96f));
+        AddFrame(card, new Color(0.1f, 0.34f, 0.42f, 0.9f), new Vector2(2f, -2f));
+        AddAccent(card);
+        SetAnchor(card, new Vector2(0.18f, 0.16f), new Vector2(0.82f, 0.74f), Vector2.zero, Vector2.zero);
+
+        RectTransform audio = CreatePanel("AudioPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
+        AddFrame(audio, new Color(0.1f, 0.24f, 0.31f, 0.82f));
+        SetAnchor(audio, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.88f), Vector2.zero, Vector2.zero);
+        AddSectionTitle(audio, "AUDIO");
+        CreateSliderRow(audio, "Music", GameSettings.MusicVolume, 0.46f, value =>
+        {
+            GameSettings.MusicVolume = value;
+            if (musicValueText != null) musicValueText.text = Percent(value);
+            AudioManager.RefreshMusic();
+        }, out musicValueText);
+        CreateSliderRow(audio, "SFX", GameSettings.SfxVolume, 0.18f, value =>
+        {
+            GameSettings.SfxVolume = value;
+            if (sfxValueText != null) sfxValueText.text = Percent(value);
+        }, out sfxValueText);
+
+        RectTransform comfort = CreatePanel("ComfortPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
+        AddFrame(comfort, new Color(0.1f, 0.24f, 0.31f, 0.82f));
+        SetAnchor(comfort, new Vector2(0.05f, 0.18f), new Vector2(0.95f, 0.44f), Vector2.zero, Vector2.zero);
+        AddSectionTitle(comfort, "COMFORT");
+        reduceShakeToggle = CreateSettingsToggle(comfort, "Reduce shake", GameSettings.ReduceShake, new Vector2(0.08f, 0.18f), value => GameSettings.ReduceShake = value);
+        vibrationToggle = CreateSettingsToggle(comfort, "Vibration", GameSettings.VibrationEnabled, new Vector2(0.55f, 0.18f), value => GameSettings.VibrationEnabled = value);
+
+        Button back = CreateButton("BackButton", root, "BACK", 22, panelSoft, Color.white);
+        back.onClick.AddListener(GoBack);
+        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), new Vector2(-190f, -34f), new Vector2(190f, 34f));
+    }
+
+    void BuildHowToPlay()
+    {
+        BuildHeader("HOW TO PLAY", "Hold the grid, collect energy, clear the route.");
+
+        RectTransform content = CreatePanel("HowToPlayContent", root, new Color(0.025f, 0.037f, 0.055f, 0.9f));
+        AddFrame(content, new Color(0.1f, 0.33f, 0.4f, 0.85f), new Vector2(2f, -2f));
+        SetAnchor(content, new Vector2(0.12f, 0.16f), new Vector2(0.88f, 0.74f), Vector2.zero, Vector2.zero);
+
+        CreateHowToCard(content, "01", "Build The Line", "Place ArcReactors for energy, then deploy Turrets, Bunkers, SnowGuns, and EMP Drones on open cells.", new Vector2(0.04f, 0.54f), new Vector2(0.48f, 0.9f));
+        CreateHowToCard(content, "02", "Collect Energy", "Click energy orbs before they fade. Armored enemies can drop bonus energy when defeated.", new Vector2(0.52f, 0.54f), new Vector2(0.96f, 0.9f));
+        CreateHowToCard(content, "03", "Read The Lanes", "Watch wave intel and lane pressure. Use Overcharge on rows that are close to breaking.", new Vector2(0.04f, 0.12f), new Vector2(0.48f, 0.48f));
+        CreateHowToCard(content, "04", "Win The Sector", "Survive every wave. If enemies breach after the rail cannon is spent, the sector falls.", new Vector2(0.52f, 0.12f), new Vector2(0.96f, 0.48f));
+
+        Button back = CreateButton("BackButton", root, "BACK", 22, panelSoft, Color.white);
+        back.onClick.AddListener(GoBack);
+        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), new Vector2(-190f, -34f), new Vector2(190f, 34f));
+    }
+
+    void BuildMissionMap()
+    {
+        BuildHeader("MISSION MAP", "Select a sector, review enemy intel, then deploy.");
+
+        RectTransform frame = CreatePanel("MissionFrame", root, new Color(0.025f, 0.037f, 0.055f, 0.92f));
+        AddFrame(frame, new Color(0.1f, 0.33f, 0.4f, 0.85f), new Vector2(2f, -2f));
+        SetAnchor(frame, new Vector2(0.05f, 0.12f), new Vector2(0.95f, 0.78f), Vector2.zero, Vector2.zero);
+
+        mapPanel = CreatePanel("CampaignMap", frame, new Color(0.014f, 0.027f, 0.04f, 0.96f));
+        AddFrame(mapPanel, new Color(0.08f, 0.18f, 0.24f, 0.9f));
+        SetAnchor(mapPanel, new Vector2(0.035f, 0.09f), new Vector2(0.68f, 0.91f), Vector2.zero, Vector2.zero);
+        mapPanel.gameObject.AddComponent<RectMask2D>();
+
+        mapScroll = mapPanel.gameObject.AddComponent<ScrollRect>();
+        mapScroll.horizontal = true;
+        mapScroll.vertical = false;
+        mapScroll.movementType = ScrollRect.MovementType.Clamped;
+        mapScroll.scrollSensitivity = 48f;
+        mapScroll.inertia = true;
+        mapScroll.decelerationRate = 0.12f;
+        mapScroll.viewport = mapPanel;
+
+        mapContent = new GameObject("CampaignMapContent", typeof(RectTransform)).GetComponent<RectTransform>();
+        mapContent.SetParent(mapPanel, false);
+        mapContent.pivot = new Vector2(0f, 0.5f);
+        SetAnchor(mapContent, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+        mapScroll.content = mapContent;
+
+        routeLayer = new GameObject("RouteLayer", typeof(RectTransform)).GetComponent<RectTransform>();
+        routeLayer.SetParent(mapContent, false);
+        SetAnchor(routeLayer, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        nodeLayer = new GameObject("NodeLayer", typeof(RectTransform)).GetComponent<RectTransform>();
+        nodeLayer.SetParent(mapContent, false);
+        SetAnchor(nodeLayer, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        BuildMissionDetail(frame);
+        RebuildMissionNodes();
+        RefreshMissionDetail();
+        FocusSelectedMission();
+
+        Button back = CreateButton("BackButton", root, "BACK", 20, panelSoft, Color.white);
+        back.onClick.AddListener(GoBack);
+        SetAnchor((RectTransform)back.transform, new Vector2(0.05f, 0.04f), new Vector2(0.05f, 0.04f), new Vector2(0f, -28f), new Vector2(210f, 28f));
+    }
+
+    void BuildMissionDetail(RectTransform frame)
+    {
+        detailPanel = CreatePanel("MissionDetail", frame, new Color(0.045f, 0.06f, 0.085f, 0.96f));
+        AddFrame(detailPanel, new Color(0.11f, 0.27f, 0.34f, 0.9f));
+        AddAccent(detailPanel);
+        SetAnchor(detailPanel, new Vector2(0.705f, 0.09f), new Vector2(0.965f, 0.91f), Vector2.zero, Vector2.zero);
+
+        missionStatusText = CreateText("Status", detailPanel, "", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionStatusText.color = accent;
+        SetAnchor(missionStatusText.rectTransform, new Vector2(0f, 1f), new Vector2(0.55f, 1f), new Vector2(24f, -46f), new Vector2(-8f, -14f));
+
+        missionDevModeText = CreateText("DevMode", detailPanel, "", 12, FontStyle.Bold, TextAnchor.MiddleRight);
+        missionDevModeText.color = hot;
+        SetAnchor(missionDevModeText.rectTransform, new Vector2(0.45f, 1f), new Vector2(1f, 1f), new Vector2(8f, -46f), new Vector2(-22f, -14f));
+
+        missionTitleText = CreateText("Title", detailPanel, "", 27, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(missionTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -96f), new Vector2(-24f, -48f));
+
+        missionTypeText = CreateText("Type", detailPanel, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionTypeText.color = new Color(0.78f, 0.92f, 0.98f, 1f);
+        SetAnchor(missionTypeText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -130f), new Vector2(-24f, -96f));
+
+        missionBriefingText = CreateText("Briefing", detailPanel, "", 16, FontStyle.Normal, TextAnchor.UpperLeft);
+        missionBriefingText.color = new Color(0.82f, 0.9f, 0.94f, 1f);
+        SetAnchor(missionBriefingText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -244f), new Vector2(-24f, -142f));
+
+        missionEnemyMixText = CreateText("EnemyMix", detailPanel, "", 16, FontStyle.Bold, TextAnchor.UpperLeft);
+        SetAnchor(missionEnemyMixText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -312f), new Vector2(-24f, -252f));
+
+        missionToolsText = CreateText("Tools", detailPanel, "", 16, FontStyle.Bold, TextAnchor.UpperLeft);
+        missionToolsText.color = new Color(0.78f, 0.95f, 1f, 1f);
+        SetAnchor(missionToolsText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -430f), new Vector2(-24f, -316f));
+
+        missionPressureText = CreateText("Pressure", detailPanel, "", 15, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionPressureText.color = new Color(1f, 0.68f, 0.22f, 1f);
+        SetAnchor(missionPressureText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 120f), new Vector2(-24f, 150f));
+
+        missionRewardText = CreateText("Reward", detailPanel, "", 15, FontStyle.Normal, TextAnchor.UpperLeft);
+        missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
+        SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 82f), new Vector2(-24f, 118f));
+
+        deployButton = CreateButton("DeployButton", detailPanel, "DEPLOY", 22, accent, Color.white);
+        deployButton.onClick.AddListener(DeploySelectedMission);
+        deployButtonText = deployButton.GetComponentInChildren<TextMeshProUGUI>();
+        SetAnchor((RectTransform)deployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 24f), new Vector2(-24f, 78f));
+    }
+
+    void RebuildMissionNodes()
+    {
+        foreach (Transform child in routeLayer)
+            Destroy(child.gameObject);
+        foreach (Transform child in nodeLayer)
+            Destroy(child.gameObject);
+
+        int count = levelCatalog != null ? levelCatalog.Count : 0;
+        float width = Mathf.Max(MapMinWidth, NodeSidePadding * 2f + Mathf.Max(0, count - 1) * NodeStep);
+        SetAnchor(mapContent, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(width, 0f));
+        BuildRoutes(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            LevelDefinition level = levelCatalog.GetAt(i);
+            if (level == null) continue;
+            if (selectedLevel == null && level.levelId == PlayerProgress.SelectedLevelId)
+                selectedLevel = level;
+        }
+
+        if (selectedLevel == null && count > 0)
+            selectedLevel = levelCatalog.GetAt(Mathf.Clamp(PlayerProgress.HighestCompletedLevel, 0, count - 1));
+
+        for (int i = 0; i < count; i++)
+        {
+            LevelDefinition level = levelCatalog.GetAt(i);
+            if (level == null) continue;
+
+            LevelDefinition captured = level;
+            MissionNodeType nodeType = CampaignIntel.NodeTypeFor(level);
+            bool completed = PlayerProgress.IsLevelCompleted(level);
+            bool unlocked = IsUnlocked(level);
+            bool selected = level == selectedLevel;
+
+            GameObject go = new GameObject($"MissionNode_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(nodeLayer, false);
+            RectTransform rect = (RectTransform)go.transform;
+            rect.anchorMin = new Vector2(0f, 0.5f);
+            rect.anchorMax = new Vector2(0f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(118f, 88f);
+            rect.anchoredPosition = NodePosition(i);
+
+            Image frame = go.GetComponent<Image>();
+            frame.color = selected ? accent : (unlocked ? ColorForNode(nodeType) : new Color(0.16f, 0.18f, 0.23f, 0.96f));
+            AddFrame(rect, completed ? new Color(0.45f, 1f, 0.68f, 0.86f) : new Color(0.1f, 0.26f, 0.34f, 0.86f));
+
+            Button button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.ColorTint;
+            button.colors = ButtonColors(frame.color, accent);
+            button.interactable = unlocked;
+            button.onClick.AddListener(() =>
+            {
+                selectedLevel = captured;
+                PlayerProgress.SelectLevel(captured);
+                AudioManager.PlaySfx(SfxType.UiClick);
+                RebuildMissionNodes();
+                RefreshMissionDetail();
+                FocusSelectedMission();
+            });
+
+            TextMeshProUGUI number = CreateText("Number", go.transform, level.levelNumber.ToString("00"), 24, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetAnchor(number.rectTransform, new Vector2(0f, 0.42f), Vector2.one, new Vector2(8f, -2f), new Vector2(-8f, -2f));
+
+            TextMeshProUGUI type = CreateText("Type", go.transform, CampaignIntel.NodeTypeLabel(nodeType), 11, FontStyle.Bold, TextAnchor.MiddleCenter);
+            type.color = new Color(0.82f, 0.93f, 0.98f, 1f);
+            SetAnchor(type.rectTransform, new Vector2(0f, 0.16f), new Vector2(1f, 0.48f), new Vector2(5f, 0f), new Vector2(-5f, 0f));
+
+            TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
+            status.color = unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f);
+            SetAnchor(status.rectTransform, Vector2.zero, new Vector2(1f, 0.22f), new Vector2(5f, 0f), new Vector2(-5f, 1f));
+        }
+    }
+
+    void BuildRoutes(int count)
+    {
+        for (int i = 0; i < count - 1; i++)
+        {
+            Vector2 from = NodePosition(i);
+            Vector2 to = NodePosition(i + 1);
+            CreateRoute(from, new Vector2(to.x, from.y));
+            CreateRoute(new Vector2(to.x, from.y), to);
+        }
+    }
+
+    void CreateRoute(Vector2 from, Vector2 to)
+    {
+        if (Vector2.Distance(from, to) < 0.01f) return;
+
+        Image line = CreateImage("Route", routeLayer, new Color(0.12f, 0.62f, 0.74f, 0.55f));
+        RectTransform rect = line.rectTransform;
+        rect.anchorMin = new Vector2(0f, 0.5f);
+        rect.anchorMax = new Vector2(0f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+
+        if (Mathf.Abs(from.y - to.y) <= Mathf.Abs(from.x - to.x))
+        {
+            rect.anchoredPosition = new Vector2((from.x + to.x) * 0.5f, from.y);
+            rect.sizeDelta = new Vector2(Mathf.Abs(to.x - from.x), 6f);
+        }
+        else
+        {
+            rect.anchoredPosition = new Vector2(from.x, (from.y + to.y) * 0.5f);
+            rect.sizeDelta = new Vector2(6f, Mathf.Abs(to.y - from.y));
+        }
+    }
+
+    void RefreshMissionDetail()
+    {
+        LevelDefinition level = selectedLevel;
+        if (level == null)
+        {
+            deployButton.interactable = false;
+            return;
+        }
+
+        bool unlocked = IsUnlocked(level);
+        bool completed = PlayerProgress.IsLevelCompleted(level);
+        EnemyMix mix = CampaignIntel.BuildLevelMix(level);
+        MissionNodeType nodeType = CampaignIntel.NodeTypeFor(level);
+
+        missionStatusText.text = unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED";
+        missionStatusText.color = unlocked ? accent : dim;
+        missionDevModeText.text = PlayerProgress.HighestCompletedLevel >= level.levelNumber ? "" : "";
+        missionTitleText.text = $"{level.levelNumber:00}  {level.displayName}";
+        missionTypeText.text = CampaignIntel.NodeTypeLabel(nodeType);
+        missionBriefingText.text = !unlocked
+            ? "Complete the previous mission to unlock this sector."
+            : (!string.IsNullOrWhiteSpace(level.missionBriefing) ? level.missionBriefing : "Ready for deployment.");
+        missionEnemyMixText.text = $"Enemy mix\n{CampaignIntel.BuildMixLabel(mix)}";
+        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedToolsStack(mix)}";
+        missionPressureText.text = $"Pressure score: {CampaignIntel.PressureScore(level)}";
+        missionRewardText.text = completed && !string.IsNullOrWhiteSpace(level.completionReward)
+            ? level.completionReward
+            : "Clear the sector to advance the campaign route.";
+
+        deployButton.interactable = unlocked;
+        deployButtonText.text = unlocked ? "DEPLOY" : "LOCKED";
+    }
+
+    void FocusSelectedMission()
+    {
+        if (selectedLevel == null || levelCatalog == null || mapScroll == null) return;
+
+        int index = 0;
+        for (int i = 0; i < levelCatalog.Count; i++)
+        {
+            if (levelCatalog.GetAt(i) == selectedLevel)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        Canvas.ForceUpdateCanvases();
+        float contentWidth = Mathf.Max(MapMinWidth, mapContent.rect.width);
+        float viewportWidth = Mathf.Max(1f, mapPanel.rect.width);
+        float scrollableWidth = Mathf.Max(1f, contentWidth - viewportWidth);
+        float targetX = NodePosition(index).x - viewportWidth * 0.42f;
+        mapScroll.horizontalNormalizedPosition = Mathf.Clamp01(targetX / scrollableWidth);
+    }
+
+    void DeploySelectedMission()
+    {
+        if (selectedLevel == null || !IsUnlocked(selectedLevel)) return;
+
+        PlayerProgress.SelectLevel(selectedLevel);
+        Time.timeScale = 1f;
+        Load(SceneNames.Game);
+    }
+
+    bool IsUnlocked(LevelDefinition level)
+    {
+        return level != null && (unlockAllLevelsForTesting || PlayerProgress.IsLevelUnlocked(level));
+    }
+
+    Vector2 NodePosition(int index)
+    {
+        return new Vector2(NodeSidePadding + index * NodeStep, NodeOffsetY(index));
+    }
+
+    float NodeOffsetY(int index)
+    {
+        switch (index % 10)
+        {
+            case 1: return 96f;
+            case 2: return -34f;
+            case 3: return 132f;
+            case 4: return 12f;
+            case 5: return -128f;
+            case 6: return 102f;
+            case 7: return -60f;
+            case 8: return 148f;
+            case 9: return -100f;
+            default: return -88f;
+        }
+    }
+
+    Color ColorForNode(MissionNodeType type)
+    {
+        switch (type)
+        {
+            case MissionNodeType.ArmorGate:
+            case MissionNodeType.IronRain:
+                return new Color(0.19f, 0.2f, 0.24f, 0.96f);
+            case MissionNodeType.RaiderTrack:
+            case MissionNodeType.VelocityNet:
+                return new Color(0.1f, 0.2f, 0.24f, 0.96f);
+            case MissionNodeType.ShieldColumn:
+            case MissionNodeType.EmpCorridor:
+                return new Color(0.15f, 0.16f, 0.25f, 0.96f);
+            case MissionNodeType.CorelineStand:
+                return new Color(0.32f, 0.08f, 0.12f, 0.96f);
+            default:
+                return panelSoft;
+        }
+    }
+
+    void BuildHeader(string title, string subtitle)
+    {
+        TextMeshProUGUI heading = CreateText("ScreenTitle", root, title, 56, FontStyle.Bold, TextAnchor.MiddleCenter);
+        heading.characterSpacing = 5f;
+        SetAnchor(heading.rectTransform, new Vector2(0.08f, 0.82f), new Vector2(0.92f, 0.94f), Vector2.zero, Vector2.zero);
+
+        TextMeshProUGUI sub = CreateText("ScreenSubtitle", root, subtitle, 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        sub.color = new Color(0.66f, 0.86f, 0.92f, 1f);
+        sub.characterSpacing = 2f;
+        SetAnchor(sub.rectTransform, new Vector2(0.18f, 0.78f), new Vector2(0.82f, 0.83f), Vector2.zero, Vector2.zero);
+    }
+
+    void AddSectionTitle(RectTransform parent, string title)
+    {
+        TextMeshProUGUI label = CreateText("SectionTitle", parent, title, 26, FontStyle.Bold, TextAnchor.MiddleLeft);
+        label.characterSpacing = 3f;
+        SetAnchor(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(34f, -66f), new Vector2(-24f, -18f));
+    }
+
+    void CreateSliderRow(RectTransform parent, string label, float value, float y, UnityEngine.Events.UnityAction<float> onChanged, out TextMeshProUGUI valueText)
+    {
+        TextMeshProUGUI labelText = CreateText($"{label}Label", parent, label, 21, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(labelText.rectTransform, new Vector2(0.08f, y + 0.12f), new Vector2(0.32f, y + 0.22f), Vector2.zero, Vector2.zero);
+
+        valueText = CreateText($"{label}Value", parent, Percent(value), 19, FontStyle.Bold, TextAnchor.MiddleRight);
+        valueText.color = new Color(0.8f, 0.92f, 0.96f, 1f);
+        SetAnchor(valueText.rectTransform, new Vector2(0.78f, y + 0.12f), new Vector2(0.92f, y + 0.22f), Vector2.zero, Vector2.zero);
+
+        Slider slider = CreateSlider($"{label}Slider", parent, value);
+        SetAnchor((RectTransform)slider.transform, new Vector2(0.08f, y), new Vector2(0.92f, y), new Vector2(0f, -12f), new Vector2(0f, 12f));
+        slider.onValueChanged.AddListener(onChanged);
+    }
+
+    Toggle CreateSettingsToggle(RectTransform parent, string label, bool value, Vector2 anchor, UnityEngine.Events.UnityAction<bool> onChanged)
+    {
+        Toggle toggle = CreateToggle(label.Replace(" ", ""), parent, label);
+        toggle.SetIsOnWithoutNotify(value);
+        toggle.onValueChanged.AddListener(onChanged);
+        SetAnchor((RectTransform)toggle.transform, anchor, anchor + new Vector2(0.36f, 0.18f), Vector2.zero, Vector2.zero);
+        return toggle;
+    }
+
+    void CreateHowToCard(RectTransform parent, string step, string title, string body, Vector2 min, Vector2 max)
+    {
+        RectTransform card = CreatePanel($"HowTo_{step}", parent, new Color(0.05f, 0.065f, 0.09f, 0.92f));
+        AddFrame(card, new Color(0.09f, 0.24f, 0.31f, 0.9f));
+        AddAccent(card);
+        SetAnchor(card, min, max, Vector2.zero, Vector2.zero);
+
+        TextMeshProUGUI number = CreateText("Step", card, step, 28, FontStyle.Bold, TextAnchor.MiddleLeft);
+        number.color = accent;
+        SetAnchor(number.rectTransform, new Vector2(0f, 1f), new Vector2(0.22f, 1f), new Vector2(28f, -76f), new Vector2(0f, -20f));
+
+        TextMeshProUGUI head = CreateText("Title", card, title, 25, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(head.rectTransform, new Vector2(0.18f, 1f), new Vector2(1f, 1f), new Vector2(0f, -76f), new Vector2(-24f, -20f));
+
+        TextMeshProUGUI copy = CreateText("Body", card, body, 18, FontStyle.Normal, TextAnchor.UpperLeft);
+        copy.color = new Color(0.82f, 0.9f, 0.94f, 1f);
+        SetAnchor(copy.rectTransform, Vector2.zero, Vector2.one, new Vector2(28f, 26f), new Vector2(-28f, -92f));
+    }
+
+    Button CreateMenuButton(string name, Transform parent, string text, bool primary, UnityEngine.Events.UnityAction action)
+    {
+        Button button = CreateButton(name, parent, text, 24, primary ? hot : panelSoft, Color.white);
+        button.onClick.AddListener(action);
+        LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
+        layout.minHeight = 66f;
+        layout.preferredHeight = 72f;
+        return button;
+    }
+
+    Button CreateButton(string name, Transform parent, string text, int size, Color normal, Color textColor)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
+        image.color = normal;
+        AddFrame((RectTransform)go.transform, new Color(0.1f, 0.24f, 0.31f, 0.85f));
+        AddButtonAccent((RectTransform)go.transform);
+
+        Button button = go.GetComponent<Button>();
+        button.transition = Selectable.Transition.ColorTint;
+        button.colors = ButtonColors(normal, accent);
+
+        TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
+        label.color = textColor;
+        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+        return button;
+    }
+
+    Slider CreateSlider(string name, Transform parent, float initialValue)
+    {
+        GameObject rootObj = new GameObject(name, typeof(RectTransform), typeof(Slider));
+        rootObj.transform.SetParent(parent, false);
+        Slider slider = rootObj.GetComponent<Slider>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = Mathf.Clamp01(initialValue);
+
+        RectTransform background = CreatePanel("Background", rootObj.transform, new Color(0.23f, 0.27f, 0.32f, 1f));
+        SetAnchor(background, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        RectTransform fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
+        fillArea.SetParent(rootObj.transform, false);
+        SetAnchor(fillArea, Vector2.zero, Vector2.one, new Vector2(3f, 3f), new Vector2(-3f, -3f));
+
+        Image fill = CreateImage("Fill", fillArea, accent);
+        SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+        Image handle = CreateImage("Handle", rootObj.transform, hot);
+        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-14f, -18f), new Vector2(14f, 18f));
+
+        slider.fillRect = fill.rectTransform;
+        slider.handleRect = handle.rectTransform;
+        slider.targetGraphic = handle;
+        return slider;
+    }
+
+    Toggle CreateToggle(string name, Transform parent, string labelText)
+    {
+        GameObject rootObj = new GameObject(name, typeof(RectTransform), typeof(Toggle));
+        rootObj.transform.SetParent(parent, false);
+        Toggle toggle = rootObj.GetComponent<Toggle>();
+
+        Image box = CreateImage("Box", rootObj.transform, panelSoft);
+        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -18f), new Vector2(36f, 18f));
+
+        Image check = CreateImage("Checkmark", box.transform, hot);
+        SetAnchor(check.rectTransform, Vector2.zero, Vector2.one, new Vector2(7f, 7f), new Vector2(-7f, -7f));
+
+        TextMeshProUGUI label = CreateText("Label", rootObj.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        SetAnchor(label.rectTransform, new Vector2(0f, 0f), Vector2.one, new Vector2(52f, 0f), Vector2.zero);
+
+        toggle.targetGraphic = box;
+        toggle.graphic = check;
+        return toggle;
+    }
+
+    RectTransform CreatePanel(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        go.GetComponent<Image>().color = color;
+        return (RectTransform)go.transform;
+    }
+
+    Image CreateImage(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
+        image.color = color;
+        return image;
+    }
+
+    TextMeshProUGUI CreateText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor alignment)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        go.transform.SetParent(parent, false);
+        TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
+        label.text = text;
+        label.fontSize = size;
+        label.enableAutoSizing = true;
+        label.fontSizeMax = size;
+        label.fontSizeMin = Mathf.Max(11f, size * 0.62f);
+        label.fontStyle = ToTmpFontStyle(style);
+        label.alignment = ToTmpAlignment(alignment);
+        label.color = Color.white;
+        label.raycastTarget = false;
+        label.textWrappingMode = TextWrappingModes.Normal;
+        label.overflowMode = TextOverflowModes.Ellipsis;
+        return label;
+    }
+
+    void AddFrame(RectTransform rect, Color color)
+    {
+        AddFrame(rect, color, new Vector2(1.5f, -1.5f));
+    }
+
+    void AddFrame(RectTransform rect, Color color, Vector2 distance)
+    {
+        Outline outline = rect.gameObject.GetComponent<Outline>();
+        if (outline == null)
+            outline = rect.gameObject.AddComponent<Outline>();
+
+        outline.effectColor = color;
+        outline.effectDistance = distance;
+        outline.useGraphicAlpha = true;
+    }
+
+    void AddAccent(RectTransform parent)
+    {
+        Image left = CreateImage("LeftAccent", parent, new Color(accent.r, accent.g, accent.b, 0.24f));
+        left.raycastTarget = false;
+        SetAnchor(left.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(3f, 8f), new Vector2(7f, -8f));
+    }
+
+    void AddButtonAccent(RectTransform parent)
+    {
+        Image top = CreateImage("TopAccent", parent, new Color(1f, 1f, 1f, 0.18f));
+        top.raycastTarget = false;
+        SetAnchor(top.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -5f), new Vector2(-8f, -2f));
+
+        Image bottom = CreateImage("BottomShade", parent, new Color(0f, 0f, 0f, 0.22f));
+        bottom.raycastTarget = false;
+        SetAnchor(bottom.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(8f, 2f), new Vector2(-8f, 5f));
+    }
+
+    ColorBlock ButtonColors(Color normal, Color highlighted)
+    {
+        ColorBlock colors = ColorBlock.defaultColorBlock;
+        colors.normalColor = normal;
+        colors.highlightedColor = Color.Lerp(normal, highlighted, 0.35f);
+        colors.pressedColor = highlighted;
+        colors.selectedColor = Color.Lerp(normal, highlighted, 0.25f);
+        colors.disabledColor = new Color(0.25f, 0.29f, 0.34f, 0.72f);
+        colors.colorMultiplier = 1f;
+        return colors;
+    }
+
+    void SetAnchor(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+    {
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.offsetMin = offsetMin;
+        rect.offsetMax = offsetMax;
+    }
+
+    FontStyles ToTmpFontStyle(FontStyle style)
+    {
+        switch (style)
+        {
+            case FontStyle.Bold: return FontStyles.Bold;
+            case FontStyle.Italic: return FontStyles.Italic;
+            case FontStyle.BoldAndItalic: return FontStyles.Bold | FontStyles.Italic;
+            default: return FontStyles.Normal;
+        }
+    }
+
+    TextAlignmentOptions ToTmpAlignment(TextAnchor alignment)
+    {
+        switch (alignment)
+        {
+            case TextAnchor.UpperLeft: return TextAlignmentOptions.TopLeft;
+            case TextAnchor.UpperCenter: return TextAlignmentOptions.Top;
+            case TextAnchor.UpperRight: return TextAlignmentOptions.TopRight;
+            case TextAnchor.MiddleLeft: return TextAlignmentOptions.Left;
+            case TextAnchor.MiddleRight: return TextAlignmentOptions.Right;
+            case TextAnchor.LowerLeft: return TextAlignmentOptions.BottomLeft;
+            case TextAnchor.LowerCenter: return TextAlignmentOptions.Bottom;
+            case TextAnchor.LowerRight: return TextAlignmentOptions.BottomRight;
+            default: return TextAlignmentOptions.Center;
+        }
+    }
+
+    string Percent(float value)
+    {
+        return $"{Mathf.RoundToInt(Mathf.Clamp01(value) * 100f)}%";
+    }
+
+    void Load(string sceneName)
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+        FrontendNavigation.LoadScene(sceneName);
+    }
+
+    void GoBack()
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+        FrontendNavigation.Back();
+    }
+
+    void Quit()
+    {
+        AudioManager.PlaySfx(SfxType.UiClick);
+        Application.Quit();
+    }
+
+    void EnsureEventSystem()
+    {
+        if (EventSystem.current != null) return;
+        GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        eventSystem.transform.SetParent(transform, false);
+    }
+
+    void EnsureRenderCamera()
+    {
+        if (Camera.main != null || FindAnyObjectByType<Camera>() != null) return;
+
+        GameObject cameraObject = new GameObject("Frontend Camera", typeof(Camera), typeof(AudioListener));
+        cameraObject.tag = "MainCamera";
+        cameraObject.transform.position = new Vector3(0f, 0f, -10f);
+
+        Camera camera = cameraObject.GetComponent<Camera>();
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = bg;
+        camera.orthographic = true;
+        camera.orthographicSize = 5f;
+    }
+}

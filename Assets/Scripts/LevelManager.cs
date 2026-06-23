@@ -80,7 +80,7 @@ public class LevelManager : MonoBehaviour
         currentLevel = level;
         PlayerProgress.SelectLevel(level);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneNames.Game);
         return true;
     }
 

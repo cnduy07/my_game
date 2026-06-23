@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class AiQaReportRunner
 {
-    const string DefaultScenePath = "Assets/Scenes/SampleScene.unity";
+    const string DefaultScenePath = "Assets/Scenes/GameScene.unity";
 
     [MenuItem("Tools/AI QA/Run Full Check")]
     public static void RunFullCheck()
@@ -600,7 +600,7 @@ public static class AiQaReportRunner
 
         sb.AppendLine("## Campaign Map");
         sb.AppendLine();
-        sb.AppendLine("- Open `MISSIONS` from the top HUD.");
+        sb.AppendLine("- Open `MISSION` from the top HUD.");
         sb.AppendLine("- Confirm the screen is a map with route nodes, not a scroll list.");
         sb.AppendLine("- Click several level nodes and confirm the detail panel updates mission name, sector type, enemy mix, recommended tools, pressure score, and deploy button.");
         sb.AppendLine("- Deploy a non-current mission and confirm the scene reloads into that mission.");
