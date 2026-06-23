@@ -96,6 +96,25 @@ public partial class GameUiController
         SetAnchor(left.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(3f, 8f), new Vector2(7f, -8f));
     }
 
+    void AddCornerTicks(RectTransform parent, Color color)
+    {
+        Image tlH = CreateImage("CornerTopLeftH", parent, color);
+        tlH.raycastTarget = false;
+        SetAnchor(tlH.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(12f, -5f), new Vector2(58f, -2f));
+
+        Image tlV = CreateImage("CornerTopLeftV", parent, color);
+        tlV.raycastTarget = false;
+        SetAnchor(tlV.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(12f, -48f), new Vector2(15f, -5f));
+
+        Image brH = CreateImage("CornerBottomRightH", parent, color);
+        brH.raycastTarget = false;
+        SetAnchor(brH.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-58f, 2f), new Vector2(-12f, 5f));
+
+        Image brV = CreateImage("CornerBottomRightV", parent, color);
+        brV.raycastTarget = false;
+        SetAnchor(brV.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-15f, 5f), new Vector2(-12f, 48f));
+    }
+
     Slider CreateSlider(string name, Transform parent)
     {
         return CreateSlider(name, parent, GameSettings.SfxVolume);
@@ -120,7 +139,7 @@ public partial class GameUiController
         Image fill = CreateImage("Fill", fillArea, accentColor);
         SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-        Image handle = CreateImage("Handle", root.transform, Color.white);
+        Image handle = CreateImage("Handle", root.transform, accentColor);
         SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-12f, -16f), new Vector2(12f, 16f));
 
         slider.fillRect = fill.rectTransform;
@@ -135,18 +154,47 @@ public partial class GameUiController
         root.transform.SetParent(parent, false);
         Toggle toggle = root.GetComponent<Toggle>();
 
-        Image box = CreateImage("Box", root.transform, panelSoftColor);
-        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -15f), new Vector2(30f, 15f));
+        Image box = CreateImage("Track", root.transform, new Color(0.08f, 0.12f, 0.16f, 1f));
+        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -12f), new Vector2(44f, 12f));
+        AddFrame(box.rectTransform, new Color(accentColor.r, accentColor.g, accentColor.b, 0.4f));
 
-        Image check = CreateImage("Checkmark", box.transform, accentColor);
-        SetAnchor(check.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 6f), new Vector2(-6f, -6f));
+        Image check = CreateImage("Knob", box.transform, accentColor);
+        SetAnchor(check.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(3f, -9f), new Vector2(21f, 9f));
 
         TextMeshProUGUI label = CreateText("Label", root.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
-        SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(42f, 0f), Vector2.zero);
+        SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(52f, 0f), Vector2.zero);
 
         toggle.targetGraphic = box;
-        toggle.graphic = check;
+        toggle.graphic = null;
+        toggle.onValueChanged.AddListener(_ => RefreshToggleVisual(toggle));
+        RefreshToggleVisual(toggle);
         return toggle;
+    }
+
+    void RefreshToggleVisual(Toggle toggle)
+    {
+        if (toggle == null) return;
+
+        Transform trackTransform = toggle.transform.Find("Track");
+        Image track = trackTransform != null ? trackTransform.GetComponent<Image>() : null;
+        Transform knobTransform = trackTransform != null ? trackTransform.Find("Knob") : null;
+        Image knob = knobTransform != null ? knobTransform.GetComponent<Image>() : null;
+
+        bool on = toggle.isOn;
+        if (track != null)
+        {
+            track.color = on
+                ? new Color(accentColor.r * 0.3f, accentColor.g * 0.3f, accentColor.b * 0.3f, 0.9f)
+                : new Color(0.08f, 0.12f, 0.16f, 1f);
+        }
+
+        if (knob != null)
+        {
+            knob.color = on ? accentColor : new Color(0.55f, 0.65f, 0.72f, 1f);
+            SetAnchor(knob.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                on ? new Vector2(23f, -9f) : new Vector2(3f, -9f),
+                on ? new Vector2(41f, 9f) : new Vector2(21f, 9f));
+        }
     }
 
     ColorBlock BuildButtonColors(Color normal, Color highlighted)

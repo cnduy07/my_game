@@ -15,6 +15,7 @@ public partial class GameUiController
 
         RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
         AddFrame(card, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
+        AddCornerTicks(card, new Color(accentColor.r, accentColor.g, accentColor.b, 0.48f));
         SetAnchor(card, new Vector2(0.035f, 0.08f), new Vector2(0.965f, 0.92f), Vector2.zero, Vector2.zero);
 
         TextMeshProUGUI title = CreateText("Title", card, "CAMPAIGN MAP", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -27,6 +28,7 @@ public partial class GameUiController
         campaignMapPanel = CreatePanel("CampaignMap", card, new Color(0.025f, 0.035f, 0.052f, 0.94f));
         AddFrame(campaignMapPanel, new Color(0.08f, 0.16f, 0.22f, 0.9f));
         SetAnchor(campaignMapPanel, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(46f, 104f), new Vector2(-448f, -132f));
+        BuildCampaignMapField(campaignMapPanel);
         campaignMapPanel.gameObject.AddComponent<RectMask2D>();
 
         campaignMapScroll = campaignMapPanel.gameObject.AddComponent<ScrollRect>();
@@ -65,6 +67,8 @@ public partial class GameUiController
     {
         missionDetailPanel = CreatePanel("MissionDetail", card, new Color(0.035f, 0.048f, 0.07f, 0.96f));
         AddFrame(missionDetailPanel, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        AddCardAccent(missionDetailPanel);
+        AddCornerTicks(missionDetailPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.42f));
         SetAnchor(missionDetailPanel, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-420f, 104f), new Vector2(-46f, -132f));
 
         missionStatusText = CreateText("Status", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -102,11 +106,54 @@ public partial class GameUiController
         missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
         SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 96f), new Vector2(-24f, 154f));
 
-        missionDeployButton = CreateButton("DeployButton", missionDetailPanel, "DEPLOY", 22, accentColor, Color.white);
+        missionDeployButton = CreateButton("DeployButton", missionDetailPanel, "DEPLOY", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
         missionDeployButton.onClick.AddListener(DeploySelectedMission);
         missionDeployButtonText = missionDeployButton.GetComponentInChildren<TextMeshProUGUI>();
         AddFrame((RectTransform)missionDeployButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
-        SetAnchor((RectTransform)missionDeployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 26f), new Vector2(-24f, 78f));
+        SetAnchor((RectTransform)missionDeployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 20f), new Vector2(-24f, 84f));
+    }
+
+    void BuildCampaignMapField(RectTransform parent)
+    {
+        Image defenseField = CreateImage("MapDefenseField", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.08f));
+        defenseField.raycastTarget = false;
+        SetAnchor(defenseField.rectTransform, new Vector2(0f, 0f), new Vector2(0.12f, 1f), Vector2.zero, Vector2.zero);
+
+        Image threatField = CreateImage("MapThreatField", parent, new Color(1f, 0.28f, 0.22f, 0.08f));
+        threatField.raycastTarget = false;
+        SetAnchor(threatField.rectTransform, new Vector2(0.84f, 0f), Vector2.one, Vector2.zero, Vector2.zero);
+
+        for (int i = 1; i < 8; i++)
+        {
+            float x = i / 8f;
+            Image line = CreateImage($"MapGridV_{i}", parent, new Color(0.12f, 0.58f, 0.68f, 0.08f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(x, 0f), new Vector2(x, 1f), new Vector2(-1f, 0f), new Vector2(1f, 0f));
+        }
+
+        for (int i = 1; i < 5; i++)
+        {
+            float y = i / 5f;
+            Image line = CreateImage($"MapGridH_{i}", parent, new Color(0.12f, 0.58f, 0.68f, 0.06f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
+        }
+
+        TextMeshProUGUI label = CreateText("MapFieldLabel", parent, "SECTOR ROUTE", 13, FontStyle.Bold, TextAnchor.MiddleLeft);
+        label.color = new Color(0.62f, 0.94f, 1f, 0.42f);
+        label.characterSpacing = 4f;
+        SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(0.42f, 0f), new Vector2(24f, 16f), new Vector2(0f, 46f));
+    }
+
+    void AddMissionNodeDecor(RectTransform parent, out Image strip, out Image dot)
+    {
+        strip = CreateImage("StatusStrip", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
+        strip.raycastTarget = false;
+        SetAnchor(strip.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -8f), new Vector2(-10f, -4f));
+
+        dot = CreateImage("StatusDot", parent, warningColor);
+        dot.raycastTarget = false;
+        SetAnchor(dot.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -22f), new Vector2(-12f, -10f));
     }
 
     void RebuildLevelButtons(int levelCount)
@@ -149,6 +196,7 @@ public partial class GameUiController
             Image frame = go.GetComponent<Image>();
             frame.color = panelSoftColor;
             AddFrame(rect, new Color(0.1f, 0.2f, 0.27f, 0.85f));
+            AddMissionNodeDecor(rect, out Image strip, out Image dot);
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -173,6 +221,8 @@ public partial class GameUiController
                 label = label,
                 type = type,
                 status = status,
+                strip = strip,
+                statusDot = dot,
                 level = level
             });
         }
@@ -208,6 +258,19 @@ public partial class GameUiController
                 button.frame.color = new Color(0.18f, 0.42f, 0.52f, 0.96f);
             else
                 button.frame.color = unlocked ? ColorForNode(nodeType) : disabledColor;
+
+            Color selectedText = new Color(0.02f, 0.06f, 0.08f, 1f);
+            button.label.color = selected ? selectedText : Color.white;
+            button.type.color = selected ? selectedText : new Color(0.82f, 0.93f, 0.98f, 1f);
+            button.status.color = selected ? selectedText : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
+            if (button.strip != null)
+                button.strip.color = selected
+                    ? new Color(0.02f, 0.08f, 0.1f, 0.45f)
+                    : (completed ? new Color(0.3f, 0.9f, 0.62f, 0.42f) : new Color(accentColor.r, accentColor.g, accentColor.b, unlocked ? 0.3f : 0.1f));
+            if (button.statusDot != null)
+                button.statusDot.color = completed
+                    ? new Color(0.3f, 0.9f, 0.62f, 0.95f)
+                    : (unlocked ? warningColor : disabledColor);
 
             button.button.interactable = unlocked;
         }
@@ -257,8 +320,15 @@ public partial class GameUiController
         if (campaignRouteLayer == null) return;
         if (Vector2.Distance(from, to) < 0.01f) return;
 
+        Image baseLine = CreateImage($"{name}_Base", campaignRouteLayer, new Color(0f, 0f, 0f, 0.35f));
+        ConfigureCampaignRouteRect(baseLine.rectTransform, from, to, 12f);
+
         Image line = CreateImage(name, campaignRouteLayer, new Color(0.09f, 0.55f, 0.66f, 0.62f));
-        RectTransform rect = line.rectTransform;
+        ConfigureCampaignRouteRect(line.rectTransform, from, to, 6f);
+    }
+
+    void ConfigureCampaignRouteRect(RectTransform rect, Vector2 from, Vector2 to, float thickness)
+    {
         rect.anchorMin = new Vector2(0f, 0.5f);
         rect.anchorMax = new Vector2(0f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
@@ -269,7 +339,7 @@ public partial class GameUiController
             float xMax = Mathf.Max(from.x, to.x);
             float y = from.y;
             rect.anchoredPosition = new Vector2((xMin + xMax) * 0.5f, y);
-            rect.sizeDelta = new Vector2(Mathf.Max(6f, xMax - xMin), 6f);
+            rect.sizeDelta = new Vector2(Mathf.Max(6f, xMax - xMin), thickness);
         }
         else
         {
@@ -277,7 +347,7 @@ public partial class GameUiController
             float yMin = Mathf.Min(from.y, to.y);
             float yMax = Mathf.Max(from.y, to.y);
             rect.anchoredPosition = new Vector2(x, (yMin + yMax) * 0.5f);
-            rect.sizeDelta = new Vector2(6f, Mathf.Max(6f, yMax - yMin));
+            rect.sizeDelta = new Vector2(thickness, Mathf.Max(6f, yMax - yMin));
         }
     }
 

@@ -21,6 +21,7 @@ public partial class GameUiController
         AddFrame(titleBlock, new Color(0.04f, 0.21f, 0.28f, 0.85f), new Vector2(2f, -2f));
         SetAnchor(titleBlock, new Vector2(0.08f, 0.42f), new Vector2(0.62f, 0.72f), Vector2.zero, Vector2.zero);
         AddCardAccent(titleBlock);
+        AddCornerTicks(titleBlock, new Color(accentColor.r, accentColor.g, accentColor.b, 0.55f));
 
         TextMeshProUGUI title = CreateText("Title", titleBlock, "CORELINE DEFENSE", 72, FontStyle.Bold, TextAnchor.MiddleLeft);
         title.color = Color.white;
@@ -39,6 +40,7 @@ public partial class GameUiController
         RectTransform commandPanel = CreatePanel("CommandPanel", mainMenuOverlay.transform, new Color(0.025f, 0.034f, 0.052f, 0.94f));
         AddFrame(commandPanel, new Color(0.07f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
         AddCardAccent(commandPanel);
+        AddCornerTicks(commandPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.6f));
         SetAnchor(commandPanel, new Vector2(0.64f, 0.2f), new Vector2(0.92f, 0.78f), Vector2.zero, Vector2.zero);
 
         TextMeshProUGUI commandTitle = CreateText("CommandTitle", commandPanel, "MISSION CONTROL", 25, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -134,7 +136,8 @@ public partial class GameUiController
     Button CreateMainMenuButton(string name, Transform parent, string text, bool primary)
     {
         Color normal = primary ? accentColor : new Color(0.025f, 0.03f, 0.052f, 0.96f);
-        Button button = CreateButton(name, parent, text, 24, normal, Color.white);
+        Color textColor = primary ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
+        Button button = CreateButton(name, parent, text, 24, normal, textColor);
         AddFrame((RectTransform)button.transform, primary
             ? new Color(0.1f, 0.62f, 0.72f, 0.95f)
             : new Color(0.07f, 0.2f, 0.28f, 0.9f));
@@ -207,6 +210,7 @@ public partial class GameUiController
 
         RectTransform card = CreatePanel("HowToPlayCard", howToPlayOverlay.transform, new Color(0.045f, 0.058f, 0.082f, 0.98f));
         AddFrame(card, new Color(0.12f, 0.36f, 0.43f, 0.95f), new Vector2(2f, -2f));
+        AddCornerTicks(card, new Color(accentColor.r, accentColor.g, accentColor.b, 0.5f));
         SetAnchor(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-420f, -260f), new Vector2(420f, 260f));
 
         TextMeshProUGUI title = CreateText("Title", card, "HOW TO PLAY", 34, FontStyle.Bold, TextAnchor.MiddleCenter);

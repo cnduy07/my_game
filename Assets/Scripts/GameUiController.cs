@@ -27,8 +27,8 @@ public partial class GameUiController : MonoBehaviour
     const float SeedTrayHorizontalPadding = 28f;
     const float SeedTrayMinWidth = 420f;
     const float SeedTrayMaxWidth = 1100f;
-    const float CampaignNodeWidth = 112f;
-    const float CampaignNodeHeight = 82f;
+    const float CampaignNodeWidth = 136f;
+    const float CampaignNodeHeight = 96f;
     const float CampaignNodeStep = 190f;
     const float CampaignMapSidePadding = 150f;
     const float CampaignMapMinContentWidth = 1040f;
@@ -137,6 +137,8 @@ public partial class GameUiController : MonoBehaviour
         public TextMeshProUGUI label;
         public TextMeshProUGUI type;
         public TextMeshProUGUI status;
+        public Image strip;
+        public Image statusDot;
         public LevelDefinition level;
     }
 
@@ -274,6 +276,7 @@ public partial class GameUiController : MonoBehaviour
     void BuildTopBar(Transform parent)
     {
         RectTransform topBar = CreatePanel("TopStatusBar", parent, backgroundColor);
+        AddCornerTicks(topBar, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
         SetAnchor(topBar, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -84f), new Vector2(0f, 0f));
 
         RectTransform energyBox = CreatePanel("EnergyBox", topBar, new Color(0.055f, 0.075f, 0.105f, 0.96f));
@@ -326,6 +329,7 @@ public partial class GameUiController : MonoBehaviour
         waveIntelPanel = CreatePanel("WaveIntel", parent, new Color(0.035f, 0.048f, 0.07f, 0.86f));
         waveIntelPanel.GetComponent<Image>().raycastTarget = false;
         AddFrame(waveIntelPanel, new Color(0.08f, 0.2f, 0.27f, 0.78f));
+        AddCornerTicks(waveIntelPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
         SetAnchor(waveIntelPanel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-360f, -142f), new Vector2(360f, -96f));
 
         waveIntelText = CreateText("Text", waveIntelPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -339,6 +343,7 @@ public partial class GameUiController : MonoBehaviour
         commandStatusPanel = CreatePanel("CommandStatus", parent, new Color(0.035f, 0.048f, 0.07f, 0.88f));
         commandStatusPanel.GetComponent<Image>().raycastTarget = false;
         AddFrame(commandStatusPanel, new Color(0.08f, 0.2f, 0.27f, 0.78f));
+        AddCornerTicks(commandStatusPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
         SetAnchor(commandStatusPanel, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-380f, 132f), new Vector2(380f, 176f));
 
         commandStatusText = CreateText("Text", commandStatusPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -351,6 +356,7 @@ public partial class GameUiController : MonoBehaviour
     {
         seedTray = CreatePanel("SeedTray", parent, new Color(0.035f, 0.048f, 0.07f, 0.97f));
         AddFrame(seedTray, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        AddCornerTicks(seedTray, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
         SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-550f, 12f), new Vector2(550f, 122f));
 
         HorizontalLayoutGroup layout = seedTray.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -367,6 +373,7 @@ public partial class GameUiController : MonoBehaviour
     {
         overchargePanel = CreatePanel("OverchargePanel", parent, new Color(0.035f, 0.048f, 0.07f, 0.95f));
         AddFrame(overchargePanel, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        AddCornerTicks(overchargePanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.34f));
         SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-190f, -206f), new Vector2(-24f, 206f));
 
         overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -383,6 +390,7 @@ public partial class GameUiController : MonoBehaviour
 
         modalCard = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.06f, 0.072f, 0.095f, 0.98f));
         AddFrame(modalCard, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
+        AddCornerTicks(modalCard, new Color(accentColor.r, accentColor.g, accentColor.b, 0.44f));
         SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -286f), new Vector2(430f, 286f));
 
         modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 36, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -427,7 +435,7 @@ public partial class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 1f), new Vector2(1f, 1f), new Vector2(18f, -388f), new Vector2(-110f, -348f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
-        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 22, accentColor, Color.white);
+        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
         resumeButton.onClick.AddListener(TogglePause);
         AddFrame((RectTransform)resumeButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
 
@@ -443,7 +451,7 @@ public partial class GameUiController : MonoBehaviour
         mainMenuButton.onClick.AddListener(ReturnToMainMenu);
         AddFrame((RectTransform)mainMenuButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 22, accentColor, Color.white);
+        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
         nextLevelButton.onClick.AddListener(GoToNextLevel);
         nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
         AddFrame((RectTransform)nextLevelButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
@@ -764,13 +772,17 @@ public partial class GameUiController : MonoBehaviour
             bool ready = seedBar.IsReady(i);
             bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(seed.cost);
             float cooldownNormalized = seedBar.GetCooldownNormalized(i);
+            Color normalColor = selected ? accentColor : (ready && afford ? panelSoftColor : disabledColor);
 
             card.label.text = seed.label;
             card.cost.text = ready ? seed.cost.ToString() : $"{seed.cost}  {seedBar.GetCooldownRemaining(i):0.0}s";
             card.cooldownFill.fillAmount = cooldownNormalized;
             card.cooldownFill.gameObject.SetActive(cooldownNormalized > 0.001f);
-            card.frame.color = selected ? accentColor : (ready && afford ? panelSoftColor : disabledColor);
-            card.button.interactable = ready && afford;
+            card.frame.color = normalColor;
+            card.button.colors = BuildButtonColors(normalColor, accentColor);
+            card.label.color = selected ? Color.black : Color.white;
+            card.cost.color = selected ? Color.black : new Color(0.88f, 0.96f, 1f, 1f);
+            card.button.interactable = selected || (ready && afford);
         }
     }
 
@@ -883,6 +895,8 @@ public partial class GameUiController : MonoBehaviour
             sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume);
             reduceShakeToggle.SetIsOnWithoutNotify(GameSettings.ReduceShake);
             vibrationToggle.SetIsOnWithoutNotify(GameSettings.VibrationEnabled);
+            RefreshToggleVisual(reduceShakeToggle);
+            RefreshToggleVisual(vibrationToggle);
         }
 
         resumeButton.gameObject.SetActive(!gameOver && !won);

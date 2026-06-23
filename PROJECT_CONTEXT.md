@@ -59,6 +59,7 @@ Can than trong cac viec:
 - `ART_STYLE.md`: style art, prompt, import convention, rig pipeline.
 - `GAME_DESIGN.md`: game design hien hanh.
 - `TASKS.md`: viec dang lam, viec tiep theo, viec chia cho chu project/Codex.
+- `NEWS_TASK.md`: current UI/UX upgrade rules va task order cho runtime-generated UI; neu lech path thi map sang file that trong repo.
 - `CONTENT_PLAN.md`: danh sach sprite, rig, animation, VFX, SFX, UI asset can lam.
 - `TECH_PLAN.md`: systems, architecture, performance, testing.
 - `RELEASE_CHECKLIST.md`: App Store/Google Play checklist.
@@ -66,6 +67,8 @@ Can than trong cac viec:
 - `GameSystems > GameBalance` trong `GameScene`: source of truth tam thoi cho stats gameplay chinh.
 - `GameUiController` tren `GameSystems`: source of truth tam thoi cho runtime HUD uGUI/TextMeshPro. Cac IMGUI cu chi la debug khi bat `showDebugImGui`.
 - `CampaignIntel`: source of truth code-side cho campaign map node positions/types, enemy mix, threat label, recommended tools va pressure score.
+- Runtime UI hien sinh bang C# uGUI/TMP, khong co UI prefab/Canvas scene lam source of truth. Frontend va GameScene co factory rieng nen slider/toggle/button style phai duoc dong bo o ca hai noi khi thay doi.
+- Procedural UI/board/VFX polish hien la production placeholder de tang cam giac game truoc khi co asset final; asset final van theo `CONTENT_PLAN.md`/`ART_STYLE.md`.
 
 ---
 
@@ -96,3 +99,5 @@ Workflow bat buoc cho feature lon:
 - Mot prefab co Animator/SpriteSkin nen dung Animator; object tinh co SpriteRenderer nen dung component nhu `DamageStages`.
 - Tune gameplay stat tren `GameBalance`; tune visual/reference/rig/MuzzlePoint tren prefab.
 - Mobile first: doc duoc tren man hinh nho, touch de bam, FPS on dinh, build size hop ly.
+- UI color semantics: `accent`/cyan cho primary action, selected state, slider/toggle; `hot`/red chi cho destructive/danger nhu EXIT; success cho cleared/completed; warning cho pressure/canh bao. Khong dung `hot` cho slider handle, toggle, START GAME, hay normal selected state.
+- Khi lam dep toan game, uu tien runtime polish khong pha gameplay truoc; sau do moi thay bang sprite/UI skin/VFX prefab final co license va source ro rang.

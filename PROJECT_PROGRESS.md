@@ -281,6 +281,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - UI overlap fix:
   - mission detail `Recommended tools` xuong dong theo tung tool va co vung text cao hon;
   - pause modal duoc noi card, tach progress/music/SFX/toggle thanh cac hang rieng de tranh chong chu.
+- `NEWS_TASK.md` UI/UX pass TASK-01..10:
+  - cap nhat docs de `NEWS_TASK.md` la current UI/UX rule source cho runtime-generated UI;
+  - slider handle/toggle knob dung cyan trong ca frontend va in-game factories;
+  - `START GAME` doi sang primary cyan, `EXIT` co danger red border, footer debug text duoc doi thanh `MISSION MAP ONLINE`;
+  - seed card selected state ro rang bang cyan background/text den;
+  - toggle doi sang pill track/knob, mission nodes tang size, deploy button cao hon trong mission map scene va gameplay overlay.
 
 ### Production foundation pass — 2026-06-22
 - Xoa `Assets/TextMesh Pro/Examples & Extras` thua sau khi import TMP Essentials; chi giu TMP runtime essentials.
@@ -535,3 +541,21 @@ Hoàn thiện **gameplay loop bằng hình xám** trước khi đụng tới art
 
 ## 📂 Danh sách file script hiện có
 `Health.cs` · `GridManager.cs` · `PlacementController.cs` · `EnemySpawner.cs` · `EnemyMover.cs` · `Shooter.cs` · `Projectile.cs`
+
+### Procedural visual polish pass - 2026-06-23
+- Chon huong code/procedural polish truoc khi co asset final: khong download asset ngoai, khong tao UI prefab song song voi runtime UI dang dung.
+- Frontend scenes:
+  - them background tactical grid, panel corner ticks, map field grid, mission node status strip/dot;
+  - mission routes co base line + glow line de doc hon;
+  - selected mission node doi text den tren nen cyan.
+- GameScene runtime UI:
+  - top bar, seed tray, overcharge panel, wave intel, command status, pause modal, main menu overlay va campaign map overlay co chung panel chrome/corner ticks;
+  - campaign overlay dong bo mission node selected/cleared/locked state voi frontend mission map.
+- Board procedural:
+  - `BoardVisualController` them tech backdrop, cell nodes, defense ports va enemy hazard stripes;
+  - muc tieu la lam board co chieu sau hon ma van giu cell/grid doc tren mobile.
+- Combat VFX fallback:
+  - muzzle embers, hit core burst, death cross spark, EMP sparks;
+  - Rail Cannon co beam fallback neu prefab beam chua gan;
+  - energy orb collect co pop/pulse VFX qua `CombatVfx.PlayEnergyCollect`.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass khi chay tuan tu.

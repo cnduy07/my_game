@@ -189,6 +189,7 @@ Layout v1:
 - `FrontendUiController` ve menu/settings/how-to/mission map bang runtime uGUI/TMP; main menu khong hien mission map backdrop nua; moi frontend scene co camera rieng va runtime camera fallback.
 - Flow frontend hien tai: `START GAME` -> `MissionMapScene`; `DEPLOY` -> `GameScene`; `SETTING`/`HOW TO PLAY` la scene rieng; frontend `BACK` quay ve scene goi truoc do, fallback `MainMenuScene`.
 - Flow gameplay hien tai: `MISSION` trong HUD/pause modal mo mission map overlay trong `GameScene`; `BACK` dong overlay va khoi phuc pause/resume state truoc do; `MAIN MENU` trong gameplay load `MainMenuScene`.
+- `NEWS_TASK.md` la current UI/UX upgrade instruction cho code-generated UI. Design token rule: cyan/accent = primary/selected/slider/toggle; red/hot = destructive/danger only; success = cleared; warning = pressure/caution. Vi frontend va gameplay co factory rieng, component style changes phai sua ca `FrontendUiController` va `GameUiController.UiFactory`.
 - Pause semantics: pause chi dong bang `Time.timeScale = 0` va giu nguyen board state. `MAIN MENU` trong pause modal huy van dang choi va quay ve frontend; persistent data chi gom selected level/progress/settings.
 - `GameUiController` da la partial:
   - main-menu UI/navigation nam trong `GameUiController.MainMenu.cs`;

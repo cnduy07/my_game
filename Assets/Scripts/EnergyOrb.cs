@@ -52,6 +52,7 @@ public class EnergyOrb : MonoBehaviour
 
     void Collect()
     {
+        CombatVfx.PlayEnergyCollect(transform.position);
         if (EnergySystem.Instance != null) EnergySystem.Instance.Add(value);
         AudioManager.PlaySfx(SfxType.EnergyCollect);
         ObjectPooler.Despawn(gameObject);

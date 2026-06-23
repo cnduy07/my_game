@@ -17,6 +17,12 @@ public static class CombatVfx
             new Color(1f, 0.95f, 0.35f, 1f), new Color(1f, 0.35f, 0.05f, 0.65f), 0.055f);
         CreateLine("MuzzleCore", position + Vector3.up * 0.035f, position + Vector3.right * 0.22f, 0.035f,
             Color.white, new Color(1f, 0.85f, 0.2f, 0.4f), 0.045f);
+        CreateParticleBurst("MuzzleEmbers", position + Vector3.right * 0.12f, 5, 0.06f,
+            new ParticleSystem.MinMaxCurve(0.08f, 0.14f),
+            new ParticleSystem.MinMaxCurve(0.35f, 0.75f),
+            new ParticleSystem.MinMaxCurve(0.025f, 0.055f),
+            new ParticleSystem.MinMaxGradient(new Color(1f, 0.92f, 0.35f, 0.95f), new Color(1f, 0.35f, 0.05f, 0.45f)),
+            0.04f, 0f, 0.28f);
     }
 
     public static void PlayHitSpark(Vector3 position)
@@ -34,6 +40,12 @@ public static class CombatVfx
             CreateLine("HitSpark", position, position + (Vector3)(dir * length), 0.025f,
                 new Color(1f, 0.95f, 0.55f, 1f), new Color(1f, 0.25f, 0.05f, 0.1f), 0.12f);
         }
+        CreateParticleBurst("HitCore", position, 6, 0.08f,
+            new ParticleSystem.MinMaxCurve(0.09f, 0.18f),
+            new ParticleSystem.MinMaxCurve(0.25f, 0.65f),
+            new ParticleSystem.MinMaxCurve(0.035f, 0.075f),
+            new ParticleSystem.MinMaxGradient(new Color(0.75f, 0.96f, 1f, 0.86f), new Color(1f, 0.5f, 0.16f, 0.72f)),
+            0.035f, 0f, 0.32f);
     }
 
     public static void PlayDeathBurst(Vector3 position)
@@ -49,6 +61,10 @@ public static class CombatVfx
             new ParticleSystem.MinMaxCurve(0.045f, 0.11f),
             new ParticleSystem.MinMaxGradient(new Color(0.65f, 0.68f, 0.7f, 0.95f), new Color(1f, 0.42f, 0.08f, 0.95f)),
             0.18f, 0.15f, 0.9f);
+        CreateLine("DeathCoreA", position + Vector3.left * 0.18f, position + Vector3.right * 0.22f, 0.055f,
+            new Color(0.9f, 1f, 1f, 0.95f), new Color(1f, 0.28f, 0.08f, 0.15f), 0.16f);
+        CreateLine("DeathCoreB", position + Vector3.down * 0.16f, position + Vector3.up * 0.2f, 0.05f,
+            new Color(0.9f, 1f, 1f, 0.85f), new Color(1f, 0.28f, 0.08f, 0.1f), 0.15f);
     }
 
     public static void PlayStaticBreak(Vector3 position)
@@ -117,12 +133,48 @@ public static class CombatVfx
         var fade = go.AddComponent<VfxFade>();
         fade.life = 0.22f;
         fade.scaleTo = radius / startRadius;
+
+        CreateParticleBurst("PulseSparks", position, 20, 0.12f,
+            new ParticleSystem.MinMaxCurve(0.16f, 0.28f),
+            new ParticleSystem.MinMaxCurve(0.5f, 1.1f),
+            new ParticleSystem.MinMaxCurve(0.035f, 0.075f),
+            new ParticleSystem.MinMaxGradient(new Color(color.r, color.g, color.b, 0.95f), new Color(1f, 1f, 1f, 0.4f)),
+            Mathf.Max(0.1f, radius * 0.18f), 0f, 0.55f);
     }
 
     public static void PlayRailCannonBeam(Vector3 position)
     {
         if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.railCannonBeamPrefab : null, position))
             return;
+        if (!FallbackEnabled()) return;
+
+        position.z = -3f;
+        Vector3 start = position + Vector3.right * 0.2f;
+        Vector3 end = position + Vector3.right * 11.2f;
+        CreateLine("RailBeamGlow", start, end, 0.22f,
+            new Color(1f, 0.2f, 0.08f, 0.72f), new Color(1f, 0.6f, 0.12f, 0.24f), 0.2f);
+        CreateLine("RailBeamCore", start, end, 0.075f,
+            Color.white, new Color(1f, 0.82f, 0.45f, 0.55f), 0.14f);
+        CreateParticleBurst("RailMuzzleBurst", start, 18, 0.08f,
+            new ParticleSystem.MinMaxCurve(0.16f, 0.28f),
+            new ParticleSystem.MinMaxCurve(0.9f, 1.8f),
+            new ParticleSystem.MinMaxCurve(0.04f, 0.09f),
+            new ParticleSystem.MinMaxGradient(new Color(1f, 0.85f, 0.35f, 0.95f), new Color(1f, 0.18f, 0.05f, 0.55f)),
+            0.12f, 0f, 0.48f);
+    }
+
+    public static void PlayEnergyCollect(Vector3 position)
+    {
+        if (!FallbackEnabled()) return;
+
+        position.z = -3f;
+        PlayPulse(position, 0.55f, new Color(0.35f, 0.95f, 1f, 0.72f));
+        CreateParticleBurst("EnergyCollect", position, 14, 0.12f,
+            new ParticleSystem.MinMaxCurve(0.18f, 0.32f),
+            new ParticleSystem.MinMaxCurve(0.45f, 1.05f),
+            new ParticleSystem.MinMaxCurve(0.045f, 0.095f),
+            new ParticleSystem.MinMaxGradient(new Color(0.72f, 1f, 1f, 0.95f), new Color(0.12f, 0.82f, 0.95f, 0.42f)),
+            0.09f, -0.08f, 0.55f);
     }
 
     private static bool TryPlayPrefab(GameObject prefab, Vector3 position)

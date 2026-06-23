@@ -55,9 +55,12 @@ public class BoardVisualController : MonoBehaviour
 
         AddDefenseZone(center, boardSize);
         AddSpawnZone(center, boardSize);
+        AddTechBackdrop(center, boardSize);
         AddGridLines(center, boardSize);
+        AddCellNodes(center, boardSize);
         AddLaneLabels(center, boardSize);
         AddEntryChevrons(center, boardSize);
+        AddHazardStripes(center, boardSize);
         AddFrame(center, boardSize);
     }
 
@@ -105,6 +108,61 @@ public class BoardVisualController : MonoBehaviour
             float y = grid.origin.y + row * grid.cellSize;
             AddRect($"EntryChevronA_{row}", new Vector2(right, y + 0.13f), new Vector2(0.32f, 0.055f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.48f), -26);
             AddRect($"EntryChevronB_{row}", new Vector2(right, y - 0.13f), new Vector2(0.32f, 0.055f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.32f), -26);
+        }
+    }
+
+    void AddTechBackdrop(Vector2 center, Vector2 boardSize)
+    {
+        AddRect("CommandDeckShadow", center + new Vector2(-boardSize.x * 0.18f, boardSize.y * 0.02f),
+            new Vector2(boardSize.x * 0.82f, boardSize.y * 0.72f), new Color(0f, 0f, 0f, 0.16f), -34);
+
+        AddRect("UpperTelemetryRail", center + new Vector2(-boardSize.x * 0.12f, boardSize.y * 0.56f),
+            new Vector2(boardSize.x * 0.68f, 0.06f), new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.22f), -30);
+        AddRect("LowerTelemetryRail", center + new Vector2(boardSize.x * 0.1f, -boardSize.y * 0.56f),
+            new Vector2(boardSize.x * 0.58f, 0.045f), new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.14f), -30);
+
+        for (int i = 0; i < 6; i++)
+        {
+            float x = grid.origin.x + (i + 0.2f) * grid.cellSize * 1.35f;
+            float y = center.y + (i % 2 == 0 ? boardSize.y * 0.64f : -boardSize.y * 0.64f);
+            AddRect($"TelemetryBlock_{i}", new Vector2(x, y), new Vector2(0.42f, 0.07f),
+                new Color(0.12f, 0.42f, 0.48f, 0.18f), -29);
+        }
+    }
+
+    void AddCellNodes(Vector2 center, Vector2 boardSize)
+    {
+        for (int row = 0; row < grid.rows; row++)
+        {
+            for (int col = 0; col < grid.cols; col++)
+            {
+                if ((row + col) % 2 != 0) continue;
+
+                Vector2 p = new Vector2(grid.origin.x + col * grid.cellSize, grid.origin.y + row * grid.cellSize);
+                AddRect($"CellNode_{col}_{row}", p + new Vector2(-0.32f, 0.32f), new Vector2(0.055f, 0.055f),
+                    new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.22f), -25);
+            }
+        }
+    }
+
+    void AddHazardStripes(Vector2 center, Vector2 boardSize)
+    {
+        float right = grid.origin.x + grid.cols * grid.cellSize - grid.cellSize * 0.18f;
+        for (int i = 0; i < 10; i++)
+        {
+            float y = center.y - boardSize.y * 0.52f + i * boardSize.y / 9f;
+            AddRect($"EnemyHazardStripe_{i}", new Vector2(right, y), new Vector2(0.42f, 0.04f),
+                new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, i % 2 == 0 ? 0.34f : 0.18f), -25, -18f);
+        }
+
+        float left = grid.origin.x - grid.cellSize * 0.72f;
+        for (int i = 0; i < grid.rows; i++)
+        {
+            float y = grid.origin.y + i * grid.cellSize;
+            AddRect($"DefensePort_{i}", new Vector2(left, y), new Vector2(0.2f, 0.64f),
+                new Color(0.02f, 0.2f, 0.25f, 0.72f), -25);
+            AddRect($"DefensePortCore_{i}", new Vector2(left + 0.08f, y), new Vector2(0.045f, 0.42f),
+                new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.72f), -24);
         }
     }
 
@@ -159,11 +217,12 @@ public class BoardVisualController : MonoBehaviour
         return new Vector2(grid.cols * grid.cellSize, grid.rows * grid.cellSize);
     }
 
-    void AddRect(string name, Vector2 center, Vector2 size, Color color, int sortingOrder)
+    void AddRect(string name, Vector2 center, Vector2 size, Color color, int sortingOrder, float rotationDegrees = 0f)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(visualRoot, false);
         go.transform.position = new Vector3(center.x, center.y, 0.15f);
+        go.transform.rotation = Quaternion.Euler(0f, 0f, rotationDegrees);
         go.transform.localScale = new Vector3(size.x, size.y, 1f);
 
         SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();

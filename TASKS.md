@@ -14,6 +14,8 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Vietnamese, Chinese, French them sau bang localization table.
   - Khong them Vietnamese khong dau vao runtime UI nua.
 - Current validation focus:
+  - Test procedural visual polish pass: frontend background/grid, mission map node states, GameScene campaign overlay, board depth layers, Rail Cannon fallback beam, energy collect pop.
+  - Test `NEWS_TASK.md` UI/UX pass: slider/toggle dung cyan, START GAME dung primary cyan, EXIT dung danger red, seed card selected state ro rang, mission node/deploy polish.
   - Kiem tra level select khong tran khoi mission box khi co 5+ level.
   - Khi co thiet bi that: test safe area/notch/touch target.
   - Test level 4-10 ve pacing/fairness; enemy/stat identity do AI QA kiem tra bang so lieu.
@@ -34,6 +36,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - chay static check + Unity batchmode QA neu licensing/editor state cho phep;
   - commit checkpoint sau khi check pass.
 - Follow Codex workflow source-of-truth trong `PROJECT_CONTEXT.md` truoc moi feature lon; `TASKS.md` chi giu current work/next work de tranh duplicate rule.
+- Khi lam UI/UX pass, doc `NEWS_TASK.md` va dong bo semantic color rules vao ca `FrontendUiController` va `GameUiController.UiFactory` neu component co factory rieng.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
@@ -193,6 +196,19 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - trong `GameScene`, nut `MISSION` mo mission map overlay thay vi load `MissionMapScene`;
   - Build Settings chay tu `MainMenuScene`, gameplay dung `GameScene`;
   - QA/editor helpers doi default gameplay scene sang `GameScene`.
+- `NEWS_TASK.md` UI/UX pass TASK-01..10:
+  - dong bo slider/toggle cyan semantic trong frontend va in-game factories;
+  - `START GAME` la primary cyan, `EXIT` co danger border;
+  - footer main menu doi thanh `MISSION MAP ONLINE`;
+  - seed card selected state co background cyan/text den;
+  - toggle doi sang pill style trong Settings/Pause;
+  - mission node va deploy button duoc tang kich thuoc trong mission map scene va gameplay overlay.
+- Procedural visual polish pass:
+  - frontend scenes co tactical grid/chrome/corner ticks nhat quan hon;
+  - GameScene HUD, pause modal, main menu overlay va campaign map overlay co chung panel chrome;
+  - campaign/mission route co base line + glow line, node selected state co text den/status strip/dot;
+  - board procedural them tech backdrop, cell nodes, defense ports va enemy hazard stripes;
+  - `CombatVfx` fallback them muzzle embers, hit core, death cross spark, EMP sparks, Rail Cannon beam fallback, energy collect pop.
 - VFX prefab generation status:
   - Code builder da co: `Tools > VFX > Rebuild Core VFX Prefabs`.
   - DONE: da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` trong `GameScene`.
@@ -214,6 +230,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
    - VFX prefab replacements for generated effects;
    - animation polish for core unit/enemy set;
    - PARTIAL: BGM support + music settings slider + placeholder ambient loop.
+   - PARTIAL: procedural visual polish pass da nang chat luong UI/board/VFX placeholder, nhung chua thay the asset final.
    - Remaining: final music track and richer audio layering.
 3. Phase 3 — Campaign content:
    - DONE baseline: level 1-10 data pack;

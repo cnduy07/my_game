@@ -221,6 +221,7 @@ Runtime hien tai:
 - HUD da chuyen sang uGUI/TextMeshPro code-generated trong `GameUiController`.
 - Day la UI runtime that de gameplay dung duoc, nhung visual art van can polish bang icon/sprite rieng.
 - Board/background da co `BoardVisualController` tao procedural sci-fi lane layout tam thoi. Day la guide layout, khong phai final environment art.
+- Procedural visual polish pass da them tactical grid/chrome/corner ticks cho frontend/GameScene UI va mission map, nhung day van la placeholder runtime rectangles.
 - Runtime UI copy hien dung English. Vietnamese/Chinese/French se them sau bang localization pipeline.
 
 Can co:
@@ -340,5 +341,7 @@ Hien tai da co VFX prototype:
 - `PlayDeathBurst`.
 - `PlayStaticBreak`.
 - `PlayBunkerBreak`.
+- `PlayRailCannonBeam` fallback beam neu chua co prefab.
+- `PlayEnergyCollect` pop/pulse khi nhat energy orb.
 
 Khi co prefab VFX dep, thay ruot cac ham nay hoac cho `DeathEffect` spawn prefab.

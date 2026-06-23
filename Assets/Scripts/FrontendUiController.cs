@@ -114,6 +114,7 @@ public class FrontendUiController : MonoBehaviour
     {
         Image baseImage = CreateImage("Background", root, bg);
         SetAnchor(baseImage.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        AddBackgroundGrid(root);
 
         Image leftBand = CreateImage("LeftCommandBand", root, new Color(0.03f, 0.12f, 0.16f, 0.18f));
         SetAnchor(leftBand.rectTransform, new Vector2(0f, 0f), new Vector2(0.32f, 1f), Vector2.zero, Vector2.zero);
@@ -139,12 +140,64 @@ public class FrontendUiController : MonoBehaviour
         railRect.localRotation = Quaternion.Euler(0f, 0f, 16f);
     }
 
+    void AddBackgroundGrid(RectTransform parent)
+    {
+        for (int i = 1; i < 12; i++)
+        {
+            float x = i / 12f;
+            Image line = CreateImage($"BgGridV_{i}", parent, new Color(0.08f, 0.22f, 0.28f, 0.08f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(x, 0f), new Vector2(x, 1f), new Vector2(-1f, 0f), new Vector2(1f, 0f));
+        }
+
+        for (int i = 1; i < 7; i++)
+        {
+            float y = i / 7f;
+            Image line = CreateImage($"BgGridH_{i}", parent, new Color(0.08f, 0.22f, 0.28f, 0.06f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
+        }
+    }
+
+    void BuildMapField(RectTransform parent)
+    {
+        Image leftField = CreateImage("MapDefenseField", parent, new Color(accent.r, accent.g, accent.b, 0.08f));
+        leftField.raycastTarget = false;
+        SetAnchor(leftField.rectTransform, new Vector2(0f, 0f), new Vector2(0.12f, 1f), Vector2.zero, Vector2.zero);
+
+        Image threatField = CreateImage("MapThreatField", parent, new Color(hot.r, hot.g, hot.b, 0.08f));
+        threatField.raycastTarget = false;
+        SetAnchor(threatField.rectTransform, new Vector2(0.84f, 0f), Vector2.one, Vector2.zero, Vector2.zero);
+
+        for (int i = 1; i < 8; i++)
+        {
+            float x = i / 8f;
+            Image line = CreateImage($"MapGridV_{i}", parent, new Color(0.12f, 0.58f, 0.68f, 0.08f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(x, 0f), new Vector2(x, 1f), new Vector2(-1f, 0f), new Vector2(1f, 0f));
+        }
+
+        for (int i = 1; i < 5; i++)
+        {
+            float y = i / 5f;
+            Image line = CreateImage($"MapGridH_{i}", parent, new Color(0.12f, 0.58f, 0.68f, 0.06f));
+            line.raycastTarget = false;
+            SetAnchor(line.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
+        }
+
+        TextMeshProUGUI label = CreateText("MapFieldLabel", parent, "SECTOR ROUTE", 13, FontStyle.Bold, TextAnchor.MiddleLeft);
+        label.color = new Color(0.62f, 0.94f, 1f, 0.42f);
+        label.characterSpacing = 4f;
+        SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(0.42f, 0f), new Vector2(24f, 16f), new Vector2(0f, 46f));
+    }
+
     void BuildMainMenu()
     {
         RectTransform title = CreatePanel("TitleBlock", root, new Color(0.02f, 0.035f, 0.052f, 0.78f));
         AddFrame(title, new Color(0.06f, 0.3f, 0.38f, 0.85f), new Vector2(2f, -2f));
         SetAnchor(title, new Vector2(0.08f, 0.56f), new Vector2(0.58f, 0.8f), Vector2.zero, Vector2.zero);
         AddAccent(title);
+        AddCornerTicks(title, new Color(accent.r, accent.g, accent.b, 0.7f));
 
         TextMeshProUGUI name = CreateText("Title", title, "CORELINE DEFENSE", 74, FontStyle.Bold, TextAnchor.MiddleLeft);
         name.characterSpacing = 6f;
@@ -158,6 +211,7 @@ public class FrontendUiController : MonoBehaviour
         RectTransform command = CreatePanel("CommandPanel", root, new Color(0.025f, 0.034f, 0.052f, 0.96f));
         AddFrame(command, new Color(0.09f, 0.33f, 0.4f, 0.95f), new Vector2(2f, -2f));
         AddAccent(command);
+        AddCornerTicks(command, new Color(accent.r, accent.g, accent.b, 0.62f));
         SetAnchor(command, new Vector2(0.62f, 0.2f), new Vector2(0.91f, 0.78f), Vector2.zero, Vector2.zero);
 
         TextMeshProUGUI header = CreateText("Header", command, "COMMAND", 27, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -177,15 +231,20 @@ public class FrontendUiController : MonoBehaviour
         CreateMenuButton("StartGame", buttons, "START GAME", true, () => Load(SceneNames.MissionMap));
         CreateMenuButton("Settings", buttons, "SETTING", false, () => Load(SceneNames.Settings));
         CreateMenuButton("HowToPlay", buttons, "HOW TO PLAY", false, () => Load(SceneNames.HowToPlay));
-        CreateMenuButton("Exit", buttons, "EXIT", false, Quit);
+        Button exitButton = CreateMenuButton("Exit", buttons, "EXIT", false, Quit);
+        AddFrame((RectTransform)exitButton.transform, new Color(hot.r, hot.g, hot.b, 0.7f));
+        TextMeshProUGUI exitLabel = exitButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (exitLabel != null)
+            exitLabel.color = new Color(1f, 0.62f, 0.58f, 1f);
 
-        TextMeshProUGUI footer = CreateText("Footer", command, "v0.1  /  FRONTEND ROUTE READY", 13, FontStyle.Bold, TextAnchor.MiddleLeft);
+        TextMeshProUGUI footer = CreateText("Footer", command, "MISSION MAP ONLINE", 13, FontStyle.Bold, TextAnchor.MiddleLeft);
         footer.color = new Color(0.48f, 0.75f, 0.82f, 0.74f);
         footer.characterSpacing = 2f;
         SetAnchor(footer.rectTransform, Vector2.zero, new Vector2(1f, 0.16f), new Vector2(36f, 8f), new Vector2(-20f, 0f));
 
         RectTransform signal = CreatePanel("SignalPanel", root, new Color(0.012f, 0.026f, 0.036f, 0.5f));
         AddFrame(signal, new Color(0.05f, 0.22f, 0.27f, 0.5f));
+        AddCornerTicks(signal, new Color(accent.r, accent.g, accent.b, 0.42f));
         SetAnchor(signal, new Vector2(0.09f, 0.2f), new Vector2(0.55f, 0.48f), Vector2.zero, Vector2.zero);
         TextMeshProUGUI signalText = CreateText("SignalText", signal, "CORELINE NET ONLINE\nSELECT AN OPERATION", 21, FontStyle.Bold, TextAnchor.MiddleLeft);
         signalText.color = new Color(0.7f, 0.94f, 1f, 0.86f);
@@ -200,10 +259,12 @@ public class FrontendUiController : MonoBehaviour
         RectTransform card = CreatePanel("SettingsCard", root, new Color(0.032f, 0.046f, 0.068f, 0.96f));
         AddFrame(card, new Color(0.1f, 0.34f, 0.42f, 0.9f), new Vector2(2f, -2f));
         AddAccent(card);
+        AddCornerTicks(card, new Color(accent.r, accent.g, accent.b, 0.62f));
         SetAnchor(card, new Vector2(0.18f, 0.16f), new Vector2(0.82f, 0.74f), Vector2.zero, Vector2.zero);
 
         RectTransform audio = CreatePanel("AudioPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
         AddFrame(audio, new Color(0.1f, 0.24f, 0.31f, 0.82f));
+        AddCornerTicks(audio, new Color(accent.r, accent.g, accent.b, 0.36f));
         SetAnchor(audio, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.88f), Vector2.zero, Vector2.zero);
         AddSectionTitle(audio, "AUDIO");
         CreateSliderRow(audio, "Music", GameSettings.MusicVolume, 0.46f, value =>
@@ -220,6 +281,7 @@ public class FrontendUiController : MonoBehaviour
 
         RectTransform comfort = CreatePanel("ComfortPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
         AddFrame(comfort, new Color(0.1f, 0.24f, 0.31f, 0.82f));
+        AddCornerTicks(comfort, new Color(accent.r, accent.g, accent.b, 0.36f));
         SetAnchor(comfort, new Vector2(0.05f, 0.18f), new Vector2(0.95f, 0.44f), Vector2.zero, Vector2.zero);
         AddSectionTitle(comfort, "COMFORT");
         reduceShakeToggle = CreateSettingsToggle(comfort, "Reduce shake", GameSettings.ReduceShake, new Vector2(0.08f, 0.18f), value => GameSettings.ReduceShake = value);
@@ -236,6 +298,7 @@ public class FrontendUiController : MonoBehaviour
 
         RectTransform content = CreatePanel("HowToPlayContent", root, new Color(0.025f, 0.037f, 0.055f, 0.9f));
         AddFrame(content, new Color(0.1f, 0.33f, 0.4f, 0.85f), new Vector2(2f, -2f));
+        AddCornerTicks(content, new Color(accent.r, accent.g, accent.b, 0.48f));
         SetAnchor(content, new Vector2(0.12f, 0.16f), new Vector2(0.88f, 0.74f), Vector2.zero, Vector2.zero);
 
         CreateHowToCard(content, "01", "Build The Line", "Place ArcReactors for energy, then deploy Turrets, Bunkers, SnowGuns, and EMP Drones on open cells.", new Vector2(0.04f, 0.54f), new Vector2(0.48f, 0.9f));
@@ -254,11 +317,13 @@ public class FrontendUiController : MonoBehaviour
 
         RectTransform frame = CreatePanel("MissionFrame", root, new Color(0.025f, 0.037f, 0.055f, 0.92f));
         AddFrame(frame, new Color(0.1f, 0.33f, 0.4f, 0.85f), new Vector2(2f, -2f));
+        AddCornerTicks(frame, new Color(accent.r, accent.g, accent.b, 0.5f));
         SetAnchor(frame, new Vector2(0.05f, 0.12f), new Vector2(0.95f, 0.78f), Vector2.zero, Vector2.zero);
 
         mapPanel = CreatePanel("CampaignMap", frame, new Color(0.014f, 0.027f, 0.04f, 0.96f));
         AddFrame(mapPanel, new Color(0.08f, 0.18f, 0.24f, 0.9f));
         SetAnchor(mapPanel, new Vector2(0.035f, 0.09f), new Vector2(0.68f, 0.91f), Vector2.zero, Vector2.zero);
+        BuildMapField(mapPanel);
         mapPanel.gameObject.AddComponent<RectMask2D>();
 
         mapScroll = mapPanel.gameObject.AddComponent<ScrollRect>();
@@ -299,6 +364,7 @@ public class FrontendUiController : MonoBehaviour
         detailPanel = CreatePanel("MissionDetail", frame, new Color(0.045f, 0.06f, 0.085f, 0.96f));
         AddFrame(detailPanel, new Color(0.11f, 0.27f, 0.34f, 0.9f));
         AddAccent(detailPanel);
+        AddCornerTicks(detailPanel, new Color(accent.r, accent.g, accent.b, 0.5f));
         SetAnchor(detailPanel, new Vector2(0.705f, 0.09f), new Vector2(0.965f, 0.91f), Vector2.zero, Vector2.zero);
 
         missionStatusText = CreateText("Status", detailPanel, "", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -329,16 +395,16 @@ public class FrontendUiController : MonoBehaviour
 
         missionPressureText = CreateText("Pressure", detailPanel, "", 15, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionPressureText.color = new Color(1f, 0.68f, 0.22f, 1f);
-        SetAnchor(missionPressureText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 120f), new Vector2(-24f, 150f));
+        SetAnchor(missionPressureText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 130f), new Vector2(-24f, 160f));
 
         missionRewardText = CreateText("Reward", detailPanel, "", 15, FontStyle.Normal, TextAnchor.UpperLeft);
         missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
-        SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 82f), new Vector2(-24f, 118f));
+        SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 92f), new Vector2(-24f, 124f));
 
-        deployButton = CreateButton("DeployButton", detailPanel, "DEPLOY", 22, accent, Color.white);
+        deployButton = CreateButton("DeployButton", detailPanel, "DEPLOY", 22, accent, new Color(0.02f, 0.06f, 0.08f, 1f));
         deployButton.onClick.AddListener(DeploySelectedMission);
         deployButtonText = deployButton.GetComponentInChildren<TextMeshProUGUI>();
-        SetAnchor((RectTransform)deployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 24f), new Vector2(-24f, 78f));
+        SetAnchor((RectTransform)deployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 20f), new Vector2(-24f, 84f));
     }
 
     void RebuildMissionNodes()
@@ -381,12 +447,13 @@ public class FrontendUiController : MonoBehaviour
             rect.anchorMin = new Vector2(0f, 0.5f);
             rect.anchorMax = new Vector2(0f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = new Vector2(118f, 88f);
+            rect.sizeDelta = new Vector2(136f, 96f);
             rect.anchoredPosition = NodePosition(i);
 
             Image frame = go.GetComponent<Image>();
             frame.color = selected ? accent : (unlocked ? ColorForNode(nodeType) : new Color(0.16f, 0.18f, 0.23f, 0.96f));
             AddFrame(rect, completed ? new Color(0.45f, 1f, 0.68f, 0.86f) : new Color(0.1f, 0.26f, 0.34f, 0.86f));
+            AddMissionNodeDecor(rect, selected, completed, unlocked, nodeType);
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
@@ -403,14 +470,15 @@ public class FrontendUiController : MonoBehaviour
             });
 
             TextMeshProUGUI number = CreateText("Number", go.transform, level.levelNumber.ToString("00"), 24, FontStyle.Bold, TextAnchor.MiddleCenter);
+            number.color = selected ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
             SetAnchor(number.rectTransform, new Vector2(0f, 0.42f), Vector2.one, new Vector2(8f, -2f), new Vector2(-8f, -2f));
 
             TextMeshProUGUI type = CreateText("Type", go.transform, CampaignIntel.NodeTypeLabel(nodeType), 11, FontStyle.Bold, TextAnchor.MiddleCenter);
-            type.color = new Color(0.82f, 0.93f, 0.98f, 1f);
+            type.color = selected ? new Color(0.02f, 0.08f, 0.1f, 1f) : new Color(0.82f, 0.93f, 0.98f, 1f);
             SetAnchor(type.rectTransform, new Vector2(0f, 0.16f), new Vector2(1f, 0.48f), new Vector2(5f, 0f), new Vector2(-5f, 0f));
 
             TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
-            status.color = unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f);
+            status.color = selected ? new Color(0.02f, 0.08f, 0.1f, 1f) : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
             SetAnchor(status.rectTransform, Vector2.zero, new Vector2(1f, 0.22f), new Vector2(5f, 0f), new Vector2(-5f, 1f));
         }
     }
@@ -430,8 +498,15 @@ public class FrontendUiController : MonoBehaviour
     {
         if (Vector2.Distance(from, to) < 0.01f) return;
 
+        Image baseLine = CreateImage("RouteBase", routeLayer, new Color(0f, 0f, 0f, 0.35f));
+        ConfigureRouteRect(baseLine.rectTransform, from, to, 12f);
+
         Image line = CreateImage("Route", routeLayer, new Color(0.12f, 0.62f, 0.74f, 0.55f));
-        RectTransform rect = line.rectTransform;
+        ConfigureRouteRect(line.rectTransform, from, to, 6f);
+    }
+
+    void ConfigureRouteRect(RectTransform rect, Vector2 from, Vector2 to, float thickness)
+    {
         rect.anchorMin = new Vector2(0f, 0.5f);
         rect.anchorMax = new Vector2(0f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
@@ -439,12 +514,12 @@ public class FrontendUiController : MonoBehaviour
         if (Mathf.Abs(from.y - to.y) <= Mathf.Abs(from.x - to.x))
         {
             rect.anchoredPosition = new Vector2((from.x + to.x) * 0.5f, from.y);
-            rect.sizeDelta = new Vector2(Mathf.Abs(to.x - from.x), 6f);
+            rect.sizeDelta = new Vector2(Mathf.Abs(to.x - from.x), thickness);
         }
         else
         {
             rect.anchoredPosition = new Vector2(from.x, (from.y + to.y) * 0.5f);
-            rect.sizeDelta = new Vector2(6f, Mathf.Abs(to.y - from.y));
+            rect.sizeDelta = new Vector2(thickness, Mathf.Abs(to.y - from.y));
         }
     }
 
@@ -596,6 +671,7 @@ public class FrontendUiController : MonoBehaviour
     {
         Toggle toggle = CreateToggle(label.Replace(" ", ""), parent, label);
         toggle.SetIsOnWithoutNotify(value);
+        RefreshToggleVisual(toggle);
         toggle.onValueChanged.AddListener(onChanged);
         SetAnchor((RectTransform)toggle.transform, anchor, anchor + new Vector2(0.36f, 0.18f), Vector2.zero, Vector2.zero);
         return toggle;
@@ -622,7 +698,11 @@ public class FrontendUiController : MonoBehaviour
 
     Button CreateMenuButton(string name, Transform parent, string text, bool primary, UnityEngine.Events.UnityAction action)
     {
-        Button button = CreateButton(name, parent, text, 24, primary ? hot : panelSoft, Color.white);
+        Color normal = primary ? accent : panelSoft;
+        Color textColor = primary ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
+        Button button = CreateButton(name, parent, text, 24, normal, textColor);
+        if (primary)
+            AddFrame((RectTransform)button.transform, new Color(accent.r, accent.g, accent.b, 0.9f));
         button.onClick.AddListener(action);
         LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
         layout.minHeight = 66f;
@@ -668,7 +748,7 @@ public class FrontendUiController : MonoBehaviour
         Image fill = CreateImage("Fill", fillArea, accent);
         SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-        Image handle = CreateImage("Handle", rootObj.transform, hot);
+        Image handle = CreateImage("Handle", rootObj.transform, accent);
         SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-14f, -18f), new Vector2(14f, 18f));
 
         slider.fillRect = fill.rectTransform;
@@ -683,18 +763,47 @@ public class FrontendUiController : MonoBehaviour
         rootObj.transform.SetParent(parent, false);
         Toggle toggle = rootObj.GetComponent<Toggle>();
 
-        Image box = CreateImage("Box", rootObj.transform, panelSoft);
-        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -18f), new Vector2(36f, 18f));
+        Image box = CreateImage("Track", rootObj.transform, new Color(0.08f, 0.12f, 0.16f, 1f));
+        SetAnchor(box.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, -12f), new Vector2(44f, 12f));
+        AddFrame(box.rectTransform, new Color(accent.r, accent.g, accent.b, 0.4f));
 
-        Image check = CreateImage("Checkmark", box.transform, hot);
-        SetAnchor(check.rectTransform, Vector2.zero, Vector2.one, new Vector2(7f, 7f), new Vector2(-7f, -7f));
+        Image check = CreateImage("Knob", box.transform, accent);
+        SetAnchor(check.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(3f, -9f), new Vector2(21f, 9f));
 
         TextMeshProUGUI label = CreateText("Label", rootObj.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(label.rectTransform, new Vector2(0f, 0f), Vector2.one, new Vector2(52f, 0f), Vector2.zero);
 
         toggle.targetGraphic = box;
-        toggle.graphic = check;
+        toggle.graphic = null;
+        toggle.onValueChanged.AddListener(_ => RefreshToggleVisual(toggle));
+        RefreshToggleVisual(toggle);
         return toggle;
+    }
+
+    void RefreshToggleVisual(Toggle toggle)
+    {
+        if (toggle == null) return;
+
+        Transform trackTransform = toggle.transform.Find("Track");
+        Image track = trackTransform != null ? trackTransform.GetComponent<Image>() : null;
+        Transform knobTransform = trackTransform != null ? trackTransform.Find("Knob") : null;
+        Image knob = knobTransform != null ? knobTransform.GetComponent<Image>() : null;
+
+        bool on = toggle.isOn;
+        if (track != null)
+        {
+            track.color = on
+                ? new Color(accent.r * 0.3f, accent.g * 0.3f, accent.b * 0.3f, 0.9f)
+                : new Color(0.08f, 0.12f, 0.16f, 1f);
+        }
+
+        if (knob != null)
+        {
+            knob.color = on ? accent : new Color(0.55f, 0.65f, 0.72f, 1f);
+            SetAnchor(knob.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                on ? new Vector2(23f, -9f) : new Vector2(3f, -9f),
+                on ? new Vector2(41f, 9f) : new Vector2(21f, 9f));
+        }
     }
 
     RectTransform CreatePanel(string name, Transform parent, Color color)
@@ -754,6 +863,46 @@ public class FrontendUiController : MonoBehaviour
         Image left = CreateImage("LeftAccent", parent, new Color(accent.r, accent.g, accent.b, 0.24f));
         left.raycastTarget = false;
         SetAnchor(left.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(3f, 8f), new Vector2(7f, -8f));
+    }
+
+    void AddCornerTicks(RectTransform parent, Color color)
+    {
+        Image tlH = CreateImage("CornerTopLeftH", parent, color);
+        tlH.raycastTarget = false;
+        SetAnchor(tlH.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(12f, -5f), new Vector2(58f, -2f));
+
+        Image tlV = CreateImage("CornerTopLeftV", parent, color);
+        tlV.raycastTarget = false;
+        SetAnchor(tlV.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(12f, -48f), new Vector2(15f, -5f));
+
+        Image brH = CreateImage("CornerBottomRightH", parent, color);
+        brH.raycastTarget = false;
+        SetAnchor(brH.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-58f, 2f), new Vector2(-12f, 5f));
+
+        Image brV = CreateImage("CornerBottomRightV", parent, color);
+        brV.raycastTarget = false;
+        SetAnchor(brV.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-15f, 5f), new Vector2(-12f, 48f));
+    }
+
+    void AddMissionNodeDecor(RectTransform parent, bool selected, bool completed, bool unlocked, MissionNodeType nodeType)
+    {
+        Color stripColor = selected
+            ? new Color(0.02f, 0.08f, 0.1f, 0.45f)
+            : (completed ? new Color(0.3f, 0.9f, 0.62f, 0.42f) : new Color(accent.r, accent.g, accent.b, unlocked ? 0.3f : 0.1f));
+        Image strip = CreateImage("StatusStrip", parent, stripColor);
+        strip.raycastTarget = false;
+        SetAnchor(strip.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -8f), new Vector2(-10f, -4f));
+
+        Color dotColor = completed
+            ? new Color(0.3f, 0.9f, 0.62f, 0.95f)
+            : (unlocked ? new Color(1f, 0.68f, 0.22f, 0.9f) : dim);
+        Image dot = CreateImage("StatusDot", parent, dotColor);
+        dot.raycastTarget = false;
+        SetAnchor(dot.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -22f), new Vector2(-12f, -10f));
+
+        Image nodeAccent = CreateImage("NodeAccent", parent, ColorForNode(nodeType));
+        nodeAccent.raycastTarget = false;
+        SetAnchor(nodeAccent.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(4f, 10f), new Vector2(8f, -10f));
     }
 
     void AddButtonAccent(RectTransform parent)
