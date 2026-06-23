@@ -1,24 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Gắn vào prefab Enemy (cùng với Health).
-// Đi sang trái. Gặp Unit cùng ô -> dừng và đập (gây damage). Vượt mép trái -> thua hàng.
+// Moves an enemy left across its assigned lane and handles contact attacks.
 public class EnemyMover : MonoBehaviour
 {
     public GridManager grid;
     public int row;
     public float speed = 0.5f;
-    public float attackDamage = 30f;   // damage mỗi giây lên Unit
+    public float attackDamage = 30f;
 
-    // Trạng thái bị làm chậm (do súng băng).
-    private float slowFactor = 1f;     // 1 = bình thường, <1 = chậm
+    float slowFactor = 1f;
     private float slowTimer = 0f;
     private float stunTimer = 0f;
     public float attackSfxInterval = 0.65f;
     private float attackSfxTimer = 0f;
 
-    private bool caught = false;       // true khi đã bị lawnmower "nhận" — đứng im chờ bị huỷ
-    private CharacterAnimator anim;    // null trên bản xám -> mọi lệnh anim tự bỏ qua
+    private bool caught = false;
+    private CharacterAnimator anim;
     private EnemyTraits traits;
 
     // Danh sách mọi địch đang sống, để Shooter và Projectile tra cứu (khỏi cần collider).
@@ -26,12 +24,17 @@ public class EnemyMover : MonoBehaviour
     static int activeOrDyingCount;
     bool registeredLifetime;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void ResetSceneState()
+    {
+        All.Clear();
+        activeOrDyingCount = 0;
+    }
+
     void Awake()
     {
         anim = GetComponent<CharacterAnimator>();
         traits = GetComponent<EnemyTraits>();
-        // Art của địch đã vẽ sẵn quay mặt sang trái (đúng hướng di chuyển) nên KHÔNG lật.
-        // Nếu sau này dùng art vẽ quay phải, gọi anim.FaceLeft(true) ở đây.
     }
 
     void OnEnable()
@@ -59,7 +62,6 @@ public class EnemyMover : MonoBehaviour
         activeOrDyingCount = Mathf.Max(0, activeOrDyingCount - 1);
     }
 
-    // Projectile gọi khi trúng đạn băng. Lấy hệ số chậm mạnh nhất, gia hạn thời gian.
     public void ApplySlow(float factor, float duration)
     {
         EnsureTraits();
@@ -97,7 +99,7 @@ public class EnemyMover : MonoBehaviour
     void Update()
     {
         if (grid == null) return;
-        if (caught) return;   // đã giao cho lawnmower, đứng im chờ bị huỷ
+        if (caught) return;
 
         if (slowTimer > 0f)
         {
@@ -128,7 +130,7 @@ public class EnemyMover : MonoBehaviour
                     attackSfxTimer = attackSfxInterval;
                 }
                 hp.TakeDamage(attackDamage * Time.deltaTime);
-                return; // đang đập Unit thì đứng yên
+                return;
             }
         }
 
@@ -138,16 +140,13 @@ public class EnemyMover : MonoBehaviour
 
         if (transform.position.x < grid.origin.x - 0.5f)
         {
-            // Hàng còn lawnmower -> nó lo; địch đứng im chờ bị huỷ.
             if (GameManager.Instance != null && GameManager.Instance.TryLawnmower(row))
             {
                 caught = true;
                 return;
             }
 
-            // Hết đường cứu -> thua.
             if (GameManager.Instance != null) GameManager.Instance.GameOver(row);
-            Debug.Log($"Enemy breached row {row} -> row lost");
             Destroy(gameObject);
         }
     }

@@ -1,33 +1,30 @@
 using UnityEngine;
 
-// Gắn vào object "GameSystems".
-// Sinh địch theo ĐỢT (wave). Mỗi đợt nhiều địch hơn + tỉ lệ địch giáp cao hơn.
-// Hết địch trong đợt -> chờ sạch màn -> đợt kế. Qua đợt cuối (huge wave) -> THẮNG.
+// Owns enemy wave scheduling for the active mission.
 public class EnemySpawner : MonoBehaviour
 {
     public static EnemySpawner Instance { get; private set; }
 
-    [Header("Tham chiếu")]
-    public GridManager grid;          // kéo GridManager vào
-    public GameObject enemyPrefab;    // địch cơ bản
-    public GameObject armoredPrefab;  // địch giáp (tuỳ chọn; trống -> luôn dùng địch cơ bản)
-    public GameObject fastPrefab;     // tuỳ chọn; trống -> dùng enemyPrefab + stat modifier
-    public GameObject shieldPrefab;   // tuỳ chọn; trống -> dùng armoredPrefab + stat modifier
+    [Header("References")]
+    public GridManager grid;
+    public GameObject enemyPrefab;
+    public GameObject armoredPrefab;
+    public GameObject fastPrefab;
+    public GameObject shieldPrefab;
 
-    [Header("Cấu hình wave")]
+    [Header("Wave Config")]
     public int waveCount = 5;
-    public int baseEnemies = 3;             // số địch đợt 1
-    public int enemiesIncreasePerWave = 2;  // mỗi đợt thêm bao nhiêu
-    public int finalWaveMultiplier = 2;     // đợt cuối nhân lên thành "huge wave"
-    public float startDelay = 8f;           // chờ trước đợt đầu để người chơi kịp bố trí
-    public float timeBetweenSpawns = 2.5f;  // giãn cách sinh trong 1 đợt
-    public float timeBetweenWaves = 12f;    // nghỉ giữa các đợt
+    public int baseEnemies = 3;
+    public int enemiesIncreasePerWave = 2;
+    public int finalWaveMultiplier = 2;
+    public float startDelay = 8f;
+    public float timeBetweenSpawns = 2.5f;
+    public float timeBetweenWaves = 12f;
     public bool useAuthoredWaves = false;
     public LevelWaveDefinition[] authoredWaves;
     public bool balanceSpawnRows = true;
     public int maxSameRowStreak = 2;
     public bool showEnemyTypeBadges = true;
-    public bool showDebugImGui;
 
     enum Phase { PreStart, Spawning, WaitingClear, BetweenWaves, Won }
     Phase phase = Phase.PreStart;
@@ -40,7 +37,6 @@ public class EnemySpawner : MonoBehaviour
     float timer = 0f;
     int lastSpawnRow = -1;
     int sameRowStreak = 0;
-    GUIStyle style;
 
     public struct EnemyTypeModifier
     {
@@ -183,7 +179,6 @@ public class EnemySpawner : MonoBehaviour
         toSpawn = currentWaveQueue != null ? currentWaveQueue.Length : 0;
         timer = 0f;
         phase = toSpawn > 0 ? Phase.Spawning : Phase.WaitingClear;
-        Debug.Log($"Wave {currentWave}/{waveCount} started - {toSpawn} enemies");
     }
 
     float RemainingPhaseTime(float duration)
@@ -524,27 +519,23 @@ public class EnemySpawner : MonoBehaviour
         if (enemy.transform.Find("EnemyTypeBadge") != null) return;
 
         Color color;
-        Vector2 size;
         switch (enemyType)
         {
             case LevelEnemyType.Fast:
                 color = new Color(0.1f, 0.9f, 1f, 0.95f);
-                size = new Vector2(0.12f, 0.36f);
                 break;
             case LevelEnemyType.Shield:
                 color = new Color(0.65f, 0.34f, 1f, 0.95f);
-                size = new Vector2(0.18f, 0.42f);
                 break;
             default:
                 color = new Color(1f, 0.42f, 0.12f, 0.95f);
-                size = new Vector2(0.14f, 0.34f);
                 break;
         }
 
         GameObject badge = new GameObject("EnemyTypeBadge");
         badge.transform.SetParent(enemy.transform, false);
-        badge.transform.localPosition = new Vector3(-0.28f, 0.34f, -0.02f);
-        badge.transform.localScale = new Vector3(size.x, size.y, 1f);
+        badge.transform.localPosition = new Vector3(-0.26f, -0.38f, -0.02f);
+        badge.transform.localScale = new Vector3(0.18f, 0.06f, 1f);
 
         SpriteRenderer renderer = badge.AddComponent<SpriteRenderer>();
         renderer.sprite = RuntimePixelSprite();
@@ -568,15 +559,4 @@ public class EnemySpawner : MonoBehaviour
         return runtimePixelSprite;
     }
 
-    void OnGUI()
-    {
-        if (!showDebugImGui) return;
-        if (phase == Phase.Won) return;
-
-        string txt = DisplayText;
-        if (style == null)
-            style = new GUIStyle(GUI.skin.label)
-            { fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperRight };
-        GUI.Label(new Rect(Screen.width - 210, 8, 200, 28), txt, style);
-    }
 }

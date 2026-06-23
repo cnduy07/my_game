@@ -192,7 +192,6 @@ MonoBehaviour:
   balanceSpawnRows: 1
   maxSameRowStreak: 2
   showEnemyTypeBadges: 1
-  showDebugImGui: 0
 --- !u!114 &53209488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,7 +223,6 @@ MonoBehaviour:
   grid: {fileID: 60195756}
   skyOrbValue: 25
   skyInterval: 8
-  showDebugImGui: 0
 --- !u!114 &53209490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,7 +257,6 @@ MonoBehaviour:
     cost: 150
     cooldown: 30
   selectedIndex: -1
-  showDebugImGui: 0
 --- !u!114 &53209491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,7 +271,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   grid: {fileID: 60195756}
   lawnmowerPrefab: {fileID: 4599616862578025363, guid: a3d85821c2d9f4a6fb5224a9c8364baf, type: 3}
-  showDebugImGui: 0
 --- !u!114 &53209492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,7 +353,6 @@ MonoBehaviour:
   fireRateMultiplier: 1.6
   damageMultiplier: 1.25
   unlocked: 1
-  showDebugImGui: 0
   feedbackDuration: 2.2
 --- !u!114 &53209494
 MonoBehaviour:

@@ -15,6 +15,12 @@ public class EnergyOrb : MonoBehaviour
     public static readonly List<EnergyOrb> All = new List<EnergyOrb>();
     private float initialLifetime;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void ResetSceneState()
+    {
+        All.Clear();
+    }
+
     void Awake()
     {
         initialLifetime = lifetime;

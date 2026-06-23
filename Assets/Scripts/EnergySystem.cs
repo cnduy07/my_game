@@ -16,9 +16,7 @@ public class EnergySystem : MonoBehaviour
     public float skyInterval = 8f;      // mỗi mấy giây rơi 1 mặt trời
 
     public int Energy { get; private set; }
-    public bool showDebugImGui;
     private float skyTimer;
-    private GUIStyle style;
 
     void Awake()
     {
@@ -84,13 +82,5 @@ public class EnergySystem : MonoBehaviour
         if (Energy < cost) return false;
         Energy -= cost;
         return true;
-    }
-
-    void OnGUI()
-    {
-        if (!showDebugImGui) return;
-        if (style == null)
-            style = new GUIStyle(GUI.skin.label) { fontSize = 20, fontStyle = FontStyle.Bold };
-        GUI.Label(new Rect(10, 8, 260, 30), $"Energy: {Energy}", style);
     }
 }

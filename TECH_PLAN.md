@@ -10,7 +10,7 @@ Scripts chinh:
 - `GridManager`: luoi 5x9, world/cell conversion, unit occupancy.
 - `PlacementController`: click/placement/collect orb.
 - `EnergySystem`: energy total, sky orb spawn.
-- `SeedBar`: unit selection/cost/cooldown bang IMGUI.
+- `SeedBar`: unit selection/cost/cooldown state source cho runtime HUD.
 - `EnergyProducer`: ArcReactor spawn energy.
 - `EnemySpawner`: wave state machine.
 - `EnemyMover`: di chuyen/attack/lawnmower trigger.
@@ -155,7 +155,7 @@ Can tuning sau Play Mode:
 
 Quyet dinh hien tai:
 - Dung **uGUI Canvas + CanvasScaler + TextMeshPro** cho gameplay HUD.
-- Khong tiep tuc dung IMGUI cho UI nguoi choi; cac `OnGUI` cu chi giu lai sau flag `showDebugImGui` de debug nhanh.
+- Khong tiep tuc dung IMGUI cho UI nguoi choi. Legacy `OnGUI` runtime debug da bi xoa khoi gameplay scripts.
 - UI Toolkit co the dung sau nay cho editor tools/custom inspectors, khong phai gameplay HUD chinh luc nay.
 - Runtime copy policy hien tai: **English-first**. Khong dung Vietnamese khong dau trong UI nguoi choi. Vietnamese/Chinese/French se them sau bang localization table khi flow on dinh.
 
@@ -186,6 +186,16 @@ Layout v1:
 - Campaign map dung horizontal `ScrollRect` + content width theo so level; node/route dat trong content coordinates, khong bi gioi han 10 level.
 - Mission detail hien dev badge `TEST MODE: ALL MISSIONS UNLOCKED` khi `unlockAllLevelsForTesting` dang bat.
 - Main menu runtime overlay la mot phan cua `GameUiController`, hien mot lan moi process/session bang static `mainMenuShownThisSession`.
+- Main menu direction: full-screen sci-fi command interface, khong con popup nho de gameplay HUD lo ro phia sau. Direction lay tu reference "Menu for 2D Shooter Game": nen toi, title lon, command panel, scanline/rail accents. Dieu chinh cho Coreline Defense bang cyan primary, red chi dung danger/threat.
+- Main menu action set hien tai: `CONTINUE`, `CAMPAIGN`, `SETTINGS`, `RESTART MISSION`; `SETTINGS` mo pause/settings modal co san va giu game paused.
+- Pause semantics: pause chi dong bang `Time.timeScale = 0` va giu nguyen board state. `MAIN MENU` trong pause modal la action rieng, reload scene de huy van dang choi va mo main menu sach; persistent data chi gom selected level/progress/settings.
+- `GameUiController` da la partial:
+  - main-menu UI/navigation nam trong `GameUiController.MainMenu.cs`;
+  - campaign map/mission navigation nam trong `GameUiController.Campaign.cs`;
+  - UI creation helpers nam trong `GameUiController.UiFactory.cs`;
+  - file chinh giu HUD, modal, dynamic HUD refresh va gameplay binding.
+- Legacy IMGUI runtime debug da bi xoa. Player-facing UI source hien la uGUI/TextMeshPro.
+- Static runtime registries (`ObjectPooler`, `EnemyMover.All`, `EnergyOrb.All`) reset khi load scene de reload/main menu khong giu stale references.
 
 Current scale pass:
 - Top bar, seed tray, seed cards, tutorial hint, va OC panel da duoc phong to sau playtest vi UI cu qua nho va co cam giac la overlay tach roi.

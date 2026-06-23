@@ -212,7 +212,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - seed tray nam phia duoi, co selected/disabled/cooldown overlay;
   - overcharge panel tach ben phai, khong con de len pause/wave;
   - modal pause/win/lose gom SFX slider, reduce shake, vibration, resume, restart.
-- `EnergySystem`, `SeedBar`, `OverchargeSystem`, `EnemySpawner`, `GameManager` van giu `OnGUI` nhung chi chay khi bat `showDebugImGui`; mac dinh tat de khong con UI chong cheo.
+- Legacy `OnGUI` runtime debug trong `EnergySystem`, `SeedBar`, `OverchargeSystem`, `EnemySpawner`, `GameManager` da bi xoa; runtime UI nguoi choi chi di qua `GameUiController`.
 - `SeedBar`, `OverchargeSystem`, `EnemySpawner` expose API nho de HUD doc state va goi action thay vi tu ve UI trong tung script.
 - `GameUiController` tu tao `EventSystem` neu scene chua co, va `PlacementController` van hoi `PointerOverPanel` de chan click UI xuyen xuong board.
 - **Unity verify:** chu project da test cac chuc nang chinh hoat dong binh thuong: HUD hien dung, seed tray/OC/pause/settings co ban chay duoc.
@@ -249,10 +249,21 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - mo map tu focus selected/current mission;
   - san sang mo rong 20+ level ma khong tran mep card.
 - Them `TEST MODE: ALL MISSIONS UNLOCKED` badge trong mission detail khi `LevelManager.unlockAllLevelsForTesting` dang bat.
-- Them main menu runtime overlay `CORELINE DEFENSE` voi `CONTINUE`, `CAMPAIGN`, `RESTART`; main menu pause game nhung khong chong pause modal.
+- Nang cap main menu runtime overlay theo direction "2D shooter command menu": full-screen dark tactical background, title block lon, command panel doc, `CONTINUE`, `CAMPAIGN`, `SETTINGS`, `RESTART MISSION`; main menu pause game nhung khong chong pause modal.
+- Pause modal co `MAIN MENU`: pause van giu nguyen state ban choi; chi khi bam `MAIN MENU` moi reload scene sach, giu lai selected level/progress/settings qua persistent data.
+- Tach main menu sang `GameUiController.MainMenu.cs` de giam trach nhiem cua `GameUiController.cs`.
+- Cleanup pass:
+  - xoa legacy IMGUI debug UI trong `EnergySystem`, `SeedBar`, `OverchargeSystem`, `EnemySpawner`, `GameManager`;
+  - xoa serialized `showDebugImGui` orphan trong `SampleScene`;
+  - xoa `.DS_Store` trong `Assets`;
+  - xoa bunker legacy assets khong con reference: `bunker_4.png`, `Bunker.controller`, `bunker.anim`, `bunker_death.anim` va `.meta`;
+  - tach UI factory/helper sang `GameUiController.UiFactory.cs`;
+  - tach campaign map/mission navigation sang `GameUiController.Campaign.cs`;
+  - reset static runtime registries/pools khi load scene de tranh stale state sau reload/main menu.
 - UI runtime co accent strip cho buttons/cards de bot cam giac rectangle prototype.
 - Board procedural them backdrop panels, lane signals va entry chevrons de doc sci-fi battlefield hon.
 - Enemy type visual fallback: Armored/Fast/Shield co badge mau nho khi chua co prefab art rieng.
+- Enemy type badge da doi tu cot doc sang chip nho o chan enemy de tranh nhin nhu visual artifact.
 - Them `VfxAutoDestroy` va `VfxPrefabBuilder` Editor tool de tao/gian VFX prefab ParticleSystem that vao `CombatVfxSettings`.
 - Da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` cua `SampleScene`.
 - AI QA sau VFX generation: `0` fail, `1` expected warning do `LevelManager.unlockAllLevelsForTesting` dang bat.
@@ -464,8 +475,8 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - Level 10: final mixed formation baseline.
 - Chua them art/enemy moi; day la data baseline de test pacing, fairness, va campaign length.
 
-- `EnergySystem.cs` — tổng năng lượng, tự rơi theo thời gian, hiển thị IMGUI góc trên-trái.
-- `SeedBar.cs` — thanh chọn unit (mỗi loại có giá + cooldown), vẽ nút bằng IMGUI, chặn click đặt khi bấm trúng nút.
+- `EnergySystem.cs` — tổng năng lượng, tự rơi energy orb theo thời gian; runtime HUD đọc state qua `GameUiController`.
+- `SeedBar.cs` — state chọn unit/cost/cooldown; runtime HUD vẽ seed tray và gọi API chọn seed.
 - `EnergyProducer.cs` — unit "Arc Reactor" định kỳ sản năng lượng (reskin Sunflower).
 - `PlacementController.cs` — sửa lại: đặt unit ĐANG CHỌN, kiểm tra đủ năng lượng + hết cooldown, trừ tiền khi đặt.
 

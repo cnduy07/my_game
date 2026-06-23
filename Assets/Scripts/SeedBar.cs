@@ -19,7 +19,6 @@ public class SeedBar : MonoBehaviour
 
     public UnitType[] seeds;
     public int selectedIndex = -1;
-    public bool showDebugImGui;
 
     private float[] cdTimer;
     private UnitType[] allSeeds;
@@ -129,30 +128,6 @@ public class SeedBar : MonoBehaviour
     public bool PointerOverBar(float guiX, float guiY)
     {
         return GameUiController.Instance != null && GameUiController.Instance.PointerOverPanel(guiX, guiY);
-    }
-
-    void OnGUI()
-    {
-        if (!showDebugImGui) return;
-        if (seeds == null) return;
-        for (int i = 0; i < seeds.Length; i++)
-        {
-            var s = seeds[i];
-            Rect r = new Rect(10 + i * 130, 48, 120, 52);
-            bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(s.cost);
-
-            GUI.enabled = IsReady(i) && afford;
-            string cd = IsReady(i) ? "" : $"  ({cdTimer[i]:0.0}s)";
-            string label = $"{s.label}\n{s.cost}{cd}";
-
-            GUI.color = (i == selectedIndex) ? Color.cyan : Color.white;
-            if (GUI.Button(r, label))
-            {
-                SelectSeed(i);
-            }
-            GUI.color = Color.white;
-            GUI.enabled = true;
-        }
     }
 
     void EnsureAllSeedsSnapshot()

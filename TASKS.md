@@ -170,7 +170,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - checklist gom campaign map, HUD intel, command feedback, OC pressure, spawn fairness, regression smoke.
 - Campaign/UI/visual foundation pass:
   - campaign map horizontal scroll/pan, khong con ep 10 mission vao mot box;
-  - main menu runtime overlay;
+  - main menu runtime overlay da doi sang full-screen command menu voi title block, tactical background, command panel doc va settings entry;
+  - pause modal co `MAIN MENU`; pause giu state, `MAIN MENU` moi reload scene sach;
+  - cleanup pass da xoa legacy IMGUI debug UI va tach `GameUiController` partial (`MainMenu`, `Campaign`, `UiFactory`);
+  - xoa bunker legacy assets khong con reference (`bunker_4`, bunker animator/controller cu);
   - test-mode badge cho unlock-all;
   - board procedural polish;
   - enemy type color badges;
@@ -279,7 +282,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 ## Blocked / Can kiem tra
 
 - Unity batchmode compile co the khong chay neu project dang mo trong Unity Editor. Neu can verify compile, dong Unity hoac cho phep chay khi project khong mo.
-- Sprite slicing cua `bunker_2`, `bunker_3`, `bunker_4` dang co thay doi. Neu chi dung moi anh la mot stage, nen de Sprite Mode = Single.
+- Sprite slicing cua `bunker_2`, `bunker_3` can giu Single Sprite stage neu chi dung moi anh la mot damage stage. `bunker_4` da bi xoa vi death dung VFX dong.
 - Asset production chua chot: can visual brief cho board/UI/icons/VFX truoc khi tao asset hang loat.
 
 ---

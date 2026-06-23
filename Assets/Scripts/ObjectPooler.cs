@@ -5,6 +5,12 @@ public static class ObjectPooler
 {
     static readonly Dictionary<GameObject, Queue<GameObject>> pools = new Dictionary<GameObject, Queue<GameObject>>();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void ResetSceneState()
+    {
+        pools.Clear();
+    }
+
     public static GameObject Spawn(GameObject prefab, Vector3 position, Quaternion rotation)
     {
         if (prefab == null) return null;

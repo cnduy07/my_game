@@ -88,7 +88,7 @@ Can co:
 - Death VFX dong: smoke, spark, metal break.
 
 Khong nen:
-- Dung `bunker_4` la no tung tinh.
+- Them sprite no tung tinh vao damage stage. Bunker death dung VFX dong roi an sprite.
 
 ### ArcReactor
 
@@ -234,7 +234,11 @@ Can co:
   - selected/current/cleared/locked visual states.
 - Pause button.
 - Win/Game Over panels.
-- Main menu sau vertical slice.
+- Main menu production art sau vertical slice:
+  - full-screen command background sprite/scene;
+  - logo/title treatment for `CORELINE DEFENSE`;
+  - 9-slice command panel/button skin matching current runtime layout;
+  - subtle scanline/noise overlay and cyan/red tactical rails.
 - Campaign map node/route art cho map scroll ngang.
 - Icon/skin cho Overcharge row buttons.
 - Pause/settings modal background + button states.

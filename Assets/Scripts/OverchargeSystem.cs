@@ -12,12 +12,9 @@ public class OverchargeSystem : MonoBehaviour
     public float fireRateMultiplier = 1.6f;
     public float damageMultiplier = 1.25f;
     public bool unlocked = true;
-    public bool showDebugImGui;
     public float feedbackDuration = 2.2f;
 
     private float[] timers;
-    private GUIStyle activeStyle;
-    private GUIStyle inactiveStyle;
     string feedbackText = "";
     float feedbackUntil;
 
@@ -155,32 +152,6 @@ public class OverchargeSystem : MonoBehaviour
     {
         feedbackText = message;
         feedbackUntil = Time.unscaledTime + Mathf.Max(0.2f, feedbackDuration);
-    }
-
-    void OnGUI()
-    {
-        if (!showDebugImGui) return;
-        if (!unlocked) return;
-        if (timers == null) return;
-
-        if (activeStyle == null)
-        {
-            activeStyle = new GUIStyle(GUI.skin.button) { fontStyle = FontStyle.Bold };
-            inactiveStyle = new GUIStyle(GUI.skin.button);
-        }
-
-        float x = Screen.width - 118f;
-        float y = 44f;
-        GUI.Label(new Rect(x, y - 22f, 110f, 20f), $"OC {energyCost}");
-
-        for (int row = timers.Length - 1; row >= 0; row--)
-        {
-            bool active = IsActive(row);
-            string text = active ? $"{row + 1}: {timers[row]:0}" : $"{row + 1}: OC";
-            Rect rect = new Rect(x, y + (timers.Length - 1 - row) * 34f, 104f, 30f);
-            if (GUI.Button(rect, text, active ? activeStyle : inactiveStyle))
-                TryActivate(row);
-        }
     }
 
     void EnsureTimers()
