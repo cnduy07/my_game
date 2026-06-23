@@ -7,11 +7,14 @@ File nay quan ly noi dung can san xuat cho game. Chu project nen dung file nay d
 ## 1. Art Direction chung
 
 Xem chi tiet trong `ART_STYLE.md`.
+Visual reference direction hien tai xem `VISUAL_REFERENCES.md`.
+Prompt gen asset chi tiet xem `ASSET_GENERATION_PROMPTS.md`.
 
 Tom tat:
 - Retro 16-bit pixel art.
 - Bold black outline.
 - Palette han che.
+- Nen/mood moi: dark navy, blue-grey, muted purple shadows, diem sang amber nho kieu warning beacon/reactor lamp.
 - Phe thu: steel grey + orange accents + red/cyan visor.
 - Enemy: silver/grey alien robot + violet/blue energy core.
 - Transparent background, square image.
@@ -252,7 +255,7 @@ Runtime hien tai:
 - `Tile.prefab` la overlay trong suot de giu cell click target va doc grid.
 
 Can co cho visual polish that:
-- 1 background/board sprite cho level "First Contact" theo phong cach sci-fi industrial.
+- 1 background/board sprite cho level "First Contact" theo phong cach sci-fi industrial, hoc mood tu `VISUAL_REFERENCES.md`: dark slab arena, wall/gate border, amber beacon lights.
 - Board can doc ro 5 lane x 9 cell o man hinh dien thoai.
 - Ben trai co defense rail/rail cannon anchors.
 - Ben phai co enemy entry/gate/warning strip.

@@ -57,6 +57,8 @@ Can than trong cac viec:
 - `PROJECT_CONTEXT.md`: vai tro, workflow, doc gi truoc.
 - `PROJECT_PROGRESS.md`: lich su tien do va quyet dinh da lam.
 - `ART_STYLE.md`: style art, prompt, import convention, rig pipeline.
+- `VISUAL_REFERENCES.md`: approved visual references va cach translate mood/palette sang sci-fi Coreline Defense.
+- `ASSET_GENERATION_PROMPTS.md`: prompt pack chi tiet de gen menu background, board, UI skin, seed icons, unit/enemy sprites va VFX.
 - `GAME_DESIGN.md`: game design hien hanh.
 - `TASKS.md`: viec dang lam, viec tiep theo, viec chia cho chu project/Codex.
 - `NEWS_TASK.md`: current UI/UX upgrade rules va task order cho runtime-generated UI; neu lech path thi map sang file that trong repo.
