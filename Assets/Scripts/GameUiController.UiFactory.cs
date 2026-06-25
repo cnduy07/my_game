@@ -81,7 +81,8 @@ public partial class GameUiController
         label.outlineWidth = 0f;
         label.raycastTarget = false;
         label.textWrappingMode = TextWrappingModes.Normal;
-        label.overflowMode = TextOverflowModes.Ellipsis;
+        label.overflowMode = TextOverflowModes.Truncate;
+        UiFont.Apply(label);
         return label;
     }
 

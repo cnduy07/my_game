@@ -46,6 +46,7 @@ public static class UiSceneTransition
         text.color = UiSpec.Text;
         text.outlineWidth = 0f;
         text.raycastTarget = false;
+        UiFont.Apply(text);
         RectTransform textRect = text.rectTransform;
         textRect.anchorMin = new Vector2(0.18f, 0.46f);
         textRect.anchorMax = new Vector2(0.82f, 0.56f);

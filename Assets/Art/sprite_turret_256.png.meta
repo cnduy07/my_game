@@ -142,14 +142,14 @@ TextureImporter:
       guid: c4eec75c76f01ed47899d989ef7bd6da
       position: {x: 104.98054, y: 136.35738, z: 0}
       rotation: {x: 0, y: 0, z: 0.6724374, w: 0.74015397}
-      length: 49.04969
+      length: 49.049706
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278190335
     - name: bone_2
       guid: a6551ca7c9e206c4e9ebfbd4a75efa65
-      position: {x: 49.049698, y: -0.0000011937135, z: 0}
+      position: {x: 49.049713, y: 0.00000026587827, z: 0}
       rotation: {x: 0, y: 0, z: 0.10029026, w: 0.9949582}
       length: 32.14074
       parentId: 0
@@ -453,8 +453,8 @@ TextureImporter:
       'boneIndex[1]': 4
       'boneIndex[2]': 0
       'boneIndex[3]': 0
-    - 'weight[0]': 0.81023264
-      'weight[1]': 0.18976738
+    - 'weight[0]': 0.8102323
+      'weight[1]': 0.18976772
       'weight[2]': 0
       'weight[3]': 0
       'boneIndex[0]': 4
@@ -469,7 +469,7 @@ TextureImporter:
       'boneIndex[1]': 0
       'boneIndex[2]': 0
       'boneIndex[3]': 0
-    - 'weight[0]': 1
+    - 'weight[0]': 0.99999994
       'weight[1]': 0
       'weight[2]': 0
       'weight[3]': 0
@@ -525,24 +525,24 @@ TextureImporter:
       'boneIndex[1]': 0
       'boneIndex[2]': 0
       'boneIndex[3]': 0
-    - 'weight[0]': 0.65998507
-      'weight[1]': 0.27772906
-      'weight[2]': 0.05094193
-      'weight[3]': 0.011343947
+    - 'weight[0]': 0.6599861
+      'weight[1]': 0.27772954
+      'weight[2]': 0.05094061
+      'weight[3]': 0.011343763
       'boneIndex[0]': 0
       'boneIndex[1]': 1
       'boneIndex[2]': 3
       'boneIndex[3]': 4
-    - 'weight[0]': 0.91189694
-      'weight[1]': 0.072602145
-      'weight[2]': 0.015500908
+    - 'weight[0]': 0.911899
+      'weight[1]': 0.07260039
+      'weight[2]': 0.015500665
       'weight[3]': 0
       'boneIndex[0]': 0
       'boneIndex[1]': 3
       'boneIndex[2]': 4
       'boneIndex[3]': 0
-    - 'weight[0]': 0.840506
-      'weight[1]': 0.15949407
+    - 'weight[0]': 0.8405061
+      'weight[1]': 0.15949398
       'weight[2]': 0
       'weight[3]': 0
       'boneIndex[0]': 3

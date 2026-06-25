@@ -40,6 +40,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Test seed tray khi selected nhung khong du energy: label/icon van doc ro, cost canh bao bang mau accent.
   - Test GameScene board grid: grid that cua gameplay ro hon generated board cell art va khong lam roi mat khi dat unit/enemy.
   - Test GameScene board underlay: vung den quanh board co hangar/command-deck detail nhe, khong tranh voi board/unit/HUD.
+  - Test Thaleah Pixel Font pass: run `Tools > Coreline > Apply Thaleah Pixel Font`, then verify MainMenu/Settings/HowToPlay/MissionMap/GameScene TMP labels use Thaleah, have no text outline/shadow, use truncate overflow, and no TMP font warnings.
   - Test enemy entry/right rail polish: static red rectangle/stripe tren board da giam; rail cannon khi fire van giu laser beam do manh nhu ban truoc.
   - Test Victory/Defeat end scene: title/subtitle can giua tot, title pulse ro hon, report icon chips/rows can giua va buttons fixed-size bang `button_command`.
   - Test Unity Console khong con warning `Unit 1` transition dung parameter `Walking` bi thieu.
@@ -56,6 +57,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Follow Codex workflow source-of-truth trong `PROJECT_CONTEXT.md` truoc moi feature lon; `TASKS.md` chi giu current work/next work de tranh duplicate rule.
 - Khi lam UI/UX pass, doc `NEWS_TASK.md` va dong bo semantic color rules vao ca `FrontendUiController` va `GameUiController.UiFactory` neu component co factory rieng.
 - Khi lam UI scene/button/modal, doc `UI_SPEC.md` truoc; khong them button style ngoai `Assets/UI/button_command.png` va ColorBlock tint states.
+- Khi lam UI text, dung `UiFont`/`Tools > Coreline > Apply Thaleah Pixel Font`; khong de TMP label moi fallback ve LiberationSans.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
@@ -79,6 +81,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 
 ### Done gan day
 
+- Thaleah Pixel Font integration:
+  - added shared `UiFont` runtime helper for generated and scene-authored TMP labels;
+  - added `Tools > Coreline > Apply Thaleah Pixel Font` to create/apply `Assets/Resources/Fonts/ThaleahFat SDF.asset`;
+  - frontend/game UI text factories now apply the shared font helper.
 - Runtime HUD rebuild da duoc chu project test OK trong Unity.
 - TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
 - Production foundation pass da duoc chu project test OK trong Unity.
@@ -320,6 +326,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Playtest VFX prefab moi: muzzle, hit spark, enemy death, bunker/static break, EMP pulse, rail cannon impact.
 - Runtime text cleanup: keep visible UI in English until localization system exists.
 - Sau runtime HUD on dinh, tach thanh prefab UI/skinning pipeline neu can art UI rieng.
+- Frontend UI authoring:
+  - DONE: bake `MainMenuScene`, `SettingsScene`, `HowToPlayScene`, `MissionMapScene` thanh scene-authored `FrontendCanvas/SafeAreaRoot`.
+  - Khi polish menu/settings/how-to/mission map, uu tien chinh object truc tiep trong scene; chi sua generator/controller neu can rebuild hoac bind logic moi.
+  - Can test Play Mode tung scene de xac nhan button navigation, settings slider/toggle, mission deploy/back van bind dung sau khi da scene-authored.
 
 ### Art/Content
 

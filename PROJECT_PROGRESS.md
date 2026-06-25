@@ -658,3 +658,12 @@ Hoàn thiện **gameplay loop bằng hình xám** trước khi đụng tới art
   - Rail Cannon co beam fallback neu prefab beam chua gan;
   - energy orb collect co pop/pulse VFX qua `CombatVfx.PlayEnergyCollect`.
 - Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass khi chay tuan tu.
+
+### Frontend scene-authored UI migration - 2026-06-25
+- Chuyen 4 frontend scenes (`MainMenuScene`, `SettingsScene`, `HowToPlayScene`, `MissionMapScene`) tu UI chi sinh runtime sang co san `FrontendCanvas/SafeAreaRoot` trong scene.
+- `FrontendUiController` them `useSceneAuthoredUi`: khi Play se bind vao UI authored neu co; neu scene thieu UI authored thi fallback ve runtime builder cu.
+- Them context menu tren controller va editor menu:
+  - `Tools > Coreline > Rebuild Current Frontend Authored UI`
+  - `Tools > Coreline > Rebuild All Frontend Authored UI`
+- Muc tieu: chu project mo scene trong Unity Editor la thay panel/button/text/background de tinh chinh bang tay; code chi xu ly navigation/settings/mission data.
+- Luu y: rebuild tool se ghi de `FrontendCanvas`, nen cac tinh chinh tay can duoc review truoc khi chay generator lai.

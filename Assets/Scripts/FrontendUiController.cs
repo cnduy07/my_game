@@ -24,6 +24,7 @@ public class FrontendUiController : MonoBehaviour
     public FrontendScreenMode screenMode = FrontendScreenMode.Auto;
     public LevelCatalog levelCatalog;
     public bool unlockAllLevelsForTesting = true;
+    public bool useSceneAuthoredUi = true;
 
     [Header("Generated Art")]
     public Sprite menuHeroSprite;
@@ -67,6 +68,10 @@ public class FrontendUiController : MonoBehaviour
     {
         EnsureRenderCamera();
         EnsureEventSystem();
+
+        if (useSceneAuthoredUi && TryBindSceneAuthoredUi())
+            return;
+
         BuildCanvas();
         BuildBackground();
 
@@ -87,6 +92,41 @@ public class FrontendUiController : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    [ContextMenu("Rebuild Authored Frontend UI")]
+    public void RebuildAuthoredFrontendUi()
+    {
+        if (Application.isPlaying)
+            return;
+
+        Transform existingCanvas = transform.Find("FrontendCanvas");
+        if (existingCanvas != null)
+            DestroyImmediate(existingCanvas.gameObject);
+
+        BuildCanvas();
+        BuildBackground();
+
+        switch (ResolveMode())
+        {
+            case FrontendScreenMode.Settings:
+                BuildSettings();
+                break;
+            case FrontendScreenMode.HowToPlay:
+                BuildHowToPlay();
+                break;
+            case FrontendScreenMode.MissionMap:
+                BuildMissionMap();
+                break;
+            default:
+                BuildMainMenu();
+                break;
+        }
+
+        UnityEditor.EditorUtility.SetDirty(this);
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+    }
+#endif
+
     FrontendScreenMode ResolveMode()
     {
         if (screenMode != FrontendScreenMode.Auto)
@@ -97,6 +137,248 @@ public class FrontendUiController : MonoBehaviour
         if (scene == SceneNames.HowToPlay) return FrontendScreenMode.HowToPlay;
         if (scene == SceneNames.MissionMap) return FrontendScreenMode.MissionMap;
         return FrontendScreenMode.MainMenu;
+    }
+
+    bool TryBindSceneAuthoredUi()
+    {
+        RectTransform authoredRoot = FindSceneAuthoredRoot();
+        if (authoredRoot == null)
+            return false;
+
+        root = authoredRoot;
+        canvas = root.GetComponentInParent<Canvas>();
+        if (canvas == null)
+            return false;
+
+        UiFont.ApplyToChildren(root);
+
+        FrontendScreenMode mode = ResolveMode();
+        if (!HasRequiredSceneAuthoredUi(mode))
+        {
+            canvas.gameObject.SetActive(false);
+            canvas = null;
+            root = null;
+            return false;
+        }
+
+        switch (mode)
+        {
+            case FrontendScreenMode.Settings:
+                BindSettingsUi();
+                break;
+            case FrontendScreenMode.HowToPlay:
+                BindHowToPlayUi();
+                break;
+            case FrontendScreenMode.MissionMap:
+                BindMissionMapUi();
+                break;
+            default:
+                BindMainMenuUi();
+                break;
+        }
+
+        return true;
+    }
+
+    bool HasRequiredSceneAuthoredUi(FrontendScreenMode mode)
+    {
+        switch (mode)
+        {
+            case FrontendScreenMode.Settings:
+                return FindDescendant(root, "SettingsCard") != null
+                    && FindDescendant(root, "MusicSlider") != null
+                    && FindDescendant(root, "SFXSlider") != null
+                    && FindDescendant(root, "Reduceshake") != null
+                    && FindDescendant(root, "Vibration") != null
+                    && FindDescendant(root, "BackButton") != null;
+            case FrontendScreenMode.HowToPlay:
+                return FindDescendant(root, "HowToPlayContent") != null
+                    && FindDescendant(root, "BackButton") != null;
+            case FrontendScreenMode.MissionMap:
+                return FindDescendant(root, "CampaignMap") != null
+                    && FindDescendant(root, "MissionDetail") != null
+                    && FindDescendant(root, "DeployButton") != null
+                    && FindDescendant(root, "BackButton") != null;
+            default:
+                return FindDescendant(root, "StartGame") != null
+                    && FindDescendant(root, "Settings") != null
+                    && FindDescendant(root, "HowToPlay") != null
+                    && FindDescendant(root, "Exit") != null;
+        }
+    }
+
+    RectTransform FindSceneAuthoredRoot()
+    {
+        Transform canvasTransform = transform.Find("FrontendCanvas");
+        if (canvasTransform == null)
+        {
+            GameObject canvasObject = GameObject.Find("FrontendCanvas");
+            canvasTransform = canvasObject != null ? canvasObject.transform : null;
+        }
+
+        Transform rootTransform = canvasTransform != null ? canvasTransform.Find("SafeAreaRoot") : null;
+        return rootTransform as RectTransform;
+    }
+
+    void BindMainMenuUi()
+    {
+        BindButton("StartGame", () => Load(SceneNames.MissionMap));
+        BindButton("Settings", () => Load(SceneNames.Settings));
+        BindButton("HowToPlay", () => Load(SceneNames.HowToPlay));
+        BindButton("Exit", Quit);
+    }
+
+    void BindSettingsUi()
+    {
+        musicValueText = FindText("MusicValue");
+        sfxValueText = FindText("SFXValue");
+
+        BindSlider("MusicSlider", GameSettings.MusicVolume, value =>
+        {
+            GameSettings.MusicVolume = value;
+            if (musicValueText != null) musicValueText.text = Percent(value);
+            AudioManager.RefreshMusic();
+        }, musicValueText);
+
+        BindSlider("SFXSlider", GameSettings.SfxVolume, value =>
+        {
+            GameSettings.SfxVolume = value;
+            if (sfxValueText != null) sfxValueText.text = Percent(value);
+        }, sfxValueText);
+
+        reduceShakeToggle = FindComponent<Toggle>("Reduceshake");
+        BindToggle(reduceShakeToggle, GameSettings.ReduceShake, value => GameSettings.ReduceShake = value);
+
+        vibrationToggle = FindComponent<Toggle>("Vibration");
+        BindToggle(vibrationToggle, GameSettings.VibrationEnabled, value => GameSettings.VibrationEnabled = value);
+
+        BindButton("BackButton", GoBack);
+    }
+
+    void BindHowToPlayUi()
+    {
+        BindButton("BackButton", GoBack);
+    }
+
+    void BindMissionMapUi()
+    {
+        mapPanel = FindRect("CampaignMap");
+        mapContent = FindRect("CampaignMapContent");
+        routeLayer = FindRect("RouteLayer");
+        nodeLayer = FindRect("NodeLayer");
+        mapScroll = mapPanel != null ? mapPanel.GetComponent<ScrollRect>() : FindComponent<ScrollRect>("CampaignMap");
+        detailPanel = FindRect("MissionDetail");
+
+        if (mapScroll != null)
+        {
+            mapScroll.viewport = mapPanel;
+            mapScroll.content = mapContent;
+        }
+
+        missionStatusText = FindText("Status", detailPanel);
+        missionDevModeText = FindText("DevMode", detailPanel);
+        missionTitleText = FindText("Title", detailPanel);
+        missionTypeText = FindText("Type", detailPanel);
+        missionBriefingText = FindText("Briefing", detailPanel);
+        missionEnemyMixText = FindText("EnemyMix", detailPanel);
+        missionToolsText = FindText("Tools", detailPanel);
+        missionPressureText = FindText("Pressure", detailPanel);
+        missionRewardText = FindText("Reward", detailPanel);
+
+        deployButton = FindComponent<Button>("DeployButton");
+        if (deployButton != null)
+        {
+            deployButton.onClick.RemoveAllListeners();
+            deployButton.onClick.AddListener(DeploySelectedMission);
+            deployButtonText = deployButton.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        BindButton("BackButton", GoBack);
+
+        if (mapPanel != null && mapContent != null && routeLayer != null && nodeLayer != null && deployButton != null)
+        {
+            selectedLevel = null;
+            RebuildMissionNodes();
+            RefreshMissionDetail();
+            FocusSelectedMission();
+        }
+    }
+
+    Button BindButton(string objectName, UnityEngine.Events.UnityAction action)
+    {
+        Button button = FindComponent<Button>(objectName);
+        if (button == null)
+            return null;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(action);
+        return button;
+    }
+
+    void BindSlider(string objectName, float value, UnityEngine.Events.UnityAction<float> action, TextMeshProUGUI valueText)
+    {
+        Slider slider = FindComponent<Slider>(objectName);
+        if (slider == null)
+            return;
+
+        slider.onValueChanged.RemoveAllListeners();
+        slider.SetValueWithoutNotify(Mathf.Clamp01(value));
+        if (valueText != null)
+            valueText.text = Percent(value);
+        slider.onValueChanged.AddListener(action);
+    }
+
+    void BindToggle(Toggle toggle, bool value, UnityEngine.Events.UnityAction<bool> action)
+    {
+        if (toggle == null)
+            return;
+
+        toggle.onValueChanged.RemoveAllListeners();
+        toggle.SetIsOnWithoutNotify(value);
+        RefreshToggleVisual(toggle);
+        toggle.onValueChanged.AddListener(_ => RefreshToggleVisual(toggle));
+        toggle.onValueChanged.AddListener(action);
+    }
+
+    RectTransform FindRect(string objectName)
+    {
+        Transform transform = FindDescendant(root, objectName);
+        return transform as RectTransform;
+    }
+
+    T FindComponent<T>(string objectName) where T : Component
+    {
+        Transform transform = FindDescendant(root, objectName);
+        return transform != null ? transform.GetComponent<T>() : null;
+    }
+
+    TextMeshProUGUI FindText(string objectName)
+    {
+        return FindComponent<TextMeshProUGUI>(objectName);
+    }
+
+    TextMeshProUGUI FindText(string objectName, Transform parent)
+    {
+        Transform transform = FindDescendant(parent, objectName);
+        return transform != null ? transform.GetComponent<TextMeshProUGUI>() : null;
+    }
+
+    Transform FindDescendant(Transform parent, string objectName)
+    {
+        if (parent == null)
+            return null;
+
+        if (parent.name == objectName)
+            return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform match = FindDescendant(child, objectName);
+            if (match != null)
+                return match;
+        }
+
+        return null;
     }
 
     void BuildCanvas()
@@ -435,10 +717,8 @@ public class FrontendUiController : MonoBehaviour
 
     void RebuildMissionNodes()
     {
-        foreach (Transform child in routeLayer)
-            Destroy(child.gameObject);
-        foreach (Transform child in nodeLayer)
-            Destroy(child.gameObject);
+        ClearChildren(routeLayer);
+        ClearChildren(nodeLayer);
 
         int count = levelCatalog != null ? levelCatalog.Count : 0;
         float width = Mathf.Max(MapMinWidth, NodeSidePadding * 2f + Mathf.Max(0, count - 1) * NodeStep);
@@ -513,6 +793,21 @@ public class FrontendUiController : MonoBehaviour
             TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
             status.color = selected ? new Color(0.82f, 1f, 1f, 0.92f) : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
             SetAnchor(status.rectTransform, Vector2.zero, new Vector2(1f, 0.22f), new Vector2(5f, 0f), new Vector2(-5f, 1f));
+        }
+    }
+
+    void ClearChildren(Transform parent)
+    {
+        if (parent == null)
+            return;
+
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            GameObject child = parent.GetChild(i).gameObject;
+            if (Application.isPlaying)
+                Destroy(child);
+            else
+                DestroyImmediate(child);
         }
     }
 
@@ -904,7 +1199,8 @@ public class FrontendUiController : MonoBehaviour
         label.outlineWidth = 0f;
         label.raycastTarget = false;
         label.textWrappingMode = TextWrappingModes.Normal;
-        label.overflowMode = TextOverflowModes.Ellipsis;
+        label.overflowMode = TextOverflowModes.Truncate;
+        UiFont.Apply(label);
         return label;
     }
 
