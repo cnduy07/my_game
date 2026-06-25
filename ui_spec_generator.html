@@ -1,0 +1,131 @@
+﻿
+<style>
+body{margin:0}
+.w{padding:16px 0;font-family:var(--font-mono);font-size:13px}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;font-family:var(--font-sans)}
+.tb{padding:5px 14px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.tb.on{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary)}
+.box{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:12px;padding:18px 20px;position:relative}
+.box pre{margin:0;white-space:pre-wrap;line-height:1.7;color:var(--color-text-primary)}
+.cpbtn{position:absolute;top:10px;right:10px;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:6px;padding:4px 12px;font-size:12px;font-family:var(--font-sans);color:var(--color-text-secondary);cursor:pointer}
+.cpbtn:hover{color:var(--color-text-primary)}
+.kw{color:#5DCAA5}
+.cm{color:var(--color-text-tertiary)}
+.val{color:#EF9F27}
+.sec{color:#85B7EB}
+.warn{color:#F0997B}
+</style>
+<div class="w">
+<div class="toolbar">
+  <button class="tb on" onclick="show('md')">UI_SPEC.md (bá» vÃ o project)</button>
+  <button class="tb" onclick="show('prompt')">Prompt nhanh (dÃ¹ng inline)</button>
+</div>
+
+<div class="box" id="pane-md">
+<button class="cpbtn" onclick="cp('md')">Copy</button>
+<pre id="t-md"><span class="sec"># UI_SPEC.md â€” Coreline Defense</span>
+<span class="cm"># Äáº·t file nÃ y á»Ÿ root project. Codex Ä‘á»c trÆ°á»›c khi implement báº¥t ká»³ scene nÃ o.</span>
+
+<span class="sec">## Visual language</span>
+<span class="kw">Style:</span>      pixel art, dark sci-fi
+<span class="kw">Palette:</span>
+  - Background:  #0D1117  (near-black)
+  - Panel:       #111827  (dark navy)
+  - Border:      #1E90A8  (cyan)        â† dÃ¹ng cho frame, khÃ´ng dÃ¹ng cho button
+  - Accent:      #FF6B35  (orange)      â† highlight, danger, exit button only
+  - Text:        #E8EAF0  (off-white)
+  - Text muted:  #6B7280
+
+<span class="sec">## Buttons â€” quy táº¯c báº¯t buá»™c</span>
+<span class="warn"># KHÃ”NG dÃ¹ng UI.Button gá»‘c (trÃ´ng generic vÃ  xáº¥u)</span>
+<span class="warn"># PHáº¢I dÃ¹ng button_command.png lÃ m ná»n cho má»i clickable action</span>
+
+<span class="kw">Asset:</span>       Assets/UI/button_command.png
+<span class="kw">Native size:</span> 288 Ã— 104 px  (pixel art, 9-slice hoáº·c scale giá»¯ tá»· lá»‡)
+<span class="kw">Render mode:</span> Point filter (NO bilinear/trilinear â†’ sáº½ bá»‹ má»)
+
+<span class="kw">Display sizes:</span>
+  - Menu chÃ­nh (START GAME, SETTINGâ€¦):  220 Ã— 72 px
+  - Popup nhá» (RESTART, MISSIONâ€¦):      172 Ã— 58 px
+  - Secondary/Deploy/Back:               188 Ã— 58 px
+  - Sidebar nhá» (wave labels):           khÃ´ng dÃ¹ng button_command, dÃ¹ng ColorRect
+
+<span class="kw">Label trÃªn button:</span>
+  - Font:        [font pixel cá»§a project, vÃ­ dá»¥: press_start_2p.ttf]
+  - Size:        16 px (menu chÃ­nh) / 14 px (popup)
+  - Color:       #E8EAF0
+  - Align:       center-middle
+  - KHÃ”NG cÃ³ shadow, KHÃ”NG cÃ³ outline trÃªn chá»¯
+
+<span class="kw">Button states:</span>
+  - Normal:  modulate = Color(1, 1, 1, 1)          â† mÃ u gá»‘c cá»§a sprite
+  - Hover:   modulate = Color(0.85, 0.95, 1.0, 1)  â† tint xanh nháº¡t
+  - Pressed: modulate = Color(0.6, 0.75, 0.9, 1)   â† tint xanh Ä‘áº­m hÆ¡n
+             + position offset (0, 2px)             â† náº£y xuá»‘ng nháº¹
+  - Disabled:modulate = Color(0.4, 0.4, 0.4, 0.6)
+
+<span class="sec">## Scene: Main Menu</span>
+<span class="kw">Layout:</span>
+  - Left 60%:  title + subtitle + status text (khÃ´ng cÃ³ gÃ¬ tÆ°Æ¡ng tÃ¡c)
+  - Right 40%: panel "COMMAND" chá»©a 4 buttons dá»c
+<span class="kw">Panel COMMAND:</span>
+  - Background: Panel9Patch hoáº·c ColorRect #111827, border cyan 1px
+  - Buttons cÃ¡ch nhau: 12 px vertical gap
+  - Padding trong panel: 24 px má»i phÃ­a
+  - Header "COMMAND": font pixel, 14px, color #6B7280 (muted), cÄƒn trÃ¡i
+<span class="kw">Thá»© tá»± buttons:</span>  START GAME â†’ SETTING â†’ HOW TO PLAY â†’ EXIT
+  - EXIT button: label color = #FF6B35 (orange/danger), modulate khÃ´ng Ä‘á»•i
+
+<span class="sec">## Scene: Defeat / End Game popup</span>
+<span class="kw">Popup panel:</span>
+  - Size: ~640 x 420 px, centered on screen
+  - Background: #0D1117, border-radius pixel (dung NinePatch neu co)
+  - Border: 2px solid #1E90A8
+<span class="kw">Ná»™i dung tá»« trÃªn xuá»‘ng:</span>
+  1. "DEFEAT" â€” font pixel 32px, color #FF6B35
+  2. TÃªn mission â€” font pixel 16px, color #E8EAF0
+  3. Stats (Cleared / Highest) - font pixel 14px, color #6B7280
+  4. Khoáº£ng trá»‘ng
+  5. Mission report rows: Mission / Wave reached / Enemies killed / Energy collected / Play time
+  6. 3 buttons ngang: RESTART | MISSION | MAIN MENU
+
+<span class="sec">## Nhá»¯ng thá»© KHÃ”NG lÃ m</span>
+<span class="warn">âœ— KhÃ´ng round corner tá»± váº½ báº±ng StyleBoxFlat â€” trÃ´ng khÃ´ng khá»›p pixel art</span>
+<span class="warn">âœ— KhÃ´ng dÃ¹ng theme máº·c Ä‘á»‹nh cá»§a engine cho báº¥t ká»³ element nÃ o trong menu</span>
+<span class="warn">âœ— KhÃ´ng thÃªm drop shadow hoáº·c glow vÃ o text</span>
+<span class="warn">âœ— KhÃ´ng scale button_command.png báº±ng linear filter</span>
+<span class="warn">âœ— KhÃ´ng tá»± chá»n mÃ u má»›i â€” chá»‰ dÃ¹ng palette á»Ÿ trÃªn</span></pre>
+</div>
+
+<div class="box" id="pane-prompt" style="display:none">
+<button class="cpbtn" onclick="cp('prompt')">Copy</button>
+<pre id="t-prompt"><span class="cm"># Paste cÃ¡i nÃ y vÃ o Ä‘áº§u má»—i láº§n nhá» Codex lÃ m UI scene</span>
+
+Before writing any UI code, read UI_SPEC.md in the project root.
+Follow every rule in that file exactly.
+
+Key things to get right:
+1. button_command.png is the ONLY button background allowed.
+   Scale it with Point/Nearest filter, never bilinear.
+2. Button states use Color modulate, not separate sprites.
+3. Pixel font, no shadows, no outlines on text.
+4. Spacing and palette must match the spec exactly.
+
+Now implement: <span class="val">[mÃ´ táº£ scene á»Ÿ Ä‘Ã¢y]</span></pre>
+</div>
+</div>
+
+<script>
+function show(k){
+  document.getElementById('pane-md').style.display = k==='md'?'block':'none';
+  document.getElementById('pane-prompt').style.display = k==='prompt'?'block':'none';
+  document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.onclick.toString().includes("'"+k+"'")));
+}
+function cp(k){
+  const txt = document.getElementById('t-'+k).innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b = document.getElementById('pane-'+k).querySelector('.cpbtn');
+    b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',1500);
+  });
+}
+</script>

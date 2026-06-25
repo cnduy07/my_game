@@ -68,7 +68,11 @@ public class EnergySystem : MonoBehaviour
         SpawnOrb(spawn, value, targetY);
     }
 
-    public void Add(int amount) => Energy += amount;
+    public void Add(int amount)
+    {
+        Energy += amount;
+        GameStatsTracker.RecordEnergyCollected(amount);
+    }
 
     public void ApplyBalance(int newStartEnergy, int newSkyOrbValue, float newSkyInterval, bool resetEnergy = true)
     {

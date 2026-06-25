@@ -45,6 +45,8 @@ public class Health : MonoBehaviour
         // Ngừng hành vi để khi đang chết không còn di chuyển/bắn, và không bị nhắm bắn nữa.
         var mover = GetComponent<EnemyMover>();
         bool wasEnemy = mover != null;
+        if (wasEnemy)
+            GameStatsTracker.RecordEnemyKilled();
         if (mover != null) mover.enabled = false;     // OnDisable tự gỡ khỏi EnemyMover.All
         var shooter = GetComponent<Shooter>();
         if (shooter != null) shooter.enabled = false;

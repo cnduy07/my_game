@@ -12,7 +12,10 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver { get; private set; }
     public bool IsWon { get; private set; }
 
-    void Awake() { Instance = this; }
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -48,7 +51,6 @@ public class GameManager : MonoBehaviour
     public void GameOver(int row)
     {
         if (IsGameOver || IsWon) return;
-        if (GameUiController.Instance != null && GameUiController.Instance.isPaused) Time.timeScale = 1f;
         IsGameOver = true;
         AudioManager.PlaySfx(SfxType.GameOver);
         Time.timeScale = 0f;

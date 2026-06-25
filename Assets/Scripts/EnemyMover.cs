@@ -6,7 +6,7 @@ public class EnemyMover : MonoBehaviour
 {
     public GridManager grid;
     public int row;
-    public float speed = 0.5f;
+    public float speed = 0.27f;
     public float attackDamage = 30f;
 
     float slowFactor = 1f;

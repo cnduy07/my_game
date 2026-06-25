@@ -91,6 +91,12 @@ cropped, cut off, blurry, busy background
 
 ### 7.1 Địch — Alien robot (cơ bản)
 ```
+Enemy production rule:
+- Basic Alien Robot is the canonical enemy base.
+- Generate and approve the Basic enemy first, then use it as image-reference/image-to-image input for Armored/Fast/Shield/Heavy variants.
+- Enemy variants must preserve the same body size, canvas footprint, pivot, ground line, left-facing side-profile pose, head/core/hip/limb joint positions, and rig proportions as Basic.
+- Variants only add modules on top of Basic: armor plates, shield emitter, exposed wires, speed fins, color/core accents. Do not create a taller, wider, differently posed, or different-limb-count enemy.
+
 Pixel art game character sprite, full body, side profile view facing left,
 an alien invader robot enemy — biomechanical otherworldly design, brushed
 silver-grey metal carapace, glowing violet energy core in the chest, thin
@@ -100,8 +106,9 @@ Centered, full body inside frame, feet at the bottom, empty margin around it.
 Transparent background. Square 1:1.
 ```
 **Biến thể (đổi dòng mô tả thân):**
-- Địch giáp (trâu máu, chậm): `bulky armored hovering alien drone, thick metal plating, heavy and slow, glowing red core behind armor.`
-- Địch nhanh gầy: `tall skinny alien mech, long spindly legs, exposed glowing wires, fast erratic look.`
+- Địch giáp (trâu máu, chậm): `Add thick silver-grey armor plates over the same base body, partially cover the violet core behind armor, reinforce the same legs with plating, and make the tanky identity clear while preserving the Basic enemy proportions.`
+- Địch nhanh: `Remove some armor plating, add exposed blue-violet wires, small speed fins, lighter leg plating, and sharper forward energy accents so it reads as quick and fragile while preserving the Basic enemy proportions.`
+- Địch khiên: `Add an energy shield plate or shield emitter on the enemy's leading left side, with blue-violet shield glow and defensive identity, while preserving the Basic enemy proportions.`
 
 ### 7.2 Turret (lính minigun cơ bản — phe thủ)
 ```

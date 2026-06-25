@@ -25,6 +25,105 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Unity `PlayerSettings.productName` da doi sang `Coreline Defense`.
 - Bundle identifier target hien tai: `com.duycaonguyen.corelinedefense`.
 
+## Strict UI spec correction - 2026-06-24
+- Read `ui_spec_generator.html` and synced the enforceable runtime rules into `UI_SPEC.md`.
+- Initial strict-spec pass used a square legacy button; later UI direction superseded it with `Assets/UI/button_command.png`, and the legacy square button asset has been removed.
+- Added `UiSpec.cs` for the exact palette, button sizes, and button state colors from the spec.
+- Added `PixelButtonPressOffset.cs` for the required pressed 2px down feedback.
+- Frontend and GameScene UI factories use the shared command button skin with ColorBlock tint states and no code-drawn button frames/notches/stripes.
+- Main menu runtime path now follows the spec layout: left title/status only, right `COMMAND` panel, 4 vertical buttons `START GAME`, `SETTING`, `HOW TO PLAY`, `EXIT`, 240x60 with 12px gap.
+- Victory/Defeat modal path is constrained to the spec-style 640x420 panel and 3 popup buttons `RESTART`, `MISSION`, `MAIN MENU` at 180x50; the next-mission button is hidden in terminal modal state.
+- Fixed `Assets/Prefabs/Unit 1.controller` by adding the missing `Walking` bool parameter used by the `turret_attack` transition.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
+
+## UI sizing/readability correction - 2026-06-25
+- Fixed main menu button sizing: menu VerticalLayoutGroups now control preferred width/height, so buttons render at fixed `UI_SPEC` size instead of falling back to square `100x100` defaults.
+- Tightened main menu composition by reducing the empty COMMAND panel footprint and making title/status placement more deliberate while keeping the left/right spec layout.
+- Reworked Settings scene audio sliders: labels/value text are separated from the slider track, slider track uses a simple color panel, and handle size is reduced so it no longer overlaps Music/SFX text.
+- Mission map deploy buttons in frontend and in-game mission overlay no longer stretch full panel width; they are fixed-size and centered.
+- Victory/Defeat modal reduced excess vertical empty space, increased result/stat text readability, and keeps the three terminal action buttons at fixed 180x50.
+- Seed tray selected item remains readable when the player lacks energy: label/icon stay bright and the cost uses the danger accent.
+- Board grid overlay is stronger and slightly thicker so the true gameplay cells read over generated board art even when the background image cell art does not perfectly align.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
+
+## Command button and UI motion pass - 2026-06-25
+- Added new canonical button asset `Assets/UI/button_command.png` as a horizontal pixel-art sci-fi metal command button; the old square legacy asset has been removed.
+- Updated all frontend/game scene `buttonSprite` references to the new `button_command` GUID.
+- Updated `UI_SPEC.md`: menu buttons `220x72`, popup buttons `172x58`, secondary/deploy/back buttons `188x58`, with Point filter and tint states preserved.
+- Added reusable UI motion components: hover/touch scale, title flicker, diagonal ambient pixel rain, deploy scene transition, and game stats tracking.
+- Main menu title is larger and flickers subtly like unstable attack lighting; frontend scenes now have subtle diagonal dark pixel rain/debris.
+- Mission map nodes now have stronger hover/touch scale and selected pulse; `DEPLOY` plays a short tactical transition before loading/reloading gameplay.
+- Victory/Defeat terminal modal now uses a mission report layout with icon-chip rows for mission, wave reached, enemies killed, energy collected, and play time.
+
+## Generated art import audit - 2026-06-24
+- Chu project da them nhieu generated PNG vao `Assets/Art`.
+- Audit phat hien sprite moi chua co `.meta` va mot so runtime sprite cu dang bi delete: `bullet.png`, `bunker_1/2/3.png`, `droneemp.png`, `energyorb.png`, `lawnmower.png`.
+- Cac prefab `Bullet`, `Bunker`, `DroneEMP`, `EnergyOrb`, `Lawnmower` dang tham chieu GUID cua nhung file cu nay, nen se missing sprite cho den khi map sang asset moi.
+- Chon huong an toan: khong sua YAML/GUID thu cong; them Editor tool `Tools > Art > Apply Generated Sprites To Prefabs` de Unity import PNG, tao `.meta`, set TextureImporter Sprite/Point/Uncompressed/PPU theo canh anh, roi gan sprite moi vao prefab bang AssetDatabase/PrefabUtility.
+- Tool da chay thanh cong bang Unity batchmode, map cac prefab dang co missing sprite risk: Bullet -> `sprite_bullet_turret_256`, Bunker -> `sprite_bunker_stage_1/2/3_256`, DroneEMP -> `sprite_drone_emp_256`, EnergyOrb -> `sprite_energy_orb_256`, Lawnmower -> `sprite_rail_cannon_256`.
+- AI QA sau generated art import: `0` fail, `1` expected warn (`LevelManager.unlockAllLevelsForTesting`).
+- Static preview pass tiep theo da map them `Unit` -> `sprite_turret_256`, `SnowGun` -> `sprite_snowgun_256`, `Enemy` -> `sprite_enemy_basic_base_256`, `ArmorEnemy` -> `sprite_enemy_armored_256`.
+- Tao `FrostProjectile.prefab` tu `Bullet.prefab`, gan `sprite_projectile_frost_256`, va doi `SnowGun.prefab` sang dung projectile băng rieng.
+- Tao them `FastEnemy.prefab` va `ShieldEnemy.prefab` tu prefab enemy hien co, gan `sprite_enemy_fast_256`/`sprite_enemy_shield_256`, roi wire vao `GameScene` va `SampleScene`.
+- Cac prefab co `SpriteSkin` dang tam tat SpriteSkin vi PNG moi la static preview, chua co rig/bone/weights. Khi co asset rig final, bat lai SpriteSkin/Animator theo pipeline 2D Animation.
+- `EnemySpawner` chi ve badge fallback cho Armored/Fast/Shield khi prefab variant bi thieu; khi variant prefab da gan thi dung sprite rieng va khong them badge rui.
+- UI/background/VFX PNG moi (`menu_hero`, official `board_coreline_combat_grid_5x9`, `button_command`, `ui_panel`, seed `icon_*`, `vfx_*`) da wire vao runtime UI/board/VFX qua `GeneratedArtApplier`, scene references, va sprite VFX prefab rebuild.
+- Batchmode art apply da rerun thanh cong; AI QA nen chay lai sau Play Mode smoke test de bat regression runtime.
+
+## Generated UI/board/VFX integration - 2026-06-24
+- `FrontendUiController` va `GameUiController` co serialized sprite refs cho `menuHeroSprite`, `boardBackgroundSprite`, `buttonSprite`, `panelSprite`; UI factories dung button/panel sprite skin thay rectangle thuan.
+- `GameUiController` seed cards hien icon: ArcReactor/Bunker/DroneEMP dung `icon_*`, Turret/SnowGun tam dung gameplay sprite khi chua co icon rieng.
+- `BoardVisualController` co `boardBackgroundSprite`; khi co generated board art thi dung sprite art lam board base va giu overlay grid/rail/spawn markers de gameplay van doc ro.
+- `VfxPrefabBuilder` rebuild `Assets/Prefabs/VFX/*` bang generated `vfx_*_256.png` thanh SpriteRenderer prefab co fade/scale qua `VfxAutoDestroy`; fallback particle van giu neu thieu sprite.
+- `GeneratedArtApplier.ApplyGeneratedSpritesToPrefabs` hien la tool tong: import PNG, map gameplay prefab sprites, assign scene UI/board refs, rebuild VFX prefabs, va gan VFX settings cho `GameScene`/`SampleScene`.
+- Verify: `dotnet build Assembly-CSharp.csproj --no-restore` pass; `dotnet build Assembly-CSharp-Editor.csproj --no-restore` pass; Unity batch art apply log pass voi `Generated art apply complete. Updated 19 prefab sprite mapping(s)`.
+
+## VFX/result modal tuning - 2026-06-24
+- Issues tu Play Mode screenshot: board art dang tranh doc voi gameplay, muzzle flash qua lon, energy collect/EMP/death VFX con nen vuong toi, Victory/Defeat modal qua phang.
+- Fix da lam: clean alpha cho cac PNG VFX chinh (`vfx_muzzle_flash_256`, `vfx_emp_pulse_256`, `vfx_enemy_death_burst_256`, `vfx_hit_spark_256`, `vfx_rail_beam_source_256`) de loai dark square artifact khi Unity render sprite.
+- `VfxPrefabBuilder` da giam scale/timing/alpha cho muzzle, EMP, enemy death va bunker break; `GeneratedArtApplier` da rebuild prefab VFX va apply vao `GameScene`/`SampleScene`.
+- `CombatVfx.PlayMuzzleFlash` spawn tai `muzzlePoint` va offset nhe sang phai de flash nam o dau nong; `PlayEnergyCollect` dung pulse nho hon va particle ngan hon.
+- `GameUiController` victory/defeat modal luc dau co result glow/sweep/core panel; pass sau da thay bang dark neutral panel va bo terminal backdrop toan man hinh.
+- `BoardVisualController.boardBackgroundOpacity` hien tai la `1.0` cho `Assets/Art/board_coreline_combat_grid_5x9.png`; overlay grid that cua gameplay se dam nhiem readability.
+- Correction: board GameScene hien tai dung official board `Assets/Art/board_coreline_combat_grid_5x9.png` tu ban PTS edit full opacity. `GeneratedArtApplier` khong tu ghi de board runtime khi chua duoc duyet.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass; Unity batch art apply pass; AI QA `0` fail, `1` expected warn (`LevelManager.unlockAllLevelsForTesting`).
+
+## Runtime board/UI/VFX feedback pass - 2026-06-24
+- Board variant test da dong: official runtime board la `Assets/Art/board_coreline_combat_grid_5x9.png`; cac file test board tam va board swap editor tool da duoc remove de tranh ap nham.
+- Sau feedback Play Mode, energy collect VFX va DroneEMP/EMP pulse bi qua be nen `CombatVfx` da tang lai sprite pulse scale/particle count/lifetime o muc vua phai.
+- Bottom seed tray doi tu card/button app-like sang dark command slots: card nho gon hon, icon bay rieng, selected glow/strip thay vi full cyan background/text den.
+- Frontend/main-menu buttons va in-game generated buttons dung shared `button_command` asset skin; mission map selected node, deploy button va route line duoc lam bot phang/cung.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass; `git diff --check` pass. AI QA chua rerun vi Unity Editor dang duoc dung de visual test.
+
+## End modal/button/pacing correction - 2026-06-24
+- Victory/Defeat modal bo terminal backdrop xanh/do toan man hinh, tat result glow/sweep/core rectangle va dung dark panel trung tinh voi title/result accent nhe.
+- GameScene/Frontend button factories apply `button_command` cho runtime buttons; `AddButtonAccent` khong con tao notch/stripe/line rectangle tren button.
+- Seed select card dung `button_command` lam background de dong bo voi shared button skin, giu icon bay/selected glow o muc nhe.
+- Enemy pacing: base speed trong `GameBalance`, enemy prefabs va `GameScene`/`SampleScene` giam tu `0.3` xuong `0.27`; Fast enemy speed modifier giam tu `1.55x` xuong `1.28x`.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass; `git diff --check` pass. Play Mode/AI QA trong Unity can confirm end modal/button va Level 4 pacing.
+
+## Asset cleanup and board naming - 2026-06-25
+- Renamed the approved runtime board art to `Assets/Art/board_coreline_combat_grid_5x9.png` while preserving its Unity GUID, so scene/prefab references stay stable.
+- Removed temporary board test/reference assets and the board swap editor helper; board variant testing is closed unless a new approved board candidate is introduced deliberately.
+- Removed unused legacy sprite PNGs whose GUIDs no longer had references after generated-art mapping: old bullet, bunker stages, drone EMP, energy orb, lawnmower, basic enemy variants, snowgun, turret, and unused reference art.
+- Removed the old reference-image folder and the legacy square UI button asset. Runtime UI source of truth remains `Assets/UI/button_command.png`.
+- Updated `ASSET_GENERATION_PROMPTS.md`, `CONTENT_PLAN.md`, `PROJECT_CONTEXT.md`, `PROJECT_PROGRESS.md`, and `TASKS.md` so future work points at the official board/button assets instead of stale test/reference names.
+- Verify: remaining PNG assets all have runtime/editor references or explicit tool references; deleted PNG GUIDs have `0` scene/prefab refs; `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
+
+## GameScene underlay and end scene pass - 2026-06-25
+- `BoardVisualController` now builds a larger hangar/command-deck underlay behind the board so the black zone around the board has dim panels, service bays, cables, signal lamps, and side bays instead of flat empty black.
+- GameScene/SampleScene board backdrop padding increased to match the new underlay.
+- Enemy entry/right rail procedural red shapes were reduced to subtle gate glow and small signal ticks; the active rail/last-defense identity should come from sprites, with code only providing restrained background cues.
+- Victory/Defeat terminal state now uses a full-screen end scene backdrop with dim board art, vignette, scan sweep, ambient debris, large pulsing result title, mission status subtitle, and stat report rows with icon chips.
+- End-state action buttons remain fixed-size `button_command` buttons on the report panel.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
+
+## GameScene visual correction pass - 2026-06-25
+- Board underlay contrast increased and extra outer catwalk/machinery blocks were added above, below, left, and right of the board so the outer black zone reads as a dim hangar rather than empty background.
+- Rail cannon laser beam restored to the stronger previous red laser/prefab style after review; only the static board-side red entry shapes stay toned down.
+- End scene title/subtitle moved lower for better centering, title pulse scale added, report panel narrowed/centered, and report rows now have backplates plus detailed icon chips instead of plain single-letter boxes.
+- Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
+
 ---
 
 ## ✅ ĐÃ LÀM
@@ -259,7 +358,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Board procedural them backdrop panels, lane signals va entry chevrons de doc sci-fi battlefield hon.
 - Enemy type visual fallback: Armored/Fast/Shield co badge mau nho khi chua co prefab art rieng.
 - Enemy type badge da doi tu cot doc sang chip nho o chan enemy de tranh nhin nhu visual artifact.
-- Them `VfxAutoDestroy` va `VfxPrefabBuilder` Editor tool de tao/gian VFX prefab ParticleSystem that vao `CombatVfxSettings`.
+- Them `VfxAutoDestroy` va `VfxPrefabBuilder` Editor tool de tao/gan VFX prefab vao `CombatVfxSettings`; ban moi uu tien sprite VFX, fallback ParticleSystem khi thieu art.
 - Da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` cua `SampleScene`.
 - AI QA sau VFX generation: `0` fail, `1` expected warning do `LevelManager.unlockAllLevelsForTesting` dang bat.
 
@@ -308,7 +407,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - neon frame/caps tam thoi.
 - Chinh `Tile.prefab` thanh cell tint trong suot hon va sorting order thap hon de board art doc duoc.
 - Doi camera background sang mau toi hop voi HUD moi.
-- Luu y: day la visual foundation/procedural placeholder, chua phai final App Store art. Khi co background/board sprite that, co the thay `BoardVisualController` bang prefab art hoac dung no lam guide layout.
+- Luu y lich su: ban dau la visual foundation/procedural placeholder. Hien tai generated board sprite da duoc wire vao `BoardVisualController`, con procedural grid/rail/marker giu vai tro gameplay overlay.
 
 ### Mission progression loop v1 — 2026-06-22
 - Them 2 level data moi: `Level_02` ("Armor Probe") va `Level_03` ("Signal Siege") voi authored waves rieng.
@@ -369,7 +468,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - seed tray rong va cao hon, seed cards lon hon;
   - OC panel va row buttons lon hon;
   - tutorial hint panel lon hon.
-- Muc tieu UI: bot cam giac cac nut la overlay nho tach roi, gan hon voi game surface. Day van la code-generated UI, chua phai final UI skin.
+- Muc tieu UI: bot cam giac cac nut la overlay nho tach roi, gan hon voi game surface. Hien tai UI van build bang code-generated uGUI, nhung button/panel/hero/icon da co generated sprite skin baseline.
 - Level pacing sau unlock gating:
   - Level 1 start delay tang, wave dau it enemy hon, spawn interval cham hon.
   - Level 2 start delay/spawn interval duoc noi de nguoi choi kip dat Bunker/economy.

@@ -8,6 +8,8 @@ public static class VfxPrefabBuilder
     const string VfxFolder = "Assets/Prefabs/VFX";
     const string MaterialPath = VfxFolder + "/VFX_SpriteParticle.mat";
     const string ScenePath = "Assets/Scenes/GameScene.unity";
+    const string SampleScenePath = "Assets/Scenes/SampleScene.unity";
+    const string ArtFolder = "Assets/Art";
 
     [MenuItem("Tools/VFX/Rebuild Core VFX Prefabs")]
     public static void RebuildCoreVfxPrefabs()
@@ -15,19 +17,41 @@ public static class VfxPrefabBuilder
         EnsureFolder();
         Material material = EnsureMaterial();
 
-        GameObject muzzle = BuildBurst("VFX_MuzzleFlash", 10, 0.12f, 0.05f, 0.18f, 1.8f, 3.4f,
-            new Color(1f, 0.96f, 0.32f, 1f), new Color(1f, 0.36f, 0.04f, 0.55f), material);
-        GameObject hit = BuildBurst("VFX_HitSpark", 16, 0.18f, 0.035f, 0.14f, 1.2f, 2.8f,
-            new Color(1f, 0.92f, 0.45f, 1f), new Color(1f, 0.18f, 0.05f, 0.4f), material);
-        GameObject death = BuildBurst("VFX_EnemyDeath", 28, 0.42f, 0.055f, 0.16f, 0.6f, 1.8f,
-            new Color(0.7f, 0.74f, 0.78f, 0.9f), new Color(1f, 0.3f, 0.08f, 0.75f), material);
-        GameObject staticBreak = BuildBurst("VFX_StaticBreak", 24, 0.6f, 0.08f, 0.22f, 0.25f, 1.0f,
-            new Color(0.55f, 0.58f, 0.58f, 0.78f), new Color(0.95f, 0.78f, 0.36f, 0.65f), material);
+        GameObject muzzle = BuildSpriteEffect("VFX_MuzzleFlash", $"{ArtFolder}/vfx_muzzle_flash_256.png",
+            0.12f, new Vector3(0.18f, 0.16f, 1f), new Vector3(0.42f, 0.32f, 1f), new Color(1f, 1f, 1f, 0.9f), 28);
+        GameObject hit = BuildSpriteEffect("VFX_HitSpark", $"{ArtFolder}/vfx_hit_spark_256.png",
+            0.2f, new Vector3(0.45f, 0.45f, 1f), new Vector3(1.05f, 1.05f, 1f), new Color(1f, 1f, 1f, 0.94f), 28, 60f);
+        GameObject death = BuildSpriteEffect("VFX_EnemyDeath", $"{ArtFolder}/vfx_enemy_death_burst_256.png",
+            0.36f, new Vector3(0.54f, 0.54f, 1f), new Vector3(1.12f, 1.12f, 1f), new Color(1f, 1f, 1f, 0.88f), 28);
+        GameObject staticBreak = BuildSpriteEffect("VFX_StaticBreak", $"{ArtFolder}/vfx_hit_spark_256.png",
+            0.32f, new Vector3(0.55f, 0.55f, 1f), new Vector3(1.25f, 1.25f, 1f), new Color(1f, 1f, 1f, 0.86f), 28, -35f);
         GameObject bunkerBreak = BuildBunkerBreak(material);
-        GameObject emp = BuildPulse("VFX_EmpPulse", new Color(0.25f, 0.9f, 1f, 0.82f), material);
-        GameObject rail = BuildPulse("VFX_RailCannonImpact", new Color(1f, 0.18f, 0.05f, 0.8f), material);
+        GameObject emp = BuildSpriteEffect("VFX_EmpPulse", $"{ArtFolder}/vfx_emp_pulse_256.png",
+            0.28f, new Vector3(0.18f, 0.18f, 1f), new Vector3(0.62f, 0.62f, 1f), new Color(1f, 1f, 1f, 0.68f), 27);
+        GameObject rail = BuildSpriteEffect("VFX_RailCannonImpact", $"{ArtFolder}/vfx_rail_beam_source_256.png",
+            0.24f, new Vector3(11.2f, 0.82f, 1f), new Vector3(11.2f, 0.44f, 1f), new Color(1f, 1f, 1f, 0.92f), 27);
 
-        AssignSettings(muzzle, hit, death, staticBreak, bunkerBreak, emp, rail);
+        if (muzzle == null)
+            muzzle = BuildBurst("VFX_MuzzleFlash", 10, 0.12f, 0.05f, 0.18f, 1.8f, 3.4f,
+                new Color(1f, 0.96f, 0.32f, 1f), new Color(1f, 0.36f, 0.04f, 0.55f), material);
+        if (hit == null)
+            hit = BuildBurst("VFX_HitSpark", 16, 0.18f, 0.035f, 0.14f, 1.2f, 2.8f,
+                new Color(1f, 0.92f, 0.45f, 1f), new Color(1f, 0.18f, 0.05f, 0.4f), material);
+        if (death == null)
+            death = BuildBurst("VFX_EnemyDeath", 28, 0.42f, 0.055f, 0.16f, 0.6f, 1.8f,
+                new Color(0.7f, 0.74f, 0.78f, 0.9f), new Color(1f, 0.3f, 0.08f, 0.75f), material);
+        if (staticBreak == null)
+            staticBreak = BuildBurst("VFX_StaticBreak", 24, 0.6f, 0.08f, 0.22f, 0.25f, 1.0f,
+                new Color(0.55f, 0.58f, 0.58f, 0.78f), new Color(0.95f, 0.78f, 0.36f, 0.65f), material);
+        if (bunkerBreak == null)
+            bunkerBreak = BuildBunkerBreak(material);
+        if (emp == null)
+            emp = BuildPulse("VFX_EmpPulse", new Color(0.25f, 0.9f, 1f, 0.82f), material);
+        if (rail == null)
+            rail = BuildPulse("VFX_RailCannonImpact", new Color(1f, 0.18f, 0.05f, 0.8f), material);
+
+        AssignSettings(ScenePath, muzzle, hit, death, staticBreak, bunkerBreak, emp, rail);
+        AssignSettings(SampleScenePath, muzzle, hit, death, staticBreak, bunkerBreak, emp, rail);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("Core VFX prefabs rebuilt and assigned.");
@@ -74,22 +98,128 @@ public static class VfxPrefabBuilder
         return SavePrefab(root, name);
     }
 
+    static GameObject BuildSpriteEffect(
+        string name,
+        string spritePath,
+        float lifetime,
+        Vector3 startScale,
+        Vector3 endScale,
+        Color color,
+        int sortingOrder,
+        float rotationSpeed = 0f)
+    {
+        Sprite sprite = LoadSprite(spritePath);
+        if (sprite == null) return null;
+
+        GameObject root = new GameObject(name);
+        SpriteRenderer renderer = root.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = color;
+        renderer.sortingOrder = sortingOrder;
+
+        VfxAutoDestroy effect = root.AddComponent<VfxAutoDestroy>();
+        effect.lifetime = lifetime;
+        effect.animateSprite = true;
+        effect.startScale = startScale;
+        effect.endScale = endScale;
+        effect.rotationSpeed = rotationSpeed;
+
+        return SavePrefab(root, name);
+    }
+
     static GameObject BuildBunkerBreak(Material material)
     {
-        GameObject root = new GameObject("VFX_BunkerBreak");
-        root.AddComponent<VfxAutoDestroy>().lifetime = 0.9f;
+        Sprite deathSprite = LoadSprite($"{ArtFolder}/vfx_enemy_death_burst_256.png");
+        Sprite sparkSprite = LoadSprite($"{ArtFolder}/vfx_hit_spark_256.png");
+        if (deathSprite != null && sparkSprite != null)
+        {
+            GameObject root = new GameObject("VFX_BunkerBreak");
+            SpriteRenderer death = root.AddComponent<SpriteRenderer>();
+            death.sprite = deathSprite;
+            death.color = new Color(1f, 1f, 1f, 0.92f);
+            death.sortingOrder = 28;
 
-        ParticleSystem smoke = root.AddComponent<ParticleSystem>();
+            VfxAutoDestroy deathEffect = root.AddComponent<VfxAutoDestroy>();
+            deathEffect.lifetime = 0.46f;
+            deathEffect.animateSprite = true;
+            deathEffect.startScale = new Vector3(0.68f, 0.68f, 1f);
+            deathEffect.endScale = new Vector3(1.28f, 1.08f, 1f);
+
+            GameObject sparks = new GameObject("Sparks");
+            sparks.transform.SetParent(root.transform, false);
+            sparks.transform.localPosition = new Vector3(0.05f, 0.08f, -0.01f);
+            SpriteRenderer sparkRenderer = sparks.AddComponent<SpriteRenderer>();
+            sparkRenderer.sprite = sparkSprite;
+            sparkRenderer.color = new Color(1f, 1f, 1f, 0.88f);
+            sparkRenderer.sortingOrder = 29;
+
+            VfxAutoDestroy sparkEffect = sparks.AddComponent<VfxAutoDestroy>();
+            sparkEffect.lifetime = 0.38f;
+            sparkEffect.animateSprite = true;
+            sparkEffect.startScale = new Vector3(0.42f, 0.42f, 1f);
+            sparkEffect.endScale = new Vector3(0.86f, 0.78f, 1f);
+            sparkEffect.rotationSpeed = -45f;
+
+            return SavePrefab(root, "VFX_BunkerBreak");
+        }
+
+        GameObject fallbackRoot = new GameObject("VFX_BunkerBreak");
+        fallbackRoot.AddComponent<VfxAutoDestroy>().lifetime = 0.9f;
+
+        ParticleSystem smoke = fallbackRoot.AddComponent<ParticleSystem>();
         ConfigureBurst(smoke, 28, 0.09f, 0.24f, 0.2f, 0.9f,
             new Color(0.48f, 0.5f, 0.5f, 0.8f), new Color(0.9f, 0.86f, 0.72f, 0.45f), material);
 
-        GameObject sparksGo = new GameObject("Sparks");
-        sparksGo.transform.SetParent(root.transform, false);
-        ParticleSystem sparks = sparksGo.AddComponent<ParticleSystem>();
-        ConfigureBurst(sparks, 18, 0.035f, 0.08f, 1.4f, 3.4f,
+        GameObject fallbackSparksGo = new GameObject("Sparks");
+        fallbackSparksGo.transform.SetParent(fallbackRoot.transform, false);
+        ParticleSystem fallbackSparks = fallbackSparksGo.AddComponent<ParticleSystem>();
+        ConfigureBurst(fallbackSparks, 18, 0.035f, 0.08f, 1.4f, 3.4f,
             new Color(1f, 0.92f, 0.45f, 1f), new Color(1f, 0.22f, 0.08f, 0.5f), material);
 
-        return SavePrefab(root, "VFX_BunkerBreak");
+        return SavePrefab(fallbackRoot, "VFX_BunkerBreak");
+    }
+
+    static Sprite LoadSprite(string path)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer != null)
+        {
+            bool changed = false;
+            if (importer.textureType != TextureImporterType.Sprite)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                changed = true;
+            }
+
+            if (importer.spriteImportMode != SpriteImportMode.Single)
+            {
+                importer.spriteImportMode = SpriteImportMode.Single;
+                changed = true;
+            }
+
+            if (importer.filterMode != FilterMode.Point)
+            {
+                importer.filterMode = FilterMode.Point;
+                changed = true;
+            }
+
+            if (importer.textureCompression != TextureImporterCompression.Uncompressed)
+            {
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                changed = true;
+            }
+
+            if (!importer.alphaIsTransparency)
+            {
+                importer.alphaIsTransparency = true;
+                changed = true;
+            }
+
+            if (changed)
+                importer.SaveAndReimport();
+        }
+
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
     static GameObject BuildPulse(string name, Color color, Material material)
@@ -151,6 +281,7 @@ public static class VfxPrefabBuilder
     }
 
     static void AssignSettings(
+        string scenePath,
         GameObject muzzle,
         GameObject hit,
         GameObject death,
@@ -159,8 +290,8 @@ public static class VfxPrefabBuilder
         GameObject emp,
         GameObject rail)
     {
-        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath) == null) return;
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) == null) return;
+        EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
 
         CombatVfxSettings settings = Object.FindAnyObjectByType<CombatVfxSettings>(FindObjectsInactive.Include);
         if (settings == null) return;

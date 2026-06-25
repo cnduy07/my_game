@@ -1,0 +1,513 @@
+{
+  "project": "Coreline Defense",
+  "version": "UI/UX Upgrade v2.0",
+  "author": "Claude UI Audit",
+  "description": "Prompt hướng dẫn chi tiết nâng cấp toàn bộ giao diện Coreline Defense. Mỗi mục có mô tả vấn đề, hướng giải quyết, giá trị cụ thể để implement.",
+
+  "design_system": {
+    "description": "Thiết lập design tokens nhất quán trước khi làm bất cứ điều gì khác. Áp dụng toàn bộ game.",
+    "colors": {
+      "primary_accent": "#00D4FF",
+      "danger_accent": "#E84040",
+      "warning_accent": "#F5A623",
+      "success_accent": "#3DCC7E",
+      "background_dark": "#0A0E14",
+      "background_panel": "#0F1621",
+      "background_card": "#141E2C",
+      "background_card_hover": "#1A2638",
+      "border_default": "rgba(0, 212, 255, 0.15)",
+      "border_active": "rgba(0, 212, 255, 0.5)",
+      "text_primary": "#EAEEF4",
+      "text_secondary": "#7A8FA8",
+      "text_muted": "#3D4F62",
+      "text_on_accent": "#000000"
+    },
+    "typography": {
+      "font_primary": "Orbitron, Rajdhani, fallback: monospace",
+      "font_body": "Rajdhani, Share Tech Mono, fallback: sans-serif",
+      "sizes": {
+        "heading_xl": "28px / weight 700",
+        "heading_lg": "22px / weight 700",
+        "heading_md": "16px / weight 600",
+        "body": "14px / weight 400",
+        "caption": "12px / weight 400",
+        "label": "11px / weight 600 / letter-spacing 0.08em / UPPERCASE"
+      }
+    },
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "40px"
+    },
+    "border_radius": {
+      "sm": "4px",
+      "md": "6px",
+      "lg": "10px",
+      "pill": "999px"
+    },
+    "transitions": {
+      "fast": "0.1s ease",
+      "default": "0.2s ease",
+      "slow": "0.35s ease"
+    },
+    "implementation_note": "Tạo một ScriptableObject UITheme.cs hoặc static class UIConstants.cs chứa toàn bộ các giá trị này. Không hard-code màu sắc trực tiếp vào từng prefab."
+  },
+
+  "screens": {
+    "main_menu": {
+      "screen_name": "Main Menu",
+      "current_issues": [
+        "Title panel bên trái và command panel bên phải không có trục căn chỉnh chung — mắt người xem không biết nhìn vào đâu trước",
+        "Nút START GAME màu đỏ quá nổi, nhưng không theo convention đúng (đỏ = nguy hiểm/cảnh báo)",
+        "Status box dưới title 'CORELINE NET ONLINE / SELECT AN OPERATION' trống, không có value thực",
+        "Version text 'v0.1 / FRONTEND ROUTE READY' hiện ở UI production trông giống debug text"
+      ],
+      "upgrades": [
+        {
+          "id": "mm_01",
+          "priority": "HIGH",
+          "title": "Căn chỉnh layout theo trục dọc trung tâm",
+          "problem": "Hai panel độc lập (trái/phải) tạo layout bị vỡ trên các tỉ lệ màn hình khác nhau",
+          "solution": "Đặt toàn bộ menu vào một container dọc căn giữa màn hình. Title phía trên, Command panel phía dưới. Hoặc giữ layout hai cột nhưng thêm một header chung bên trên spanning full width.",
+          "layout_spec": {
+            "header_zone": "Full-width, height 120px, chứa title CORELINE DEFENSE + subtitle",
+            "content_zone": "Hai cột 50/50. Trái: lore/status panel. Phải: command panel",
+            "command_panel_width": "380px max, căn phải với margin 60px từ edge"
+          }
+        },
+        {
+          "id": "mm_02",
+          "priority": "HIGH",
+          "title": "Đổi màu nút START GAME sang Primary Accent (cyan)",
+          "problem": "Màu đỏ = danger trong UI convention. Dùng cho CTA chính gây nhầm lẫn ngữ nghĩa",
+          "solution": "START GAME dùng background #00D4FF, text #000000. Hover state: background sáng hơn 15%, thêm glow box-shadow 0 0 20px rgba(0,212,255,0.4). Các nút SETTING/HOW TO PLAY/EXIT dùng transparent background + border #00D4FF opacity 0.3, hover opacity 0.8.",
+          "button_hierarchy": {
+            "primary": "bg #00D4FF, text black, full border-radius 4px",
+            "secondary": "bg transparent, border 1px solid rgba(0,212,255,0.4), text #00D4FF",
+            "destructive": "bg transparent, border 1px solid rgba(232,64,64,0.4), text #E84040 — chỉ dùng cho EXIT/DELETE"
+          }
+        },
+        {
+          "id": "mm_03",
+          "priority": "MEDIUM",
+          "title": "Thêm nội dung thực vào status panel",
+          "problem": "Panel trạng thái hiện trống — lãng phí real estate và cơ hội storytelling",
+          "solution": "Hiển thị: (1) Số mission đã clear / tổng missions, (2) Highest score, (3) Một dòng 'intel' ngắn về mission tiếp theo. Nếu chưa có data thì hiện 'AWAITING FIELD REPORT...' với blinking cursor animation.",
+          "animation": "Typewriter effect cho intel line — delay 0.5s sau khi menu appear, type từng ký tự với speed 40ms/char"
+        },
+        {
+          "id": "mm_04",
+          "priority": "LOW",
+          "title": "Dọn debug text, thêm thông tin build có nghĩa",
+          "solution": "Thay 'v0.1 / FRONTEND ROUTE READY' bằng 'BUILD 0.1.0' hoặc ẩn hoàn toàn. Version text nên font-size 10px, opacity 0.3, góc dưới trái màn hình."
+        }
+      ]
+    },
+
+    "setting_screen": {
+      "screen_name": "Setting Screen",
+      "current_issues": [
+        "Slider handle màu đỏ — sai hoàn toàn: đỏ = nguy hiểm, không phải điều chỉnh âm thanh",
+        "Slider handle trong Pause Menu màu trắng/cyan — hai màu khác nhau cho cùng một component",
+        "Checkbox 'Reduce shake' không có visual feedback rõ ràng là bật hay tắt",
+        "Khoảng cách giữa AUDIO section và COMFORT section quá lớn — dead space",
+        "Không có nút APPLY/SAVE rõ ràng, không biết thay đổi có được lưu chưa"
+      ],
+      "upgrades": [
+        {
+          "id": "st_01",
+          "priority": "CRITICAL",
+          "title": "Đồng bộ hóa slider component",
+          "problem": "Hai nơi dùng slider (Setting screen + Pause menu) có màu handle khác nhau",
+          "solution": "Tạo một UISlider prefab duy nhất. Track: bg rgba(255,255,255,0.08), border 1px solid rgba(0,212,255,0.2), height 6px, radius 3px. Fill: linear-gradient left→right #00D4FF. Handle: square 18×18px, bg #00D4FF, border none, cursor pointer. Hover: handle scale 1.2, thêm glow. Tất cả slider trong game dùng prefab này.",
+          "handle_spec": {
+            "size": "18px × 18px",
+            "shape": "rounded rect, radius 3px",
+            "color": "#00D4FF",
+            "hover_glow": "box-shadow 0 0 10px rgba(0,212,255,0.6)",
+            "track_height": "6px",
+            "fill_color": "#00D4FF"
+          }
+        },
+        {
+          "id": "st_02",
+          "priority": "HIGH",
+          "title": "Redesign toggle/checkbox thành Toggle component rõ ràng",
+          "problem": "Checkbox nhỏ khó nhìn, không rõ trạng thái on/off",
+          "solution": "Thay checkbox bằng pill toggle: width 44px, height 24px. OFF state: bg rgba(255,255,255,0.1), knob trái #7A8FA8. ON state: bg rgba(0,212,255,0.3), border 1px solid #00D4FF, knob phải #00D4FF. Transition: 0.2s slide. Thêm text 'ON'/'OFF' nhỏ bên cạnh toggle, font-size 11px.",
+          "toggle_spec": {
+            "width": "44px",
+            "height": "24px",
+            "knob_size": "18px diameter",
+            "off_bg": "rgba(255,255,255,0.08)",
+            "on_bg": "rgba(0,212,255,0.25)",
+            "on_border": "1px solid rgba(0,212,255,0.6)",
+            "transition": "all 0.2s ease"
+          }
+        },
+        {
+          "id": "st_03",
+          "priority": "MEDIUM",
+          "title": "Compact layout, thêm section headers rõ ràng",
+          "solution": "Section header dùng: label 11px UPPERCASE, letter-spacing 0.1em, color #7A8FA8, border-bottom 1px solid rgba(0,212,255,0.1), padding-bottom 8px, margin-bottom 16px. Giảm khoảng cách giữa AUDIO và COMFORT xuống còn 24px thay vì 40px hiện tại.",
+          "layout_improvements": "Đặt slider value (55%) inline bên phải label thay vì trên riêng một dòng để tiết kiệm vertical space"
+        },
+        {
+          "id": "st_04",
+          "priority": "LOW",
+          "title": "Auto-save với visual confirmation",
+          "solution": "Cài đặt tự động lưu khi người dùng thay đổi. Hiện toast notification nhỏ góc trên phải: 'Settings saved ✓' fade in 0.2s, hold 1.5s, fade out 0.3s."
+        }
+      ]
+    },
+
+    "how_to_play": {
+      "screen_name": "How To Play",
+      "current_issues": [
+        "Body text quá nhỏ (~12px), contrast kém trên nền tối",
+        "Các card 2×2 không có visual phân biệt — tất cả đều đồng đều, không có hierarchy"
+      ],
+      "upgrades": [
+        {
+          "id": "htp_01",
+          "priority": "HIGH",
+          "title": "Tăng readability body text",
+          "solution": "Body text tăng lên 14px, line-height 1.6, color #B8C8D8 (không phải pure white). Card background nên có subtle border-left 3px solid [accent color] để phân biệt từng tip category.",
+          "text_spec": {
+            "card_title": "16px, weight 600, color #EAEEF4",
+            "card_number": "13px, weight 700, color #00D4FF, letter-spacing 0.05em",
+            "card_body": "14px, weight 400, color #B8C8D8, line-height 1.6"
+          }
+        },
+        {
+          "id": "htp_02",
+          "priority": "MEDIUM",
+          "title": "Color-code các card theo category",
+          "solution": "Mỗi card có accent color khác nhau trên border-left: (01) cyan #00D4FF — Economy/Build, (02) green #3DCC7E — Collect, (03) amber #F5A623 — Read/Analyze, (04) red #E84040 — Win/Survive. Giúp người chơi nhớ theo màu.",
+          "card_border_spec": "border-left: 3px solid [accent], border-left-radius: 0, thêm subtle inner glow"
+        },
+        {
+          "id": "htp_03",
+          "priority": "LOW",
+          "title": "Thêm icon cho mỗi card",
+          "solution": "Thêm icon nhỏ 24×24px trước số thứ tự: (01) ⚡ energy icon, (02) 🔮 orb icon, (03) 📊 chart icon, (04) 🏆 trophy icon. Dùng SVG hoặc sprite sheet để không làm nặng game."
+        }
+      ]
+    },
+
+    "mission_map": {
+      "screen_name": "Mission Map",
+      "current_issues": [
+        "Mission node 90×60px quá nhỏ, text bị cắt, khó click/tap",
+        "Side panel thông tin mission không có visual hierarchy — tất cả text cùng size và weight",
+        "Nút DEPLOY cyan quan trọng nhưng không to nhất vùng panel",
+        "Mission node được chọn (highlighted) không đủ nổi bật so với unselected",
+        "Connector line giữa các mission node quá mỏng — khó thấy đường campaign route"
+      ],
+      "upgrades": [
+        {
+          "id": "mm2_01",
+          "priority": "HIGH",
+          "title": "Tăng kích thước mission node",
+          "solution": "Node size tối thiểu 110×70px. Bên trong: số mission to 16px weight 700 màu accent, tên mission 12px weight 500, trạng thái (READY/LOCKED/CLEARED) dạng badge nhỏ bên dưới.",
+          "node_states": {
+            "cleared": "bg rgba(61,204,126,0.15), border 1.5px solid #3DCC7E, text #3DCC7E",
+            "ready": "bg rgba(0,212,255,0.12), border 1.5px solid #00D4FF, text #00D4FF",
+            "selected": "bg rgba(0,212,255,0.25), border 2px solid #00D4FF, box-shadow 0 0 20px rgba(0,212,255,0.3), text #FFFFFF",
+            "locked": "bg rgba(255,255,255,0.04), border 1px dashed rgba(255,255,255,0.1), text rgba(255,255,255,0.2)"
+          }
+        },
+        {
+          "id": "mm2_02",
+          "priority": "HIGH",
+          "title": "Redesign side panel thông tin mission",
+          "solution": "Phân tầng rõ ràng từ trên xuống: (1) Badge trạng thái nhỏ (READY/IN PROGRESS), (2) Số + Tên mission 20px bold, (3) Subtitle/flavor text italic 13px muted, (4) Divider line, (5) Enemy mix với icon, (6) Recommended tools với icon, (7) Pressure score với màu warning nếu cao, (8) DEPLOY button full width.",
+          "panel_layout": {
+            "status_badge": "height 22px, pill shape, font 10px UPPERCASE letter-spacing 0.1em",
+            "mission_title": "font-size 20px, weight 700, margin-top 8px",
+            "subtitle": "font-size 13px, color #7A8FA8, font-style italic, margin-top 4px",
+            "section_divider": "margin 12px 0, border-top 1px solid rgba(255,255,255,0.06)",
+            "stat_label": "font-size 11px, UPPERCASE, color #7A8FA8, letter-spacing 0.08em",
+            "stat_value": "font-size 13px, color #EAEEF4, margin-top 2px",
+            "pressure_score": {
+              "low_0_40": "color #3DCC7E",
+              "medium_41_70": "color #F5A623",
+              "high_71_100": "color #E84040"
+            }
+          }
+        },
+        {
+          "id": "mm2_03",
+          "priority": "MEDIUM",
+          "title": "Tăng visibility connector line",
+          "solution": "Connector line giữa các node: stroke-width 2px, color rgba(0,212,255,0.35). Line đã cleared: color rgba(61,204,126,0.5). Thêm animated dash flow trên selected path: stroke-dasharray 6 3, animation chạy từ start→end node, duration 2s loop.",
+          "connector_spec": {
+            "default_stroke": "2px, rgba(0,212,255,0.25)",
+            "cleared_stroke": "2px, rgba(61,204,126,0.5)",
+            "active_stroke": "2px, #00D4FF với dash animation"
+          }
+        },
+        {
+          "id": "mm2_04",
+          "priority": "HIGH",
+          "title": "DEPLOY button nổi bật hơn",
+          "solution": "DEPLOY button: full width của panel, height 52px (tăng từ 44px), font-size 16px weight 700, letter-spacing 0.08em. Thêm subtle scan-line animation từ trái qua phải khi hover. Disabled state khi mission locked: opacity 0.3, cursor not-allowed.",
+          "deploy_button_spec": {
+            "height": "52px",
+            "font": "16px, weight 700, letter-spacing 0.08em",
+            "bg": "#00D4FF",
+            "text_color": "#000000",
+            "hover_effect": "brightness 1.1 + scan-line animation sweep",
+            "disabled": "opacity 0.3, pointer-events none"
+          }
+        }
+      ]
+    },
+
+    "in_game_hud": {
+      "screen_name": "In-Game HUD",
+      "current_issues": [
+        "Tool selector bar dưới cùng không có selected state visible khi tool đã chọn",
+        "Tool selector thiếu hotkey indicator (phím 1/2/3)",
+        "Energy counter chỉ hiện số — không có max/context/icon",
+        "Wave info bar nhỏ ở top — info quan trọng nhưng thiếu visual weight",
+        "Pause button (||) không đủ lớn, khó click",
+        "Không có visual feedback khi không đủ energy để place unit",
+        "Enemy sprite preview bên trái không có label loại enemy"
+      ],
+      "upgrades": [
+        {
+          "id": "ig_01",
+          "priority": "CRITICAL",
+          "title": "Tool selector selected state",
+          "problem": "Người chơi không biết tool nào đang active vì không có visual selected state",
+          "solution": "Selected tool: bg #00D4FF, text #000000, border none, thêm border-top 3px solid #FFFFFF. Hover state: bg rgba(0,212,255,0.15). Unselected: bg rgba(255,255,255,0.05), text #7A8FA8. Thêm hotkey badge góc trên phải mỗi tool: [1] [2] [3] font 10px.",
+          "tool_card_spec": {
+            "width": "Flexible, min 90px",
+            "height": "64px",
+            "selected_bg": "#00D4FF",
+            "selected_text": "#000000",
+            "selected_indicator": "border-top 3px solid rgba(255,255,255,0.8)",
+            "hover_bg": "rgba(0,212,255,0.12)",
+            "default_bg": "rgba(0,0,0,0.4)",
+            "hotkey_badge": "position absolute top-right, font 10px, bg rgba(0,0,0,0.5), padding 2px 4px"
+          }
+        },
+        {
+          "id": "ig_02",
+          "priority": "HIGH",
+          "title": "Redesign Energy counter",
+          "solution": "Thay text 'Energy: 75' bằng panel nhỏ gọn hơn: icon lightning bolt ⚡ + số current + '/' + số max. Ví dụ: ⚡ 75/150. Khi energy < 30%: text màu #E84040 + subtle pulse animation. Khi đủ energy để place selected tool: value highlight xanh.",
+          "energy_hud_spec": {
+            "format": "⚡ [current] / [max]",
+            "icon_size": "16px",
+            "normal_color": "#EAEEF4",
+            "low_threshold": "30% — đổi sang #E84040",
+            "low_animation": "opacity pulse 1.2s ease-in-out",
+            "sufficient_for_tool": "color #3DCC7E khi có đủ energy cho tool đang chọn"
+          }
+        },
+        {
+          "id": "ig_03",
+          "priority": "HIGH",
+          "title": "Wave info bar nổi bật hơn",
+          "solution": "Wave bar tăng height lên 32px, background rgba(0,0,0,0.7), border-bottom 1px solid rgba(0,212,255,0.2). Text format: 'WAVE 1/5 — Probe wave' + separator + 'Basic ×3 | Armor ×1' với icon cho từng loại enemy. Wave countdown timer căn phải.",
+          "wave_bar_spec": {
+            "height": "32px",
+            "bg": "rgba(10,14,20,0.85)",
+            "border_bottom": "1px solid rgba(0,212,255,0.15)",
+            "wave_number_color": "#00D4FF",
+            "wave_name_color": "#EAEEF4",
+            "enemy_count_color": "#F5A623",
+            "next_wave_timer": "countdown, color #7A8FA8, position right"
+          }
+        },
+        {
+          "id": "ig_04",
+          "priority": "MEDIUM",
+          "title": "Affordable indicator trên tool",
+          "solution": "Khi không đủ energy để mua tool: tô màu đỏ cost và thêm icon 🔒 nhỏ. Khi vừa đủ: cost màu amber. Khi thoải mái: cost màu white. CSS transition khi energy thay đổi.",
+          "cost_color_logic": {
+            "cant_afford": "color #E84040, add lock icon opacity 0.7",
+            "barely_afford": "color #F5A623",
+            "can_afford": "color rgba(255,255,255,0.7)"
+          }
+        },
+        {
+          "id": "ig_05",
+          "priority": "MEDIUM",
+          "title": "Enemy preview sidebar có label",
+          "solution": "Mỗi enemy sprite trong sidebar trái có: tooltip khi hover hiện tên + HP + đặc điểm. Hoặc thêm badge nhỏ bên cạnh sprite: 'B' cho Basic, 'A' cho Armor, với màu tương ứng.",
+          "enemy_badge_spec": {
+            "basic": "badge '#B', bg rgba(255,255,255,0.1), text #7A8FA8",
+            "armor": "badge '#A', bg rgba(245,166,35,0.15), text #F5A623",
+            "badge_size": "14px × 14px, position absolute top-right of sprite"
+          }
+        },
+        {
+          "id": "ig_06",
+          "priority": "LOW",
+          "title": "Grid cell hover feedback",
+          "solution": "Khi hover vào cell trên grid: cell highlight với bg rgba(0,212,255,0.08), border 1px solid rgba(0,212,255,0.3). Khi selected tool không đặt được tại cell đó (e.g., occupied): hover màu đỏ rgba(232,64,64,0.12) + border đỏ."
+        }
+      ]
+    },
+
+    "pause_menu": {
+      "screen_name": "Pause Menu",
+      "current_issues": [
+        "Slider trong pause màu cyan (handle trắng), slider trong Setting màu đỏ — không nhất quán",
+        "Checkbox 'Reduce shake' và toggle 'Vibration' style khác nhau trong cùng một menu",
+        "Nút RESUME không đủ to/nổi bật so với RESTART/MISSION/MAIN MENU",
+        "Modal không có backdrop blur — background game hiện qua gây rối mắt"
+      ],
+      "upgrades": [
+        {
+          "id": "pm_01",
+          "priority": "CRITICAL",
+          "title": "Đồng bộ component với Setting screen",
+          "solution": "Pause menu dùng cùng UISlider prefab và UIToggle prefab như Setting screen. Không tạo component mới. Nếu đang dùng khác prefab, refactor ngay.",
+          "action": "Audit toàn bộ scene, tìm và replace tất cả slider/toggle/checkbox bằng prefab chuẩn"
+        },
+        {
+          "id": "pm_02",
+          "priority": "HIGH",
+          "title": "Modal backdrop",
+          "solution": "Thêm backdrop overlay: full-screen Panel với color rgba(5,8,15,0.75), và CanvasGroup blur nếu dùng URP (depth of field effect). Nếu không có URP: dùng một RawImage với BlurEffect shader đơn giản hoặc chỉ overlay màu tối là đủ.",
+          "backdrop_spec": {
+            "color": "rgba(5,8,15,0.75)",
+            "blur": "optional: 8px Gaussian nếu có URP",
+            "animation": "fade in 0.2s ease"
+          }
+        },
+        {
+          "id": "pm_03",
+          "priority": "HIGH",
+          "title": "Button hierarchy trong pause",
+          "solution": "RESUME: primary style (bg #00D4FF, text black, full width hoặc to nhất). RESTART: secondary style. MISSION: secondary style. MAIN MENU: tertiary/ghost style với màu muted. Nhóm RESUME riêng phía trên, nhóm navigation (RESTART/MISSION/MAIN MENU) thành một row phía dưới.",
+          "button_layout": "RESUME chiếm full width. RESTART | MISSION | MAIN MENU trên cùng một hàng, mỗi nút 33% width"
+        }
+      ]
+    }
+  },
+
+  "global_improvements": {
+    "title": "Cải thiện toàn cục áp dụng cho toàn bộ game",
+    "items": [
+      {
+        "id": "global_01",
+        "priority": "CRITICAL",
+        "title": "Tạo UI Component Library thống nhất",
+        "description": "Tạo thư mục Assets/UI/Components/ với các prefab chuẩn: PrimaryButton, SecondaryButton, GhostButton, UISlider, UIToggle, PanelCard, ModalOverlay, ToastNotification, BadgeLabel. Mọi màn hình chỉ được dùng những component này, không tự tạo mới.",
+        "file_structure": {
+          "Assets/UI/Components/Buttons/": "PrimaryButton.prefab, SecondaryButton.prefab, GhostButton.prefab, DestructiveButton.prefab",
+          "Assets/UI/Components/Inputs/": "UISlider.prefab, UIToggle.prefab, UICheckbox.prefab",
+          "Assets/UI/Components/Layout/": "PanelCard.prefab, ModalOverlay.prefab, SectionHeader.prefab",
+          "Assets/UI/Components/Feedback/": "ToastNotification.prefab, LoadingSpinner.prefab",
+          "Assets/UI/Theme/": "UITheme.asset (ScriptableObject)"
+        }
+      },
+      {
+        "id": "global_02",
+        "priority": "HIGH",
+        "title": "Thêm micro-animations cho tất cả interactive elements",
+        "description": "Mọi button cần: hover scale 1.03, press scale 0.97, transition 0.1s. Mọi panel appear cần: fade + slide up 8px, duration 0.25s ease-out. Modal open: scale từ 0.95 lên 1.0 + fade in 0.2s.",
+        "animation_library": {
+          "button_hover": "scale(1.03), duration 0.1s",
+          "button_press": "scale(0.97), duration 0.08s",
+          "panel_enter": "translateY(8px)→(0) + opacity(0)→(1), 0.25s ease-out",
+          "modal_enter": "scale(0.95)→(1) + opacity(0)→(1), 0.2s ease-out",
+          "number_change": "flash tới màu accent rồi về normal, 0.3s"
+        }
+      },
+      {
+        "id": "global_03",
+        "priority": "HIGH",
+        "title": "Accessibility: minimum touch target 44×44px",
+        "description": "Tất cả button và interactive element phải có hitbox tối thiểu 44×44px kể cả khi visual nhỏ hơn. Dùng padding hoặc invisible extended hitbox. Đặc biệt quan trọng cho mission node map và tool selector."
+      },
+      {
+        "id": "global_04",
+        "priority": "MEDIUM",
+        "title": "Screen transition animations",
+        "description": "Khi navigate giữa các màn hình: màn hình hiện tại fade out + slide left 20px, màn hình mới fade in + slide in từ phải 20px, duration 0.3s. Main Menu → Mission Map: zoom out nhẹ (scale 0.98) rồi crossfade."
+      },
+      {
+        "id": "global_05",
+        "priority": "MEDIUM",
+        "title": "Sound feedback nhất quán",
+        "description": "Tất cả button click cần SFX ngắn (< 100ms). Primary action (START, DEPLOY): sound to hơn, tần số thấp hơn. Secondary action: sound nhẹ. Error (không đủ energy): distorted short buzz. Map node select: confirmation beep. Group tất cả UI SFX vào một AudioMixer group 'UI_SFX' để người chơi có thể adjust riêng."
+      }
+    ]
+  },
+
+  "implementation_order": {
+    "description": "Thứ tự ưu tiên implement để có impact tối đa với effort tối thiểu",
+    "phase_1_critical_2_3_days": [
+      "global_01: Tạo component library (UITheme + prefab chuẩn)",
+      "st_01: Đồng bộ UISlider prefab — fix ngay visual inconsistency lớn nhất",
+      "pm_01: Dùng prefab chuẩn trong Pause menu",
+      "ig_01: Tool selector selected state — critical gameplay feedback",
+      "mm2_01: Tăng mission node size"
+    ],
+    "phase_2_high_3_5_days": [
+      "mm_02: Main menu button hierarchy (đổi sang cyan primary)",
+      "mm2_02: Side panel thông tin mission redesign",
+      "ig_02: Energy counter redesign",
+      "ig_03: Wave info bar",
+      "pm_02: Modal backdrop",
+      "pm_03: Pause button hierarchy",
+      "st_02: Toggle redesign",
+      "htp_01: How to play readability"
+    ],
+    "phase_3_polish_3_5_days": [
+      "global_02: Micro-animations",
+      "global_03: Touch targets",
+      "global_04: Screen transitions",
+      "ig_04: Affordable indicator",
+      "mm_03: Main menu status panel content",
+      "mm2_03: Connector line animation",
+      "htp_02: Card color coding",
+      "mm2_04: DEPLOY button polish"
+    ],
+    "phase_4_optional": [
+      "global_05: Sound feedback",
+      "ig_05: Enemy preview labels",
+      "ig_06: Grid cell hover",
+      "mm_04: Version text cleanup",
+      "htp_03: How to play icons"
+    ]
+  },
+
+  "codex_prompt_templates": {
+    "description": "Các prompt mẫu để dùng với Codex/Unity AI khi implement từng thay đổi",
+    "prompts": [
+      {
+        "task": "Tạo UITheme ScriptableObject",
+        "prompt": "Create a Unity ScriptableObject class called UITheme with public Color fields for: primaryAccent (#00D4FF), dangerAccent (#E84040), warningAccent (#F5A623), successAccent (#3DCC7E), backgroundDark (#0A0E14), backgroundPanel (#0F1621), backgroundCard (#141E2C), borderDefault (rgba 0,212,255,0.15), textPrimary (#EAEEF4), textSecondary (#7A8FA8), textMuted (#3D4F62). Add a [CreateAssetMenu] attribute. Create an instance at Assets/UI/Theme/UITheme.asset."
+      },
+      {
+        "task": "Tạo UISlider prefab",
+        "prompt": "Create a Unity UI prefab called UISlider. It should be a Slider component with: track rect height 6px, border-radius via image sprite, track fill color #00D4FF, background track color rgba(255,255,255,0.08). The handle should be an 18×18px RectTransform with a rounded-square sprite, color #00D4FF. Add a script UISliderController.cs that: (1) scales handle to 1.2 on hover, back to 1.0 on exit, (2) applies glow effect (outer glow component or Image color change) on hover, (3) has an optional label Text component that displays current value as percentage. Save prefab to Assets/UI/Components/Inputs/UISlider.prefab."
+      },
+      {
+        "task": "Tạo UIToggle prefab",
+        "prompt": "Create a Unity UI Toggle prefab called UIToggle as a pill-shaped toggle button (NOT a checkbox). Dimensions: 44px wide × 24px tall, rounded (rx=12px). OFF state: background rgba(255,255,255,0.08), knob on left side (18px diameter circle, color #7A8FA8). ON state: background rgba(0,212,255,0.25), border 1px solid rgba(0,212,255,0.6), knob on right side (color #00D4FF). Add a script UIToggleController.cs that animates the knob sliding between left/right with a 0.2s ease transition when value changes. Optionally show small 'ON'/'OFF' text (11px, opacity 0.6) next to the toggle. Save to Assets/UI/Components/Inputs/UIToggle.prefab."
+      },
+      {
+        "task": "Fix tool selector selected state",
+        "prompt": "In the in-game HUD BottomBar, find the tool selection buttons (ArcReactor, Turret, Bunker). Modify the UIToolButton script or create one if missing. When a tool is selected: set button background color to #00D4FF, set label text color to #000000, add a 3px top border with color rgba(255,255,255,0.8), show the cost value in black. When unselected: background rgba(0,0,0,0.4), label color #7A8FA8, no top border, cost color depends on affordability (red if can't afford, amber if barely, white if comfortable). Add keyboard shortcuts: press 1 for ArcReactor, 2 for Turret, 3 for Bunker. Show hotkey badge '[1]' '[2]' '[3]' in the top-right corner of each button at 10px font size."
+      },
+      {
+        "task": "Mission node redesign",
+        "prompt": "In the Mission Map scene, redesign MissionNode prefab. Minimum size: 110px wide × 70px tall. Layout inside node: (1) mission number top-left, 13px, weight 700, color set by state, (2) mission name center, 11px, weight 500, (3) status badge bottom-center, 9px UPPERCASE pill shape. States: CLEARED (bg rgba(61,204,126,0.15), border 1.5px #3DCC7E), READY (bg rgba(0,212,255,0.12), border 1.5px #00D4FF), SELECTED (bg rgba(0,212,255,0.25), border 2px #00D4FF, add EventTrigger for glow pulse animation), LOCKED (bg rgba(255,255,255,0.04), border 1px dashed rgba(255,255,255,0.1), text opacity 0.2). Ensure all mission nodes have a minimum touch target of 44×44px using an invisible extended hit area if needed."
+      },
+      {
+        "task": "Energy HUD redesign",
+        "prompt": "Find the Energy display in the in-game HUD top-left. Replace simple 'Energy: 75' text with a compact component: lightning bolt icon (16×16px sprite or TextMeshPro rich text icon) + current value + '/' + max value text, e.g. '⚡ 75 / 150'. Create script EnergyHUDController.cs: (1) update display every frame or on energy change event, (2) when current energy < 30% of max: tween text color to #E84040 and start a subtle opacity pulse animation (0.8 to 1.0, 1.2s loop), (3) when current energy is enough to place the selected tool: flash text to #3DCC7E for 0.3s then return to normal, (4) when not enough energy to place selected tool: show a quick shake animation (2px left-right, 3 times, 0.15s each)."
+      }
+    ]
+  }
+}

@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 6bf61da6d97ba499d821e45d1881536d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7d9a9f04c0b3cd84c8a3f3e20adb7b1d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -107,5 +107,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lawnmower
   grid: {fileID: 0}
   row: 0
-  speed: 8
-  killDistance: 0.6
+  warningDelay: 0.18
+  beamDuration: 0.35
+  damage: 99999
+  beamLine: {fileID: 0}
+  beamColor: {r: 1, g: 0.18, b: 0.05, a: 1}
+  beamWidth: 0.08

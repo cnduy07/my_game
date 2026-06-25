@@ -178,8 +178,8 @@ MonoBehaviour:
   grid: {fileID: 60195756}
   enemyPrefab: {fileID: 6305580585309829948, guid: 4e174d0ae721b4d2bb2042abb5d08b24, type: 3}
   armoredPrefab: {fileID: 6305580585309829948, guid: df5ea8454f9f947a484d25f8e1c35d03, type: 3}
-  fastPrefab: {fileID: 0}
-  shieldPrefab: {fileID: 0}
+  fastPrefab: {fileID: 6305580585309829948, guid: a86bb4e8603e4db2b2691697e9770f10, type: 3}
+  shieldPrefab: {fileID: 6305580585309829948, guid: b942f3f54a5548aaa26c6f759cb4ca53, type: 3}
   waveCount: 5
   baseEnemies: 3
   enemiesIncreasePerWave: 2
@@ -466,7 +466,7 @@ MonoBehaviour:
     prefab: {fileID: 6305580585309829948, guid: 4e174d0ae721b4d2bb2042abb5d08b24, type: 3}
     maxHealth: 100
     deathAnimTime: 0.4
-    speed: 0.3
+    speed: 0.27
     attackDamage: 25
     attackSfxInterval: 1.1
     projectileDamageMultiplier: 1
@@ -478,7 +478,7 @@ MonoBehaviour:
     prefab: {fileID: 6305580585309829948, guid: df5ea8454f9f947a484d25f8e1c35d03, type: 3}
     maxHealth: 300
     deathAnimTime: 2
-    speed: 0.3
+    speed: 0.27
     attackDamage: 30
     attackSfxInterval: 1.1
     projectileDamageMultiplier: 0.85
@@ -538,6 +538,15 @@ MonoBehaviour:
   accentColor: {r: 0.13, g: 0.82, b: 0.95, a: 1}
   warningColor: {r: 1, g: 0.55, b: 0.17, a: 1}
   disabledColor: {r: 0.33, g: 0.38, b: 0.45, a: 0.86}
+  menuHeroSprite: {fileID: 21300000, guid: 83e04a5beedc0084385b083a13e0fa21, type: 3}
+  boardBackgroundSprite: {fileID: 21300000, guid: da6711c14bb693245917f66f7f2256ce, type: 3}
+  buttonSprite: {fileID: 21300000, guid: b8a4b7cf7d2c4b79a0d2a27c23f1e6c9, type: 3}
+  panelSprite: {fileID: 21300000, guid: d4dd9307f1ba6ce4486f225836859244, type: 3}
+  arcReactorIcon: {fileID: 21300000, guid: dad900de8ac09904d9c4fc5263627280, type: 3}
+  turretIcon: {fileID: 21300000, guid: a0fb79986828bda4c8d1e70ba203e9d2, type: 3}
+  bunkerIcon: {fileID: 21300000, guid: edcff1e60391c1d4fbb6fa263e592d5f, type: 3}
+  snowGunIcon: {fileID: 21300000, guid: c1fa5dabb4404774298dabcacd3a65be, type: 3}
+  droneEmpIcon: {fileID: 21300000, guid: e30eb63f47679bb45a843df45232d1cf, type: 3}
 --- !u!114 &53209497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661,9 +670,11 @@ MonoBehaviour:
   gridLineColor: {r: 0.16, g: 0.29, b: 0.34, a: 0.68}
   accentLineColor: {r: 0.08, g: 0.85, b: 0.96, a: 0.72}
   dangerLineColor: {r: 1, g: 0.24, b: 0.12, a: 0.62}
+  boardBackgroundSprite: {fileID: 21300000, guid: da6711c14bb693245917f66f7f2256ce, type: 3}
+  boardBackgroundOpacity: 1
   outerPadding: 0.36
-  backdropPaddingX: 2.35
-  backdropPaddingY: 1.2
+  backdropPaddingX: 3.35
+  backdropPaddingY: 1.65
   gridLineWidth: 0.025
   accentLineWidth: 0.055
 --- !u!1 &519420028

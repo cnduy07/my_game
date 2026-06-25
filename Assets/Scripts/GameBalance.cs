@@ -303,7 +303,7 @@ public class EnemyBalance
     public GameObject prefab;
     public float maxHealth = 100f;
     public float deathAnimTime = 0.8f;
-    public float speed = 0.3f;
+    public float speed = 0.27f;
     public float attackDamage = 25f;
     public float attackSfxInterval = 1.1f;
 

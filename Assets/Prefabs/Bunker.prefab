@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 8f5e5994aa1be479a987a36a17778090, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 759379ea34f19fc43b34abee180d801b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -123,11 +123,11 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DamageStages
   health: {fileID: 0}
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 2617603157166847889}
   stages:
-  - {fileID: 21300000, guid: 8f5e5994aa1be479a987a36a17778090, type: 3}
-  - {fileID: 21300000, guid: b073ca13713df47dab80e3beb82b23a0, type: 3}
-  - {fileID: 21300000, guid: 88afab709e2d7468e84398f4b66d327b, type: 3}
+  - {fileID: 21300000, guid: 759379ea34f19fc43b34abee180d801b, type: 3}
+  - {fileID: 21300000, guid: dcdd94492946e4c4394312ad03c0b0a5, type: 3}
+  - {fileID: 21300000, guid: 6259fd3e65ad6cf4cbbe2988d4eaeeb0, type: 3}
   showFinalStageBeforeDestroy: 1
 --- !u!114 &-1964709117047045837
 MonoBehaviour:

@@ -12,21 +12,32 @@ public partial class GameUiController : MonoBehaviour
     [Header("HUD")]
     public bool isPaused;
     public bool showMainMenuOnLaunch = true;
-    public Color backgroundColor = new Color(0.035f, 0.05f, 0.075f, 0.94f);
-    public Color panelColor = new Color(0.09f, 0.13f, 0.18f, 0.92f);
-    public Color panelSoftColor = new Color(0.13f, 0.18f, 0.24f, 0.9f);
-    public Color accentColor = new Color(0.13f, 0.82f, 0.95f, 1f);
-    public Color warningColor = new Color(1f, 0.55f, 0.17f, 1f);
-    public Color disabledColor = new Color(0.33f, 0.38f, 0.45f, 0.86f);
+    public Color backgroundColor = UiSpec.Background;
+    public Color panelColor = UiSpec.Panel;
+    public Color panelSoftColor = UiSpec.Panel;
+    public Color accentColor = UiSpec.Border;
+    public Color warningColor = UiSpec.Accent;
+    public Color disabledColor = UiSpec.ButtonDisabled;
+
+    [Header("Generated Art")]
+    public Sprite menuHeroSprite;
+    public Sprite boardBackgroundSprite;
+    public Sprite buttonSprite;
+    public Sprite panelSprite;
+    public Sprite arcReactorIcon;
+    public Sprite turretIcon;
+    public Sprite bunkerIcon;
+    public Sprite snowGunIcon;
+    public Sprite droneEmpIcon;
 
     const float ReferenceWidth = 1920f;
     const float ReferenceHeight = 1080f;
-    const float SeedCardWidth = 188f;
-    const float SeedCardHeight = 86f;
-    const float SeedTraySpacing = 10f;
-    const float SeedTrayHorizontalPadding = 28f;
+    const float SeedCardWidth = 174f;
+    const float SeedCardHeight = 78f;
+    const float SeedTraySpacing = 7f;
+    const float SeedTrayHorizontalPadding = 24f;
     const float SeedTrayMinWidth = 420f;
-    const float SeedTrayMaxWidth = 1100f;
+    const float SeedTrayMaxWidth = 980f;
     const float CampaignNodeWidth = 136f;
     const float CampaignNodeHeight = 96f;
     const float CampaignNodeStep = 190f;
@@ -61,9 +72,16 @@ public partial class GameUiController : MonoBehaviour
     TextMeshProUGUI modalTitleText;
     TextMeshProUGUI modalSubtitleText;
     TextMeshProUGUI progressText;
+    RectTransform modalStatsPanel;
+    readonly TextMeshProUGUI[] modalStatTexts = new TextMeshProUGUI[5];
+    readonly Image[] modalStatIcons = new Image[5];
     RectTransform terminalSceneBackdrop;
     TextMeshProUGUI terminalSceneText;
     Image terminalSceneTint;
+    Image modalResultGlow;
+    Image modalResultSweep;
+    Image modalResultCore;
+    Image terminalSweepLine;
     TextMeshProUGUI musicText;
     Slider musicSlider;
     TextMeshProUGUI sfxText;
@@ -115,6 +133,10 @@ public partial class GameUiController : MonoBehaviour
     {
         public Button button;
         public Image frame;
+        public Image selectedGlow;
+        public Image statusStrip;
+        public Image iconBay;
+        public Image icon;
         public Image cooldownFill;
         public TextMeshProUGUI label;
         public TextMeshProUGUI cost;
@@ -354,13 +376,13 @@ public partial class GameUiController : MonoBehaviour
 
     void BuildSeedTray(Transform parent)
     {
-        seedTray = CreatePanel("SeedTray", parent, new Color(0.035f, 0.048f, 0.07f, 0.97f));
-        AddFrame(seedTray, new Color(0.1f, 0.2f, 0.27f, 0.9f));
-        AddCornerTicks(seedTray, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
-        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-550f, 12f), new Vector2(550f, 122f));
+        seedTray = CreatePanel("SeedTray", parent, new Color(0.014f, 0.02f, 0.032f, 0.96f));
+        AddFrame(seedTray, new Color(0.05f, 0.18f, 0.24f, 0.84f));
+        AddCornerTicks(seedTray, new Color(accentColor.r, accentColor.g, accentColor.b, 0.26f));
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-500f, 14f), new Vector2(500f, 112f));
 
         HorizontalLayoutGroup layout = seedTray.gameObject.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(14, 14, 12, 12);
+        layout.padding = new RectOffset(12, 12, 10, 10);
         layout.spacing = SeedTraySpacing;
         layout.childAlignment = TextAnchor.MiddleCenter;
         layout.childControlWidth = true;
@@ -388,26 +410,45 @@ public partial class GameUiController : MonoBehaviour
         overlayImage.color = new Color(0f, 0f, 0f, 0.42f);
         SetAnchor((RectTransform)modalOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-        modalCard = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.06f, 0.072f, 0.095f, 0.98f));
-        AddFrame(modalCard, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
-        AddCornerTicks(modalCard, new Color(accentColor.r, accentColor.g, accentColor.b, 0.44f));
+        modalCard = CreatePanel("ModalCard", modalOverlay.transform, new Color(0.01f, 0.018f, 0.026f, 0.97f));
+        AddFrame(modalCard, UiSpec.Border, new Vector2(2f, -2f));
+        AddCornerTicks(modalCard, new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.42f));
         SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-430f, -286f), new Vector2(430f, 286f));
 
-        modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 36, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalResultGlow = CreateImage("ModalResultGlow", modalCard, new Color(accentColor.r, accentColor.g, accentColor.b, 0.08f));
+        modalResultGlow.raycastTarget = false;
+        SetAnchor(modalResultGlow.rectTransform, new Vector2(0.08f, 0.56f), new Vector2(0.92f, 0.91f), Vector2.zero, Vector2.zero);
+        modalResultGlow.gameObject.SetActive(false);
+
+        modalResultSweep = CreateImage("ModalResultSweep", modalCard, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
+        modalResultSweep.raycastTarget = false;
+        SetAnchor(modalResultSweep.rectTransform, new Vector2(0.12f, 0.69f), new Vector2(0.88f, 0.69f), new Vector2(0f, -3f), new Vector2(0f, 3f));
+        modalResultSweep.gameObject.SetActive(false);
+
+        modalResultCore = CreateImage("ModalResultCore", modalCard, new Color(0f, 0f, 0f, 0.24f));
+        modalResultCore.raycastTarget = false;
+        SetAnchor(modalResultCore.rectTransform, new Vector2(0.16f, 0.29f), new Vector2(0.84f, 0.62f), Vector2.zero, Vector2.zero);
+        AddFrame(modalResultCore.rectTransform, new Color(0.1f, 0.32f, 0.38f, 0.34f));
+        modalResultCore.gameObject.SetActive(false);
+
+        modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 32, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -76f), new Vector2(-28f, -22f));
 
-        modalSubtitleText = CreateText("ModalSubtitle", modalCard, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
-        modalSubtitleText.color = new Color(0.82f, 0.93f, 0.98f, 1f);
+        modalSubtitleText = CreateText("ModalSubtitle", modalCard, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalSubtitleText.color = UiSpec.Text;
         SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -116f), new Vector2(-28f, -78f));
 
-        progressText = CreateText("ProgressText", modalCard, "", 19, FontStyle.Normal, TextAnchor.MiddleCenter);
-        progressText.color = new Color(0.86f, 0.91f, 0.95f, 1f);
+        progressText = CreateText("ProgressText", modalCard, "", 14, FontStyle.Normal, TextAnchor.MiddleCenter);
+        progressText.color = UiSpec.TextMuted;
         SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -166f), new Vector2(-52f, -126f));
+
+        BuildModalStatsPanel();
 
         terminalSceneBackdrop = CreatePanel("TerminalSceneBackdrop", modalOverlay.transform, new Color(0.02f, 0.034f, 0.045f, 0.88f));
         terminalSceneBackdrop.SetSiblingIndex(0);
         SetAnchor(terminalSceneBackdrop, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
         BuildTerminalScene(terminalSceneBackdrop);
+        terminalSceneBackdrop.gameObject.SetActive(false);
 
         musicText = CreateText("MusicText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(musicText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -214f), new Vector2(-52f, -178f));
@@ -435,23 +476,23 @@ public partial class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 1f), new Vector2(1f, 1f), new Vector2(18f, -388f), new Vector2(-110f, -348f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
-        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
+        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 14, UiSpec.ButtonNormal, UiSpec.Text);
         resumeButton.onClick.AddListener(TogglePause);
         AddFrame((RectTransform)resumeButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
 
-        restartButton = CreateButton("RestartButton", modalCard, "RESTART", 22, panelSoftColor, Color.white);
+        restartButton = CreateButton("RestartButton", modalCard, "RESTART", 14, UiSpec.ButtonNormal, UiSpec.Text);
         restartButton.onClick.AddListener(RestartLevel);
         AddFrame((RectTransform)restartButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSION", 22, panelSoftColor, Color.white);
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSION", 14, UiSpec.ButtonNormal, UiSpec.Text);
         modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
         AddFrame((RectTransform)modalLevelSelectButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        mainMenuButton = CreateButton("MainMenuButton", modalCard, "MAIN MENU", 22, panelSoftColor, Color.white);
+        mainMenuButton = CreateButton("MainMenuButton", modalCard, "MAIN MENU", 14, UiSpec.ButtonNormal, UiSpec.Text);
         mainMenuButton.onClick.AddListener(ReturnToMainMenu);
         AddFrame((RectTransform)mainMenuButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
+        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 14, UiSpec.ButtonNormal, UiSpec.Text);
         nextLevelButton.onClick.AddListener(GoToNextLevel);
         nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
         AddFrame((RectTransform)nextLevelButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
@@ -460,15 +501,87 @@ public partial class GameUiController : MonoBehaviour
         modalOverlay.SetActive(false);
     }
 
+    void BuildModalStatsPanel()
+    {
+        modalStatsPanel = new GameObject("MissionReportStats", typeof(RectTransform)).GetComponent<RectTransform>();
+        modalStatsPanel.SetParent(modalCard, false);
+        SetAnchor(modalStatsPanel, new Vector2(0.16f, 0.28f), new Vector2(0.84f, 0.64f), Vector2.zero, Vector2.zero);
+
+        string[] glyphs = { "M", "W", "K", "E", "T" };
+        for (int i = 0; i < modalStatTexts.Length; i++)
+        {
+            RectTransform row = new GameObject($"StatRow_{i}", typeof(RectTransform)).GetComponent<RectTransform>();
+            row.SetParent(modalStatsPanel, false);
+            float top = 1f - i * 0.2f;
+            SetAnchor(row, new Vector2(0f, top - 0.16f), new Vector2(1f, top - 0.01f), Vector2.zero, Vector2.zero);
+
+            Image rowPlate = CreateImage("Backplate", row, new Color(0.012f, 0.035f, 0.045f, 0.62f));
+            rowPlate.raycastTarget = false;
+            SetAnchor(rowPlate.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            Image icon = CreateImage("Icon", row, new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.22f));
+            modalStatIcons[i] = icon;
+            SetAnchor(icon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(10f, -15f), new Vector2(54f, 15f));
+            AddFrame(icon.rectTransform, new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.5f));
+            AddStatIconDetails(icon.rectTransform, i);
+
+            TextMeshProUGUI glyph = CreateText("Glyph", icon.transform, glyphs[i], 9, FontStyle.Bold, TextAnchor.MiddleCenter);
+            glyph.color = new Color(UiSpec.Text.r, UiSpec.Text.g, UiSpec.Text.b, 0.86f);
+            SetAnchor(glyph.rectTransform, new Vector2(0.32f, 0f), Vector2.one, Vector2.zero, Vector2.zero);
+
+            TextMeshProUGUI value = CreateText("Value", row, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+            value.color = UiSpec.Text;
+            modalStatTexts[i] = value;
+            SetAnchor(value.rectTransform, Vector2.zero, Vector2.one, new Vector2(72f, 0f), new Vector2(-16f, 0f));
+        }
+
+        modalStatsPanel.gameObject.SetActive(false);
+    }
+
+    void AddStatIconDetails(RectTransform icon, int index)
+    {
+        Color dim = new Color(0f, 0.015f, 0.02f, 0.58f);
+        Color light = new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.62f);
+
+        Image leftBar = CreateImage("IconLeftBar", icon, light);
+        leftBar.raycastTarget = false;
+        SetAnchor(leftBar.rectTransform, new Vector2(0f, 0.18f), new Vector2(0f, 0.82f), new Vector2(4f, 0f), new Vector2(8f, 0f));
+
+        Image core = CreateImage("IconCore", icon, dim);
+        core.raycastTarget = false;
+        SetAnchor(core.rectTransform, new Vector2(0.18f, 0.26f), new Vector2(0.5f, 0.74f), Vector2.zero, Vector2.zero);
+
+        float y = index % 2 == 0 ? 0.64f : 0.36f;
+        Image tick = CreateImage("IconTick", icon, light);
+        tick.raycastTarget = false;
+        SetAnchor(tick.rectTransform, new Vector2(0.18f, y), new Vector2(0.5f, y), new Vector2(0f, -1.5f), new Vector2(0f, 1.5f));
+    }
+
     void BuildTerminalScene(RectTransform parent)
     {
-        terminalSceneTint = CreateImage("TerminalTint", parent, new Color(0.05f, 0.42f, 0.28f, 0.22f));
+        if (boardBackgroundSprite != null)
+        {
+            Image boardArt = CreateImage("GeneratedTerminalBoard", parent, new Color(1f, 1f, 1f, 0.28f));
+            ApplySprite(boardArt, boardBackgroundSprite, new Color(1f, 1f, 1f, 0.28f), false);
+            boardArt.raycastTarget = false;
+            SetAnchor(boardArt.rectTransform, new Vector2(0.04f, 0.12f), new Vector2(0.96f, 0.88f), Vector2.zero, Vector2.zero);
+        }
+
+        terminalSceneTint = CreateImage("TerminalTint", parent, new Color(0.02f, 0.12f, 0.14f, 0.36f));
         terminalSceneTint.raycastTarget = false;
         SetAnchor(terminalSceneTint.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
+        Image vignetteTop = CreateImage("EndSceneTopVignette", parent, new Color(0f, 0f, 0f, 0.5f));
+        vignetteTop.raycastTarget = false;
+        SetAnchor(vignetteTop.rectTransform, new Vector2(0f, 0.74f), Vector2.one, Vector2.zero, Vector2.zero);
+
+        Image vignetteBottom = CreateImage("EndSceneBottomVignette", parent, new Color(0f, 0f, 0f, 0.58f));
+        vignetteBottom.raycastTarget = false;
+        SetAnchor(vignetteBottom.rectTransform, Vector2.zero, new Vector2(1f, 0.26f), Vector2.zero, Vector2.zero);
+
         RectTransform horizon = CreatePanel("Horizon", parent, new Color(0.02f, 0.05f, 0.06f, 0.72f));
         horizon.GetComponent<Image>().raycastTarget = false;
-        SetAnchor(horizon, new Vector2(0f, 0.18f), new Vector2(1f, 0.46f), Vector2.zero, Vector2.zero);
+        SetAnchor(horizon, new Vector2(0f, 0.1f), new Vector2(1f, 0.4f), Vector2.zero, Vector2.zero);
 
         for (int i = 0; i < 8; i++)
         {
@@ -481,7 +594,7 @@ public partial class GameUiController : MonoBehaviour
         RectTransform map = CreatePanel("TerminalMap", parent, new Color(0.015f, 0.026f, 0.034f, 0.64f));
         map.GetComponent<Image>().raycastTarget = false;
         AddFrame(map, new Color(0.08f, 0.32f, 0.38f, 0.46f));
-        SetAnchor(map, new Vector2(0.08f, 0.58f), new Vector2(0.92f, 0.84f), Vector2.zero, Vector2.zero);
+        SetAnchor(map, new Vector2(0.08f, 0.58f), new Vector2(0.92f, 0.86f), Vector2.zero, Vector2.zero);
 
         for (int i = 0; i < 6; i++)
         {
@@ -496,6 +609,10 @@ public partial class GameUiController : MonoBehaviour
         terminalSceneText.characterSpacing = 5f;
         SetAnchor(terminalSceneText.rectTransform, new Vector2(0f, 0.84f), new Vector2(1f, 0.94f), new Vector2(24f, 0f), new Vector2(-24f, 0f));
 
+        terminalSweepLine = CreateImage("TerminalSweepLine", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
+        terminalSweepLine.raycastTarget = false;
+        SetAnchor(terminalSweepLine.rectTransform, new Vector2(0.08f, 0.74f), new Vector2(0.92f, 0.74f), new Vector2(0f, -3f), new Vector2(0f, 3f));
+
         for (int i = 0; i < 10; i++)
         {
             float y = 0.04f + i * 0.095f;
@@ -503,6 +620,18 @@ public partial class GameUiController : MonoBehaviour
             scan.raycastTarget = false;
             SetAnchor(scan.rectTransform, new Vector2(0f, y), new Vector2(1f, y), new Vector2(0f, -1f), new Vector2(0f, 1f));
         }
+
+        for (int i = 0; i < 7; i++)
+        {
+            float x = 0.08f + i * 0.14f;
+            Image beacon = CreateImage($"EndSceneBeacon_{i}", parent, i % 2 == 0
+                ? new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.2f)
+                : new Color(1f, 0.42f, 0.12f, 0.16f));
+            beacon.raycastTarget = false;
+            SetAnchor(beacon.rectTransform, new Vector2(x, 0.08f), new Vector2(x, 0.08f), new Vector2(-5f, -5f), new Vector2(5f, 5f));
+        }
+
+        UiAmbientFx.Create(parent, 18);
     }
 
     void RebuildDynamicUiIfNeeded()
@@ -538,9 +667,7 @@ public partial class GameUiController : MonoBehaviour
             go.transform.SetParent(seedTray, false);
 
             Image frame = go.GetComponent<Image>();
-            frame.color = panelSoftColor;
-            AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.8f));
-            AddCardAccent((RectTransform)go.transform);
+            ApplySprite(frame, buttonSprite, UiSpec.ButtonNormal, false);
 
             LayoutElement layout = go.GetComponent<LayoutElement>();
             layout.preferredWidth = SeedCardWidth;
@@ -549,12 +676,22 @@ public partial class GameUiController : MonoBehaviour
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
-            button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            button.colors = BuildButtonColors(UiSpec.ButtonNormal, UiSpec.ButtonHover);
             button.onClick.AddListener(() =>
             {
                 if (SeedBar.Instance != null)
                     SeedBar.Instance.SelectSeed(index);
             });
+            go.AddComponent<PixelButtonPressOffset>();
+
+            Image selectedGlow = CreateImage("SelectedGlow", go.transform, new Color(accentColor.r, accentColor.g, accentColor.b, 0.16f));
+            selectedGlow.raycastTarget = false;
+            SetAnchor(selectedGlow.rectTransform, Vector2.zero, Vector2.one, new Vector2(3f, 3f), new Vector2(-3f, -3f));
+
+            Image statusStrip = CreateImage("StatusStrip", go.transform, new Color(accentColor.r, accentColor.g, accentColor.b, 0.22f));
+            statusStrip.raycastTarget = false;
+            statusStrip.gameObject.SetActive(false);
+            SetAnchor(statusStrip.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -7f), new Vector2(-8f, -4f));
 
             Image cooldown = CreateImage("CooldownFill", go.transform, new Color(0f, 0f, 0f, 0.52f));
             cooldown.type = Image.Type.Filled;
@@ -562,17 +699,33 @@ public partial class GameUiController : MonoBehaviour
             cooldown.fillOrigin = (int)Image.OriginVertical.Bottom;
             SetAnchor(cooldown.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
-            SetAnchor(label.rectTransform, new Vector2(0f, 0.35f), new Vector2(1f, 1f), new Vector2(8f, -4f), new Vector2(-8f, -2f));
+            Image iconBay = CreateImage("IconBay", go.transform, new Color(0f, 0.01f, 0.018f, 0.48f));
+            iconBay.raycastTarget = false;
+            SetAnchor(iconBay.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(10f, 11f), new Vector2(64f, -11f));
+            AddFrame(iconBay.rectTransform, new Color(0.05f, 0.22f, 0.28f, 0.48f), new Vector2(1f, -1f));
 
-            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter);
+            Image icon = CreateImage("Icon", go.transform, Color.white);
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+            SetAnchor(icon.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(12f, 13f), new Vector2(62f, -13f));
+
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 15, FontStyle.Bold, TextAnchor.MiddleLeft);
+            label.characterSpacing = 1f;
+            SetAnchor(label.rectTransform, new Vector2(0f, 0.42f), new Vector2(1f, 1f), new Vector2(70f, -5f), new Vector2(-8f, -4f));
+
+            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 14, FontStyle.Bold, TextAnchor.MiddleLeft);
             cost.color = new Color(0.88f, 0.96f, 1f, 1f);
-            SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(8f, 2f), new Vector2(-8f, -2f));
+            cost.characterSpacing = 1f;
+            SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(70f, 4f), new Vector2(-8f, -2f));
 
             seedCards.Add(new SeedCard
             {
                 button = button,
                 frame = frame,
+                selectedGlow = selectedGlow,
+                statusStrip = statusStrip,
+                iconBay = iconBay,
+                icon = icon,
                 cooldownFill = cooldown,
                 label = label,
                 cost = cost
@@ -588,7 +741,7 @@ public partial class GameUiController : MonoBehaviour
                              Mathf.Max(0, seedCount - 1) * SeedTraySpacing +
                              SeedTrayHorizontalPadding;
         float width = Mathf.Clamp(contentWidth, SeedTrayMinWidth, SeedTrayMaxWidth);
-        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 12f), new Vector2(width * 0.5f, 122f));
+        SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 14f), new Vector2(width * 0.5f, 112f));
     }
 
     void RebuildRowButtons(int rowCount)
@@ -772,18 +925,64 @@ public partial class GameUiController : MonoBehaviour
             bool ready = seedBar.IsReady(i);
             bool afford = EnergySystem.Instance != null && EnergySystem.Instance.CanAfford(seed.cost);
             float cooldownNormalized = seedBar.GetCooldownNormalized(i);
-            Color normalColor = selected ? accentColor : (ready && afford ? panelSoftColor : disabledColor);
+            Color normalColor = selected
+                ? UiSpec.ButtonHover
+                : (ready && afford ? UiSpec.ButtonNormal : UiSpec.ButtonDisabled);
 
-            card.label.text = seed.label;
-            card.cost.text = ready ? seed.cost.ToString() : $"{seed.cost}  {seedBar.GetCooldownRemaining(i):0.0}s";
+            card.label.text = DisplaySeedLabel(seed.label);
+            card.cost.text = ready ? $"E {seed.cost}" : $"{seedBar.GetCooldownRemaining(i):0.0}s";
+            Sprite icon = IconForSeed(seed.label);
+            if (card.icon != null)
+            {
+                card.icon.sprite = icon;
+                card.icon.gameObject.SetActive(icon != null);
+                card.icon.color = selected || (ready && afford) ? Color.white : new Color(0.58f, 0.66f, 0.72f, 0.86f);
+            }
             card.cooldownFill.fillAmount = cooldownNormalized;
             card.cooldownFill.gameObject.SetActive(cooldownNormalized > 0.001f);
             card.frame.color = normalColor;
-            card.button.colors = BuildButtonColors(normalColor, accentColor);
-            card.label.color = selected ? Color.black : Color.white;
-            card.cost.color = selected ? Color.black : new Color(0.88f, 0.96f, 1f, 1f);
+            card.button.colors = BuildButtonColors(UiSpec.ButtonNormal, UiSpec.ButtonHover);
+            if (card.selectedGlow != null)
+            {
+                card.selectedGlow.gameObject.SetActive(selected);
+                card.selectedGlow.color = new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, selected ? 0.12f : 0f);
+            }
+            if (card.statusStrip != null)
+                card.statusStrip.gameObject.SetActive(false);
+            if (card.iconBay != null)
+                card.iconBay.color = selected
+                    ? new Color(0.01f, 0.06f, 0.075f, 0.82f)
+                    : new Color(0f, 0.01f, 0.018f, 0.48f);
+            card.label.color = selected || (ready && afford) ? UiSpec.Text : UiSpec.TextMuted;
+            card.cost.color = selected && !afford
+                ? UiSpec.Accent
+                : (selected || (ready && afford) ? UiSpec.Text : UiSpec.TextMuted);
             card.button.interactable = selected || (ready && afford);
         }
+    }
+
+    string DisplaySeedLabel(string label)
+    {
+        if (string.IsNullOrWhiteSpace(label)) return "";
+
+        if (label.Contains("Arc")) return "ARC";
+        if (label.Contains("Turret")) return "TURRET";
+        if (label.Contains("Bunker")) return "BUNKER";
+        if (label.Contains("Snow")) return "SNOW";
+        if (label.Contains("Drone")) return "EMP";
+        return label.ToUpperInvariant();
+    }
+
+    Sprite IconForSeed(string label)
+    {
+        if (string.IsNullOrWhiteSpace(label)) return null;
+
+        if (label.Contains("Arc")) return arcReactorIcon;
+        if (label.Contains("Turret")) return turretIcon != null ? turretIcon : buttonSprite;
+        if (label.Contains("Bunker")) return bunkerIcon;
+        if (label.Contains("Snow")) return snowGunIcon != null ? snowGunIcon : turretIcon;
+        if (label.Contains("Drone")) return droneEmpIcon;
+        return null;
     }
 
     void RefreshRowButtons()
@@ -834,6 +1033,7 @@ public partial class GameUiController : MonoBehaviour
 
         bool gameOver = GameManager.Instance != null && GameManager.Instance.IsGameOver;
         bool won = GameManager.Instance != null && GameManager.Instance.IsWon;
+
         bool missionMapOpen = levelSelectOverlay != null && levelSelectOverlay.activeSelf;
         bool show = !mainMenuOpen && !missionMapOpen && (isPaused || gameOver || won);
         modalOverlay.SetActive(show);
@@ -847,27 +1047,85 @@ public partial class GameUiController : MonoBehaviour
             modalTitleText.text = "PAUSED";
 
         bool terminal = gameOver || won;
+        SetAnchor(modalCard, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            terminal ? new Vector2(-560f, -330f) : new Vector2(-430f, -286f),
+            terminal ? new Vector2(560f, 330f) : new Vector2(430f, 286f));
+        Image overlayImage = modalOverlay != null ? modalOverlay.GetComponent<Image>() : null;
+        if (overlayImage != null)
+            overlayImage.color = terminal ? new Color(0f, 0f, 0f, 0.78f) : new Color(0f, 0f, 0f, 0.42f);
         if (terminalSceneBackdrop != null)
             terminalSceneBackdrop.gameObject.SetActive(terminal);
         if (terminalSceneText != null)
             terminalSceneText.text = won ? "SECTOR SECURED" : "CORELINE BREACHED";
         if (terminalSceneTint != null)
-            terminalSceneTint.color = won ? new Color(0.05f, 0.42f, 0.28f, 0.22f) : new Color(0.62f, 0.04f, 0.02f, 0.24f);
+            terminalSceneTint.color = terminal
+                ? (won ? new Color(0.02f, 0.24f, 0.22f, 0.4f) : new Color(0.26f, 0.05f, 0.035f, 0.42f))
+                : Color.clear;
+        Color resultAccent = won ? new Color(0.32f, 1f, 0.68f, 1f) : (gameOver ? new Color(1f, 0.28f, 0.16f, 1f) : accentColor);
+        if (modalResultGlow != null)
+            modalResultGlow.gameObject.SetActive(terminal);
+        if (modalResultSweep != null)
+            modalResultSweep.gameObject.SetActive(terminal);
+        if (modalResultCore != null)
+            modalResultCore.gameObject.SetActive(terminal);
+        if (terminalSweepLine != null)
+            terminalSweepLine.gameObject.SetActive(terminal);
         Image modalImage = modalCard != null ? modalCard.GetComponent<Image>() : null;
         if (modalImage != null)
-            modalImage.color = won
-                ? new Color(0.035f, 0.095f, 0.088f, 0.98f)
-                : (gameOver ? new Color(0.105f, 0.048f, 0.048f, 0.98f) : new Color(0.06f, 0.072f, 0.095f, 0.98f));
-        modalTitleText.color = won ? new Color(0.73f, 1f, 0.82f, 1f) : (gameOver ? new Color(1f, 0.72f, 0.62f, 1f) : Color.white);
+            modalImage.color = terminal ? new Color(0.006f, 0.014f, 0.022f, 0.96f) : UiSpec.Panel;
+        modalTitleText.color = terminal ? resultAccent : UiSpec.Text;
+        modalSubtitleText.color = UiSpec.Text;
+        progressText.color = terminal ? UiSpec.TextMuted : UiSpec.Text;
+        if (modalStatsPanel != null)
+            modalStatsPanel.gameObject.SetActive(terminal);
+        if (progressText != null)
+            progressText.gameObject.SetActive(!terminal);
+        modalTitleText.fontSize = terminal ? 68f : 32f;
+        modalTitleText.fontSizeMax = modalTitleText.fontSize;
+        modalTitleText.fontSizeMin = modalTitleText.fontSize;
+        modalTitleText.characterSpacing = terminal ? 5f : 0f;
+        modalSubtitleText.fontSize = terminal ? 24f : 16f;
+        modalSubtitleText.fontSizeMax = modalSubtitleText.fontSize;
+        modalSubtitleText.fontSizeMin = modalSubtitleText.fontSize;
+        modalSubtitleText.characterSpacing = terminal ? 3f : 0f;
+        progressText.fontSize = terminal ? 16f : 14f;
+        progressText.fontSizeMax = progressText.fontSize;
+        progressText.fontSizeMin = progressText.fontSize;
+        if (!terminal)
+        {
+            modalTitleText.rectTransform.localScale = Vector3.one;
+            modalSubtitleText.rectTransform.localScale = Vector3.one;
+        }
 
         if (gameOver || won)
-            SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -220f), new Vector2(-52f, -126f));
+        {
+            SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -154f), new Vector2(-52f, -60f));
+            SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -204f), new Vector2(-52f, -158f));
+            if (modalStatsPanel != null)
+                SetAnchor(modalStatsPanel, new Vector2(0.27f, 0.28f), new Vector2(0.73f, 0.56f), Vector2.zero, Vector2.zero);
+            if (modalResultGlow != null)
+                SetAnchor(modalResultGlow.rectTransform, new Vector2(0.12f, 0.6f), new Vector2(0.88f, 0.89f), Vector2.zero, Vector2.zero);
+            if (modalResultSweep != null)
+                SetAnchor(modalResultSweep.rectTransform, new Vector2(0.24f, 0.59f), new Vector2(0.76f, 0.59f), new Vector2(0f, -3f), new Vector2(0f, 3f));
+            if (modalResultCore != null)
+                SetAnchor(modalResultCore.rectTransform, new Vector2(0.22f, 0.24f), new Vector2(0.78f, 0.57f), Vector2.zero, Vector2.zero);
+        }
         else
+        {
+            SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -76f), new Vector2(-28f, -22f));
+            SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -116f), new Vector2(-28f, -78f));
             SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -166f), new Vector2(-52f, -126f));
+        }
 
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
-        modalSubtitleText.text = level != null ? level.displayName : "";
-        if (level != null)
+        modalSubtitleText.text = terminal ? (won ? "MISSION COMPLETE" : "CORELINE BREACHED") : (level != null ? level.displayName : "");
+        if (terminal)
+        {
+            RefreshTerminalReport(level, won, gameOver);
+            RefreshTerminalEffects(won, gameOver, resultAccent);
+            progressText.text = "";
+        }
+        else if (level != null)
         {
             bool completed = PlayerProgress.IsLevelCompleted(level);
             string progress = $"Cleared: {(completed ? "Yes" : "No")}   |   Highest: {PlayerProgress.HighestCompletedLevel}";
@@ -909,41 +1167,153 @@ public partial class GameUiController : MonoBehaviour
         bool canPlayNext = won && nextLevel != null && LevelManager.Instance != null && LevelManager.Instance.IsLevelUnlocked(nextLevel);
         if (nextLevelButton != null)
         {
-            nextLevelButton.gameObject.SetActive(canPlayNext);
-            nextLevelButton.interactable = canPlayNext;
+            nextLevelButton.gameObject.SetActive(false);
+            nextLevelButton.interactable = false;
         }
         if (nextLevelButtonText != null && nextLevel != null)
             nextLevelButtonText.text = $"MISSION {nextLevel.levelNumber}";
 
+        RefreshModalButtonStyle(gameOver, won, canPlayNext);
         LayoutModalButtons(gameOver, won, canPlayNext);
+    }
+
+    void RefreshTerminalReport(LevelDefinition level, bool won, bool gameOver)
+    {
+        EnemySpawner spawner = EnemySpawner.Instance;
+        GameStatsTracker stats = GameStatsTracker.Instance;
+        string missionName = level != null ? $"{level.levelNumber:00}  {level.displayName}" : "Unknown sector";
+        string wave = spawner != null ? $"{Mathf.Max(0, spawner.CurrentWave)}/{Mathf.Max(1, spawner.WaveCount)}" : "--";
+        int kills = stats != null ? stats.EnemiesKilled : 0;
+        int energy = stats != null ? stats.EnergyCollected : 0;
+        string playTime = stats != null ? FormatTime(stats.PlayTimeSeconds) : "--:--";
+
+        SetModalStat(0, "Mission", missionName, UiSpec.Border);
+        SetModalStat(1, "Wave reached", wave, won ? new Color(0.32f, 1f, 0.68f, 1f) : UiSpec.Accent);
+        SetModalStat(2, "Enemies killed", kills.ToString("N0"), UiSpec.TextMuted);
+        SetModalStat(3, "Energy collected", energy.ToString("N0"), UiSpec.Border);
+        SetModalStat(4, "Play time", playTime, UiSpec.TextMuted);
+    }
+
+    void RefreshTerminalEffects(bool won, bool gameOver, Color resultAccent)
+    {
+        float slowPulse = 0.5f + Mathf.Sin(Time.unscaledTime * 2.8f) * 0.5f;
+        float sharpPulse = Mathf.PerlinNoise(8.1f, Time.unscaledTime * 9f);
+        float brightness = Mathf.Lerp(0.72f, 1.08f, slowPulse);
+        if (sharpPulse > 0.78f)
+            brightness += 0.18f;
+
+        Color titleColor = new Color(
+            Mathf.Clamp01(resultAccent.r * brightness),
+            Mathf.Clamp01(resultAccent.g * brightness),
+            Mathf.Clamp01(resultAccent.b * brightness),
+            1f);
+
+        if (modalTitleText != null)
+        {
+            modalTitleText.color = titleColor;
+            float titleScale = Mathf.Lerp(1f, 1.035f, slowPulse);
+            if (sharpPulse > 0.9f)
+                titleScale += 0.025f;
+            modalTitleText.rectTransform.localScale = new Vector3(titleScale, titleScale, 1f);
+        }
+        if (modalSubtitleText != null)
+        {
+            modalSubtitleText.color = new Color(0.82f, 0.96f, 1f, 0.92f);
+            float subtitleScale = Mathf.Lerp(1f, 1.012f, slowPulse);
+            modalSubtitleText.rectTransform.localScale = new Vector3(subtitleScale, subtitleScale, 1f);
+        }
+        if (terminalSceneText != null)
+            terminalSceneText.color = new Color(resultAccent.r, resultAccent.g, resultAccent.b, Mathf.Lerp(0.34f, 0.68f, slowPulse));
+        if (terminalSceneTint != null)
+            terminalSceneTint.color = won
+                ? new Color(0.02f, 0.24f, 0.22f, Mathf.Lerp(0.32f, 0.44f, slowPulse))
+                : new Color(0.26f, 0.05f, 0.035f, Mathf.Lerp(0.34f, 0.48f, slowPulse));
+        if (modalResultGlow != null)
+            modalResultGlow.color = new Color(resultAccent.r, resultAccent.g, resultAccent.b, Mathf.Lerp(0.08f, 0.16f, slowPulse));
+        if (modalResultSweep != null)
+            modalResultSweep.color = new Color(resultAccent.r, resultAccent.g, resultAccent.b, Mathf.Lerp(0.2f, 0.42f, slowPulse));
+        if (modalResultCore != null)
+        {
+            Image core = modalResultCore.GetComponent<Image>();
+            if (core != null)
+                core.color = new Color(0.006f, 0.026f, 0.032f, 0.78f);
+        }
+        if (terminalSweepLine != null)
+        {
+            float y = Mathf.Lerp(0.18f, 0.86f, Mathf.Repeat(Time.unscaledTime * 0.18f, 1f));
+            SetAnchor(terminalSweepLine.rectTransform, new Vector2(0.06f, y), new Vector2(0.94f, y), new Vector2(0f, -2f), new Vector2(0f, 2f));
+            terminalSweepLine.color = new Color(resultAccent.r, resultAccent.g, resultAccent.b, 0.18f);
+        }
+    }
+
+    void SetModalStat(int index, string label, string value, Color iconColor)
+    {
+        if (index < 0 || index >= modalStatTexts.Length) return;
+
+        if (modalStatTexts[index] != null)
+            modalStatTexts[index].text = $"{label.ToUpperInvariant()}   {value}";
+        if (modalStatIcons[index] != null)
+            modalStatIcons[index].color = new Color(iconColor.r, iconColor.g, iconColor.b, 0.36f);
+    }
+
+    string FormatTime(float seconds)
+    {
+        int total = Mathf.Max(0, Mathf.RoundToInt(seconds));
+        int minutes = total / 60;
+        int secs = total % 60;
+        return $"{minutes:00}:{secs:00}";
+    }
+
+    void RefreshModalButtonStyle(bool gameOver, bool won, bool canPlayNext)
+    {
+        if (!gameOver && !won)
+        {
+            SetButtonStyle(resumeButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+            SetButtonStyle(restartButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+            SetButtonStyle(modalLevelSelectButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+            SetButtonStyle(mainMenuButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+            return;
+        }
+
+        SetButtonStyle(restartButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+        SetButtonStyle(modalLevelSelectButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+        SetButtonStyle(mainMenuButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
+        SetButtonStyle(nextLevelButton, UiSpec.ButtonNormal, UiSpec.Text, UiSpec.Border);
     }
 
     void LayoutModalButtons(bool gameOver, bool won, bool canPlayNext)
     {
+        float width = UiSpec.PopupButtonWidth;
+        float height = UiSpec.PopupButtonHeight;
         float yMin = 34f;
-        float yMax = 88f;
+        float yMax = yMin + height;
 
         if (!gameOver && !won)
         {
-            SetAnchor((RectTransform)resumeButton.transform, new Vector2(0f, 0f), new Vector2(0.25f, 0f), new Vector2(42f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)restartButton.transform, new Vector2(0.25f, 0f), new Vector2(0.5f, 0f), new Vector2(6f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.5f, 0f), new Vector2(0.75f, 0f), new Vector2(6f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)mainMenuButton.transform, new Vector2(0.75f, 0f), new Vector2(1f, 0f), new Vector2(6f, yMin), new Vector2(-42f, yMax));
+            float gap = 18f;
+            float total = width * 4f + gap * 3f;
+            float start = -total * 0.5f;
+            SetModalButton(resumeButton, start, yMin, width, height);
+            SetModalButton(restartButton, start + (width + gap), yMin, width, height);
+            SetModalButton(modalLevelSelectButton, start + (width + gap) * 2f, yMin, width, height);
+            SetModalButton(mainMenuButton, start + (width + gap) * 3f, yMin, width, height);
             return;
         }
 
-        if (canPlayNext)
-        {
-            SetAnchor((RectTransform)restartButton.transform, new Vector2(0f, 0f), new Vector2(0.25f, 0f), new Vector2(42f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.25f, 0f), new Vector2(0.5f, 0f), new Vector2(6f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)mainMenuButton.transform, new Vector2(0.5f, 0f), new Vector2(0.75f, 0f), new Vector2(6f, yMin), new Vector2(-6f, yMax));
-            SetAnchor((RectTransform)nextLevelButton.transform, new Vector2(0.75f, 0f), new Vector2(1f, 0f), new Vector2(6f, yMin), new Vector2(-42f, yMax));
-            return;
-        }
+        float terminalGap = 24f;
+        float terminalTotal = width * 3f + terminalGap * 2f;
+        float terminalStart = -terminalTotal * 0.5f;
+        SetModalButton(restartButton, terminalStart, 32f, width, height);
+        SetModalButton(modalLevelSelectButton, terminalStart + width + terminalGap, 32f, width, height);
+        SetModalButton(mainMenuButton, terminalStart + (width + terminalGap) * 2f, 32f, width, height);
+    }
 
-        SetAnchor((RectTransform)restartButton.transform, new Vector2(0f, 0f), new Vector2(0.333f, 0f), new Vector2(52f, yMin), new Vector2(-8f, yMax));
-        SetAnchor((RectTransform)modalLevelSelectButton.transform, new Vector2(0.333f, 0f), new Vector2(0.666f, 0f), new Vector2(8f, yMin), new Vector2(-8f, yMax));
-        SetAnchor((RectTransform)mainMenuButton.transform, new Vector2(0.666f, 0f), new Vector2(1f, 0f), new Vector2(8f, yMin), new Vector2(-52f, yMax));
+    void SetModalButton(Button button, float left, float bottom, float width, float height)
+    {
+        if (button == null) return;
+        SetAnchor((RectTransform)button.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(left, bottom),
+            new Vector2(left + width, bottom + height));
     }
 
     void GoToNextLevel()

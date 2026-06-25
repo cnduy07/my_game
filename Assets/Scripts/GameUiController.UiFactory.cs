@@ -9,6 +9,15 @@ public partial class GameUiController
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
         go.transform.SetParent(parent, false);
         Image image = go.GetComponent<Image>();
+        ApplySprite(image, panelSprite, color, false);
+        return (RectTransform)go.transform;
+    }
+
+    RectTransform CreateColorPanel(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        Image image = go.GetComponent<Image>();
         image.color = color;
         return (RectTransform)go.transform;
     }
@@ -30,6 +39,7 @@ public partial class GameUiController
     void AddFrame(RectTransform rect, Color color, Vector2 distance)
     {
         if (rect == null) return;
+        if (rect.GetComponent<Button>() != null) return;
 
         var outline = rect.gameObject.GetComponent<Outline>();
         if (outline == null)
@@ -38,6 +48,21 @@ public partial class GameUiController
         outline.effectColor = color;
         outline.effectDistance = distance;
         outline.useGraphicAlpha = true;
+    }
+
+    void SetButtonStyle(Button button, Color normal, Color textColor, Color frameColor)
+    {
+        if (button == null) return;
+
+        Image image = button.GetComponent<Image>();
+        if (image != null)
+            ApplySprite(image, buttonSprite, UiSpec.ButtonNormal, false);
+
+        button.colors = BuildButtonColors(UiSpec.ButtonNormal, UiSpec.ButtonHover);
+
+        TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
+        if (label != null)
+            label.color = textColor;
     }
 
     TextMeshProUGUI CreateText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor alignment)
@@ -49,10 +74,11 @@ public partial class GameUiController
         label.fontSize = size;
         label.enableAutoSizing = true;
         label.fontSizeMax = size;
-        label.fontSizeMin = Mathf.Max(11f, size * 0.62f);
+        label.fontSizeMin = size;
         label.fontStyle = ToTmpFontStyle(style);
         label.alignment = ToTmpAlignment(alignment);
-        label.color = Color.white;
+        label.color = UiSpec.Text;
+        label.outlineWidth = 0f;
         label.raycastTarget = false;
         label.textWrappingMode = TextWrappingModes.Normal;
         label.overflowMode = TextOverflowModes.Ellipsis;
@@ -64,29 +90,41 @@ public partial class GameUiController
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
         go.transform.SetParent(parent, false);
         Image image = go.GetComponent<Image>();
-        image.color = normal;
-        AddFrame((RectTransform)go.transform, new Color(0.1f, 0.2f, 0.27f, 0.85f));
-        AddButtonAccent((RectTransform)go.transform);
+        ApplySprite(image, buttonSprite, UiSpec.ButtonNormal, false);
 
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.ColorTint;
-        button.colors = BuildButtonColors(normal, accentColor);
+        button.colors = BuildButtonColors(UiSpec.ButtonNormal, UiSpec.ButtonHover);
+        go.AddComponent<PixelButtonPressOffset>();
+        go.AddComponent<UiInteractMotion>();
 
         TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
         label.color = textColor;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
         SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
         return button;
     }
 
+    void ApplySprite(Image image, Sprite sprite, Color color, bool preserveAspect)
+    {
+        if (image == null) return;
+
+        image.color = color;
+        if (sprite == null) return;
+
+        image.sprite = sprite;
+        image.type = HasBorder(sprite) ? Image.Type.Sliced : Image.Type.Simple;
+        image.preserveAspect = preserveAspect;
+    }
+
+    bool HasBorder(Sprite sprite)
+    {
+        return sprite != null && sprite.border.sqrMagnitude > 0.01f;
+    }
+
     void AddButtonAccent(RectTransform parent)
     {
-        Image top = CreateImage("TopAccent", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
-        top.raycastTarget = false;
-        SetAnchor(top.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -5f), new Vector2(-8f, -2f));
-
-        Image bottom = CreateImage("BottomShade", parent, new Color(0f, 0f, 0f, 0.2f));
-        bottom.raycastTarget = false;
-        SetAnchor(bottom.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(8f, 2f), new Vector2(-8f, 5f));
+        // `button_command` owns the visible chrome; avoid extra code-drawn notches/lines.
     }
 
     void AddCardAccent(RectTransform parent)
@@ -129,7 +167,7 @@ public partial class GameUiController
         slider.maxValue = 1f;
         slider.value = Mathf.Clamp01(initialValue);
 
-        RectTransform background = CreatePanel("Background", root.transform, new Color(0.23f, 0.27f, 0.32f, 1f));
+        RectTransform background = CreateColorPanel("Background", root.transform, new Color(0.07f, 0.1f, 0.14f, 1f));
         SetAnchor(background, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         RectTransform fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
@@ -140,7 +178,7 @@ public partial class GameUiController
         SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         Image handle = CreateImage("Handle", root.transform, accentColor);
-        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-12f, -16f), new Vector2(12f, 16f));
+        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-8f, -15f), new Vector2(8f, 15f));
 
         slider.fillRect = fill.rectTransform;
         slider.handleRect = handle.rectTransform;
@@ -200,12 +238,13 @@ public partial class GameUiController
     ColorBlock BuildButtonColors(Color normal, Color highlighted)
     {
         ColorBlock colors = ColorBlock.defaultColorBlock;
-        colors.normalColor = normal;
-        colors.highlightedColor = Color.Lerp(normal, highlighted, 0.35f);
-        colors.pressedColor = highlighted;
-        colors.selectedColor = Color.Lerp(normal, highlighted, 0.25f);
-        colors.disabledColor = disabledColor;
+        colors.normalColor = UiSpec.ButtonNormal;
+        colors.highlightedColor = UiSpec.ButtonHover;
+        colors.pressedColor = UiSpec.ButtonPressed;
+        colors.selectedColor = UiSpec.ButtonHover;
+        colors.disabledColor = UiSpec.ButtonDisabled;
         colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.05f;
         return colors;
     }
 

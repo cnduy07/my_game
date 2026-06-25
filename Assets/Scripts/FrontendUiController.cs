@@ -25,6 +25,12 @@ public class FrontendUiController : MonoBehaviour
     public LevelCatalog levelCatalog;
     public bool unlockAllLevelsForTesting = true;
 
+    [Header("Generated Art")]
+    public Sprite menuHeroSprite;
+    public Sprite boardBackgroundSprite;
+    public Sprite buttonSprite;
+    public Sprite panelSprite;
+
     readonly Color bg = new Color(0.012f, 0.018f, 0.03f, 1f);
     readonly Color panel = new Color(0.035f, 0.05f, 0.075f, 0.94f);
     readonly Color panelSoft = new Color(0.08f, 0.115f, 0.155f, 0.95f);
@@ -113,6 +119,7 @@ public class FrontendUiController : MonoBehaviour
     void BuildBackground()
     {
         Image baseImage = CreateImage("Background", root, bg);
+        ApplySprite(baseImage, menuHeroSprite, menuHeroSprite != null ? new Color(1f, 1f, 1f, 0.38f) : bg, false);
         SetAnchor(baseImage.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
         AddBackgroundGrid(root);
 
@@ -138,6 +145,8 @@ public class FrontendUiController : MonoBehaviour
         railRect.sizeDelta = new Vector2(2300f, 18f);
         railRect.anchoredPosition = new Vector2(80f, -120f);
         railRect.localRotation = Quaternion.Euler(0f, 0f, 16f);
+
+        UiAmbientFx.Create(root, 30);
     }
 
     void AddBackgroundGrid(RectTransform parent)
@@ -161,6 +170,14 @@ public class FrontendUiController : MonoBehaviour
 
     void BuildMapField(RectTransform parent)
     {
+        if (boardBackgroundSprite != null)
+        {
+            Image boardArt = CreateImage("GeneratedBoardArt", parent, new Color(1f, 1f, 1f, 0.54f));
+            ApplySprite(boardArt, boardBackgroundSprite, new Color(1f, 1f, 1f, 0.54f), false);
+            boardArt.raycastTarget = false;
+            SetAnchor(boardArt.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        }
+
         Image leftField = CreateImage("MapDefenseField", parent, new Color(accent.r, accent.g, accent.b, 0.08f));
         leftField.raycastTarget = false;
         SetAnchor(leftField.rectTransform, new Vector2(0f, 0f), new Vector2(0.12f, 1f), Vector2.zero, Vector2.zero);
@@ -201,6 +218,7 @@ public class FrontendUiController : MonoBehaviour
 
         TextMeshProUGUI name = CreateText("Title", title, "CORELINE DEFENSE", 74, FontStyle.Bold, TextAnchor.MiddleLeft);
         name.characterSpacing = 6f;
+        name.gameObject.AddComponent<UiTitleFlicker>();
         SetAnchor(name.rectTransform, new Vector2(0f, 0.36f), Vector2.one, new Vector2(44f, 0f), new Vector2(-24f, -12f));
 
         TextMeshProUGUI sub = CreateText("Subtitle", title, "ROBOT SIEGE  /  TACTICAL GRID DEFENSE", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -208,11 +226,11 @@ public class FrontendUiController : MonoBehaviour
         sub.characterSpacing = 3f;
         SetAnchor(sub.rectTransform, Vector2.zero, new Vector2(1f, 0.36f), new Vector2(48f, 8f), new Vector2(-24f, 0f));
 
-        RectTransform command = CreatePanel("CommandPanel", root, new Color(0.025f, 0.034f, 0.052f, 0.96f));
+        RectTransform command = CreateColorPanel("CommandPanel", root, new Color(0.025f, 0.034f, 0.052f, 0.96f));
         AddFrame(command, new Color(0.09f, 0.33f, 0.4f, 0.95f), new Vector2(2f, -2f));
         AddAccent(command);
         AddCornerTicks(command, new Color(accent.r, accent.g, accent.b, 0.62f));
-        SetAnchor(command, new Vector2(0.62f, 0.2f), new Vector2(0.91f, 0.78f), Vector2.zero, Vector2.zero);
+        SetAnchor(command, new Vector2(0.63f, 0.22f), new Vector2(0.93f, 0.78f), Vector2.zero, Vector2.zero);
 
         TextMeshProUGUI header = CreateText("Header", command, "COMMAND", 27, FontStyle.Bold, TextAnchor.MiddleLeft);
         header.characterSpacing = 5f;
@@ -260,20 +278,20 @@ public class FrontendUiController : MonoBehaviour
         AddFrame(card, new Color(0.1f, 0.34f, 0.42f, 0.9f), new Vector2(2f, -2f));
         AddAccent(card);
         AddCornerTicks(card, new Color(accent.r, accent.g, accent.b, 0.62f));
-        SetAnchor(card, new Vector2(0.18f, 0.16f), new Vector2(0.82f, 0.74f), Vector2.zero, Vector2.zero);
+        SetAnchor(card, new Vector2(0.2f, 0.15f), new Vector2(0.8f, 0.76f), Vector2.zero, Vector2.zero);
 
         RectTransform audio = CreatePanel("AudioPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
         AddFrame(audio, new Color(0.1f, 0.24f, 0.31f, 0.82f));
         AddCornerTicks(audio, new Color(accent.r, accent.g, accent.b, 0.36f));
-        SetAnchor(audio, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.88f), Vector2.zero, Vector2.zero);
+        SetAnchor(audio, new Vector2(0.08f, 0.5f), new Vector2(0.92f, 0.88f), Vector2.zero, Vector2.zero);
         AddSectionTitle(audio, "AUDIO");
-        CreateSliderRow(audio, "Music", GameSettings.MusicVolume, 0.46f, value =>
+        CreateSliderRow(audio, "Music", GameSettings.MusicVolume, 0.58f, value =>
         {
             GameSettings.MusicVolume = value;
             if (musicValueText != null) musicValueText.text = Percent(value);
             AudioManager.RefreshMusic();
         }, out musicValueText);
-        CreateSliderRow(audio, "SFX", GameSettings.SfxVolume, 0.18f, value =>
+        CreateSliderRow(audio, "SFX", GameSettings.SfxVolume, 0.26f, value =>
         {
             GameSettings.SfxVolume = value;
             if (sfxValueText != null) sfxValueText.text = Percent(value);
@@ -282,14 +300,16 @@ public class FrontendUiController : MonoBehaviour
         RectTransform comfort = CreatePanel("ComfortPanel", card, new Color(0.055f, 0.072f, 0.1f, 0.86f));
         AddFrame(comfort, new Color(0.1f, 0.24f, 0.31f, 0.82f));
         AddCornerTicks(comfort, new Color(accent.r, accent.g, accent.b, 0.36f));
-        SetAnchor(comfort, new Vector2(0.05f, 0.18f), new Vector2(0.95f, 0.44f), Vector2.zero, Vector2.zero);
+        SetAnchor(comfort, new Vector2(0.08f, 0.18f), new Vector2(0.92f, 0.44f), Vector2.zero, Vector2.zero);
         AddSectionTitle(comfort, "COMFORT");
         reduceShakeToggle = CreateSettingsToggle(comfort, "Reduce shake", GameSettings.ReduceShake, new Vector2(0.08f, 0.18f), value => GameSettings.ReduceShake = value);
         vibrationToggle = CreateSettingsToggle(comfort, "Vibration", GameSettings.VibrationEnabled, new Vector2(0.55f, 0.18f), value => GameSettings.VibrationEnabled = value);
 
-        Button back = CreateButton("BackButton", root, "BACK", 22, panelSoft, Color.white);
+        Button back = CreateButton("BackButton", root, "BACK", 16, panelSoft, Color.white);
         back.onClick.AddListener(GoBack);
-        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), new Vector2(-190f, -34f), new Vector2(190f, 34f));
+        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, -UiSpec.SecondaryButtonHeight * 0.5f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, UiSpec.SecondaryButtonHeight * 0.5f));
     }
 
     void BuildHowToPlay()
@@ -306,9 +326,11 @@ public class FrontendUiController : MonoBehaviour
         CreateHowToCard(content, "03", "Read The Lanes", "Watch wave intel and lane pressure. Use Overcharge on rows that are close to breaking.", new Vector2(0.04f, 0.12f), new Vector2(0.48f, 0.48f));
         CreateHowToCard(content, "04", "Win The Sector", "Survive every wave. If enemies breach after the rail cannon is spent, the sector falls.", new Vector2(0.52f, 0.12f), new Vector2(0.96f, 0.48f));
 
-        Button back = CreateButton("BackButton", root, "BACK", 22, panelSoft, Color.white);
+        Button back = CreateButton("BackButton", root, "BACK", 16, panelSoft, Color.white);
         back.onClick.AddListener(GoBack);
-        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), new Vector2(-190f, -34f), new Vector2(190f, 34f));
+        SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, -UiSpec.SecondaryButtonHeight * 0.5f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, UiSpec.SecondaryButtonHeight * 0.5f));
     }
 
     void BuildMissionMap()
@@ -354,9 +376,11 @@ public class FrontendUiController : MonoBehaviour
         RefreshMissionDetail();
         FocusSelectedMission();
 
-        Button back = CreateButton("BackButton", root, "BACK", 20, panelSoft, Color.white);
+        Button back = CreateButton("BackButton", root, "BACK", 16, panelSoft, Color.white);
         back.onClick.AddListener(GoBack);
-        SetAnchor((RectTransform)back.transform, new Vector2(0.05f, 0.04f), new Vector2(0.05f, 0.04f), new Vector2(0f, -28f), new Vector2(210f, 28f));
+        SetAnchor((RectTransform)back.transform, new Vector2(0.08f, 0.045f), new Vector2(0.08f, 0.045f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, -UiSpec.SecondaryButtonHeight * 0.5f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, UiSpec.SecondaryButtonHeight * 0.5f));
     }
 
     void BuildMissionDetail(RectTransform frame)
@@ -401,10 +425,12 @@ public class FrontendUiController : MonoBehaviour
         missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
         SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 92f), new Vector2(-24f, 124f));
 
-        deployButton = CreateButton("DeployButton", detailPanel, "DEPLOY", 22, accent, new Color(0.02f, 0.06f, 0.08f, 1f));
+        deployButton = CreateButton("DeployButton", detailPanel, "DEPLOY", 16, UiSpec.ButtonNormal, UiSpec.Text);
         deployButton.onClick.AddListener(DeploySelectedMission);
         deployButtonText = deployButton.GetComponentInChildren<TextMeshProUGUI>();
-        SetAnchor((RectTransform)deployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 20f), new Vector2(-24f, 84f));
+        SetAnchor((RectTransform)deployButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, 22f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, 22f + UiSpec.SecondaryButtonHeight));
     }
 
     void RebuildMissionNodes()
@@ -451,14 +477,21 @@ public class FrontendUiController : MonoBehaviour
             rect.anchoredPosition = NodePosition(i);
 
             Image frame = go.GetComponent<Image>();
-            frame.color = selected ? accent : (unlocked ? ColorForNode(nodeType) : new Color(0.16f, 0.18f, 0.23f, 0.96f));
-            AddFrame(rect, completed ? new Color(0.45f, 1f, 0.68f, 0.86f) : new Color(0.1f, 0.26f, 0.34f, 0.86f));
+            frame.color = selected ? new Color(0.018f, 0.09f, 0.11f, 0.98f) : (unlocked ? ColorForNode(nodeType) : new Color(0.12f, 0.135f, 0.17f, 0.96f));
+            AddFrame(rect, selected
+                ? new Color(accent.r, accent.g, accent.b, 0.92f)
+                : (completed ? new Color(0.45f, 1f, 0.68f, 0.86f) : new Color(0.1f, 0.26f, 0.34f, 0.86f)));
             AddMissionNodeDecor(rect, selected, completed, unlocked, nodeType);
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
             button.colors = ButtonColors(frame.color, accent);
             button.interactable = unlocked;
+            UiInteractMotion motion = go.AddComponent<UiInteractMotion>();
+            motion.hoverScale = 1.08f;
+            motion.selectedScale = 1.06f;
+            motion.pulseAmplitude = 0.022f;
+            motion.SetSelected(selected && unlocked);
             button.onClick.AddListener(() =>
             {
                 selectedLevel = captured;
@@ -470,15 +503,15 @@ public class FrontendUiController : MonoBehaviour
             });
 
             TextMeshProUGUI number = CreateText("Number", go.transform, level.levelNumber.ToString("00"), 24, FontStyle.Bold, TextAnchor.MiddleCenter);
-            number.color = selected ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
+            number.color = selected ? new Color(0.82f, 1f, 1f, 1f) : Color.white;
             SetAnchor(number.rectTransform, new Vector2(0f, 0.42f), Vector2.one, new Vector2(8f, -2f), new Vector2(-8f, -2f));
 
             TextMeshProUGUI type = CreateText("Type", go.transform, CampaignIntel.NodeTypeLabel(nodeType), 11, FontStyle.Bold, TextAnchor.MiddleCenter);
-            type.color = selected ? new Color(0.02f, 0.08f, 0.1f, 1f) : new Color(0.82f, 0.93f, 0.98f, 1f);
+            type.color = selected ? new Color(0.38f, 0.92f, 1f, 1f) : new Color(0.82f, 0.93f, 0.98f, 1f);
             SetAnchor(type.rectTransform, new Vector2(0f, 0.16f), new Vector2(1f, 0.48f), new Vector2(5f, 0f), new Vector2(-5f, 0f));
 
             TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
-            status.color = selected ? new Color(0.02f, 0.08f, 0.1f, 1f) : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
+            status.color = selected ? new Color(0.82f, 1f, 1f, 0.92f) : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
             SetAnchor(status.rectTransform, Vector2.zero, new Vector2(1f, 0.22f), new Vector2(5f, 0f), new Vector2(-5f, 1f));
         }
     }
@@ -498,11 +531,14 @@ public class FrontendUiController : MonoBehaviour
     {
         if (Vector2.Distance(from, to) < 0.01f) return;
 
-        Image baseLine = CreateImage("RouteBase", routeLayer, new Color(0f, 0f, 0f, 0.35f));
-        ConfigureRouteRect(baseLine.rectTransform, from, to, 12f);
+        Image glow = CreateImage("RouteGlow", routeLayer, new Color(accent.r, accent.g, accent.b, 0.14f));
+        ConfigureRouteRect(glow.rectTransform, from, to, 18f);
 
-        Image line = CreateImage("Route", routeLayer, new Color(0.12f, 0.62f, 0.74f, 0.55f));
-        ConfigureRouteRect(line.rectTransform, from, to, 6f);
+        Image baseLine = CreateImage("RouteBase", routeLayer, new Color(0f, 0f, 0f, 0.42f));
+        ConfigureRouteRect(baseLine.rectTransform, from, to, 10f);
+
+        Image line = CreateImage("Route", routeLayer, new Color(0.12f, 0.62f, 0.74f, 0.72f));
+        ConfigureRouteRect(line.rectTransform, from, to, 5f);
     }
 
     void ConfigureRouteRect(RectTransform rect, Vector2 from, Vector2 to, float thickness)
@@ -583,8 +619,13 @@ public class FrontendUiController : MonoBehaviour
         if (selectedLevel == null || !IsUnlocked(selectedLevel)) return;
 
         PlayerProgress.SelectLevel(selectedLevel);
+        AudioManager.PlaySfx(SfxType.UiClick);
         Time.timeScale = 1f;
-        Load(SceneNames.Game);
+        LevelDefinition level = selectedLevel;
+        UiSceneTransition.Play(this, root, $"DEPLOYING SECTOR {level.levelNumber:00}", () =>
+        {
+            FrontendNavigation.LoadScene(SceneNames.Game);
+        });
     }
 
     bool IsUnlocked(LevelDefinition level)
@@ -656,14 +697,14 @@ public class FrontendUiController : MonoBehaviour
     void CreateSliderRow(RectTransform parent, string label, float value, float y, UnityEngine.Events.UnityAction<float> onChanged, out TextMeshProUGUI valueText)
     {
         TextMeshProUGUI labelText = CreateText($"{label}Label", parent, label, 21, FontStyle.Bold, TextAnchor.MiddleLeft);
-        SetAnchor(labelText.rectTransform, new Vector2(0.08f, y + 0.12f), new Vector2(0.32f, y + 0.22f), Vector2.zero, Vector2.zero);
+        SetAnchor(labelText.rectTransform, new Vector2(0.08f, y + 0.06f), new Vector2(0.32f, y + 0.18f), Vector2.zero, Vector2.zero);
 
         valueText = CreateText($"{label}Value", parent, Percent(value), 19, FontStyle.Bold, TextAnchor.MiddleRight);
         valueText.color = new Color(0.8f, 0.92f, 0.96f, 1f);
-        SetAnchor(valueText.rectTransform, new Vector2(0.78f, y + 0.12f), new Vector2(0.92f, y + 0.22f), Vector2.zero, Vector2.zero);
+        SetAnchor(valueText.rectTransform, new Vector2(0.78f, y + 0.06f), new Vector2(0.92f, y + 0.18f), Vector2.zero, Vector2.zero);
 
         Slider slider = CreateSlider($"{label}Slider", parent, value);
-        SetAnchor((RectTransform)slider.transform, new Vector2(0.08f, y), new Vector2(0.92f, y), new Vector2(0f, -12f), new Vector2(0f, 12f));
+        SetAnchor((RectTransform)slider.transform, new Vector2(0.08f, y - 0.05f), new Vector2(0.92f, y - 0.05f), new Vector2(0f, -8f), new Vector2(0f, 8f));
         slider.onValueChanged.AddListener(onChanged);
     }
 
@@ -698,15 +739,13 @@ public class FrontendUiController : MonoBehaviour
 
     Button CreateMenuButton(string name, Transform parent, string text, bool primary, UnityEngine.Events.UnityAction action)
     {
-        Color normal = primary ? accent : panelSoft;
-        Color textColor = primary ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
-        Button button = CreateButton(name, parent, text, 24, normal, textColor);
-        if (primary)
-            AddFrame((RectTransform)button.transform, new Color(accent.r, accent.g, accent.b, 0.9f));
+        Button button = CreateButton(name, parent, text, 16, UiSpec.ButtonNormal, text == "EXIT" ? UiSpec.Accent : UiSpec.Text);
         button.onClick.AddListener(action);
         LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
-        layout.minHeight = 66f;
-        layout.preferredHeight = 72f;
+        layout.minWidth = UiSpec.MenuButtonWidth;
+        layout.preferredWidth = UiSpec.MenuButtonWidth;
+        layout.minHeight = UiSpec.MenuButtonHeight;
+        layout.preferredHeight = UiSpec.MenuButtonHeight;
         return button;
     }
 
@@ -715,16 +754,17 @@ public class FrontendUiController : MonoBehaviour
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
         go.transform.SetParent(parent, false);
         Image image = go.GetComponent<Image>();
-        image.color = normal;
-        AddFrame((RectTransform)go.transform, new Color(0.1f, 0.24f, 0.31f, 0.85f));
-        AddButtonAccent((RectTransform)go.transform);
+        ApplySprite(image, buttonSprite, UiSpec.ButtonNormal, false);
 
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.ColorTint;
-        button.colors = ButtonColors(normal, accent);
+        button.colors = ButtonColors(UiSpec.ButtonNormal, UiSpec.ButtonHover);
+        go.AddComponent<PixelButtonPressOffset>();
+        go.AddComponent<UiInteractMotion>();
 
         TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
         label.color = textColor;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
         SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
         return button;
     }
@@ -738,7 +778,7 @@ public class FrontendUiController : MonoBehaviour
         slider.maxValue = 1f;
         slider.value = Mathf.Clamp01(initialValue);
 
-        RectTransform background = CreatePanel("Background", rootObj.transform, new Color(0.23f, 0.27f, 0.32f, 1f));
+        RectTransform background = CreateColorPanel("Background", rootObj.transform, new Color(0.07f, 0.1f, 0.14f, 1f));
         SetAnchor(background, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         RectTransform fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
@@ -749,7 +789,7 @@ public class FrontendUiController : MonoBehaviour
         SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         Image handle = CreateImage("Handle", rootObj.transform, accent);
-        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-14f, -18f), new Vector2(14f, 18f));
+        SetAnchor(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(-8f, -15f), new Vector2(8f, 15f));
 
         slider.fillRect = fill.rectTransform;
         slider.handleRect = handle.rectTransform;
@@ -810,6 +850,14 @@ public class FrontendUiController : MonoBehaviour
     {
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
         go.transform.SetParent(parent, false);
+        ApplySprite(go.GetComponent<Image>(), panelSprite, color, false);
+        return (RectTransform)go.transform;
+    }
+
+    RectTransform CreateColorPanel(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
         go.GetComponent<Image>().color = color;
         return (RectTransform)go.transform;
     }
@@ -823,6 +871,23 @@ public class FrontendUiController : MonoBehaviour
         return image;
     }
 
+    void ApplySprite(Image image, Sprite sprite, Color color, bool preserveAspect)
+    {
+        if (image == null) return;
+
+        image.color = color;
+        if (sprite == null) return;
+
+        image.sprite = sprite;
+        image.type = HasBorder(sprite) ? Image.Type.Sliced : Image.Type.Simple;
+        image.preserveAspect = preserveAspect;
+    }
+
+    bool HasBorder(Sprite sprite)
+    {
+        return sprite != null && sprite.border.sqrMagnitude > 0.01f;
+    }
+
     TextMeshProUGUI CreateText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor alignment)
     {
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
@@ -832,10 +897,11 @@ public class FrontendUiController : MonoBehaviour
         label.fontSize = size;
         label.enableAutoSizing = true;
         label.fontSizeMax = size;
-        label.fontSizeMin = Mathf.Max(11f, size * 0.62f);
+        label.fontSizeMin = size;
         label.fontStyle = ToTmpFontStyle(style);
         label.alignment = ToTmpAlignment(alignment);
-        label.color = Color.white;
+        label.color = UiSpec.Text;
+        label.outlineWidth = 0f;
         label.raycastTarget = false;
         label.textWrappingMode = TextWrappingModes.Normal;
         label.overflowMode = TextOverflowModes.Ellipsis;
@@ -849,6 +915,9 @@ public class FrontendUiController : MonoBehaviour
 
     void AddFrame(RectTransform rect, Color color, Vector2 distance)
     {
+        if (rect == null) return;
+        if (rect.GetComponent<Button>() != null) return;
+
         Outline outline = rect.gameObject.GetComponent<Outline>();
         if (outline == null)
             outline = rect.gameObject.AddComponent<Outline>();
@@ -907,24 +976,19 @@ public class FrontendUiController : MonoBehaviour
 
     void AddButtonAccent(RectTransform parent)
     {
-        Image top = CreateImage("TopAccent", parent, new Color(1f, 1f, 1f, 0.18f));
-        top.raycastTarget = false;
-        SetAnchor(top.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -5f), new Vector2(-8f, -2f));
-
-        Image bottom = CreateImage("BottomShade", parent, new Color(0f, 0f, 0f, 0.22f));
-        bottom.raycastTarget = false;
-        SetAnchor(bottom.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(8f, 2f), new Vector2(-8f, 5f));
+        // `button_command` is the shared button chrome; keep frontend buttons asset-led.
     }
 
     ColorBlock ButtonColors(Color normal, Color highlighted)
     {
         ColorBlock colors = ColorBlock.defaultColorBlock;
-        colors.normalColor = normal;
-        colors.highlightedColor = Color.Lerp(normal, highlighted, 0.35f);
-        colors.pressedColor = highlighted;
-        colors.selectedColor = Color.Lerp(normal, highlighted, 0.25f);
-        colors.disabledColor = new Color(0.25f, 0.29f, 0.34f, 0.72f);
+        colors.normalColor = UiSpec.ButtonNormal;
+        colors.highlightedColor = UiSpec.ButtonHover;
+        colors.pressedColor = UiSpec.ButtonPressed;
+        colors.selectedColor = UiSpec.ButtonHover;
+        colors.disabledColor = UiSpec.ButtonDisabled;
         colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.05f;
         return colors;
     }
 

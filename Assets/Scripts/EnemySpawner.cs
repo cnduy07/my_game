@@ -208,7 +208,7 @@ public class EnemySpawner : MonoBehaviour
             GameBalance.Instance.ApplyEnemy(e, prefab);
         ApplyEnemyTypeModifiers(e, enemyType);
         ApplyEnemyReward(e, enemyType);
-        ApplyEnemyTypeVisualFallback(e, enemyType);
+        ApplyEnemyTypeVisualFallback(e, enemyType, UsesPrefabFallback(enemyType));
     }
 
     int ChooseSpawnRow()
@@ -441,7 +441,7 @@ public class EnemySpawner : MonoBehaviour
             case LevelEnemyType.Fast:
                 return new EnemyTypeModifier(
                     healthMultiplier: 0.7f,
-                    speedMultiplier: 1.55f,
+                    speedMultiplier: 1.28f,
                     attackDamageMultiplier: 0.8f,
                     projectileDamageMultiplier: 1.1f,
                     empDamageMultiplier: 1.15f,
@@ -529,8 +529,24 @@ public class EnemySpawner : MonoBehaviour
         dropper.Initialize(armoredEnergyDropChance, armoredEnergyDropValue);
     }
 
-    void ApplyEnemyTypeVisualFallback(GameObject enemy, LevelEnemyType enemyType)
+    bool UsesPrefabFallback(LevelEnemyType enemyType)
     {
+        switch (enemyType)
+        {
+            case LevelEnemyType.Armored:
+                return armoredPrefab == null;
+            case LevelEnemyType.Fast:
+                return fastPrefab == null;
+            case LevelEnemyType.Shield:
+                return shieldPrefab == null;
+            default:
+                return false;
+        }
+    }
+
+    void ApplyEnemyTypeVisualFallback(GameObject enemy, LevelEnemyType enemyType, bool prefabVisualFallback)
+    {
+        if (!prefabVisualFallback) return;
         if (!showEnemyTypeBadges || enemy == null || enemyType == LevelEnemyType.Basic) return;
         if (enemy.transform.Find("EnemyTypeBadge") != null) return;
 

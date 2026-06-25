@@ -14,18 +14,36 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Vietnamese, Chinese, French them sau bang localization table.
   - Khong them Vietnamese khong dau vao runtime UI nua.
 - Current validation focus:
-  - Test procedural visual polish pass: frontend background/grid, mission map node states, GameScene campaign overlay, board depth layers, Rail Cannon fallback beam, energy collect pop.
+  - Test generated art integration pass: menu hero, board art, button/panel skin, seed icons, gameplay sprites, and sprite-based VFX prefabs.
+  - Test procedural overlays still read well over generated art: frontend grid/chrome, mission map node states, GameScene campaign overlay, board grid/lanes, Rail Cannon beam, energy collect pop.
   - Test `NEWS_TASK.md` UI/UX pass: slider/toggle dung cyan, START GAME dung primary cyan, EXIT dung danger red, seed card selected state ro rang, mission node/deploy polish.
   - Kiem tra level select khong tran khoi mission box khi co 5+ level.
   - Khi co thiet bi that: test safe area/notch/touch target.
   - Test level 4-10 ve pacing/fairness; enemy/stat identity do AI QA kiem tra bang so lieu.
-  - Neu tiep tuc lam art: uu tien board/background, seed icons, VFX prefab.
+  - Neu tiep tuc lam art: uu tien rig/animation final cho Basic enemy/Turret, icon rieng cho Turret/SnowGun neu can, ArcReactor gameplay sprite, va audio/music final.
   - Test frontend scene flow: `MainMenuScene` -> `MissionMapScene` -> `GameScene`, va `SETTING`/`HOW TO PLAY` quay ve menu dung.
   - Test frontend scene moi khong con `Display 1 No cameras rendering`.
   - Test `BACK` tu `SettingsScene`/`HowToPlayScene`/`MissionMapScene` ve dung scene goi truoc do, fallback la `MainMenuScene`.
   - Test nut `MISSION` trong `GameScene` chi mo mission map overlay va `BACK` dong overlay, giu nguyen state/pause state cua tran.
   - Test mission detail `Recommended tools` khong con de chu; test pause modal audio/progress/toggles khong con chong chu.
   - Kiem tra settings scene moi khong con chong chu, slider/toggle bam duoc tren desktop/mobile aspect.
+  - Generated art import da apply prefab + scene mapping; can Play Mode smoke test Turret, SnowGun frost projectile, Basic/Armored/Fast/Shield enemy, Bullet, Bunker damage stages, DroneEMP, EnergyOrb collect, menu/mission/settings/how-to skin, board art, seed icons, muzzle/hit/death/EMP/Rail VFX.
+  - Test VFX tuning pass: muzzle flash phai nho, nam ngay dau nong va huong sang phai; energy collect/EMP pulse da tang lai sau feedback qua be, nhung khong duoc che mat unit/enemy.
+  - Test Victory/Defeat modal moi: khong con terminal backdrop xanh/do toan man hinh, khong co hop mau/duong thang tu ve gay roi, cac button dung `button_command`, text can giua va doc ro.
+  - GameScene board active hien tai phai dung `Assets/Art/board_coreline_combat_grid_5x9.png` full opacity; khong tu ghi de board runtime khi chua co phe duyet.
+  - Test UI command pass moi: seed tray bottom dung `button_command` game-like hon, selected seed khong con full cyan app button; frontend main menu buttons dung shared `button_command` thay vi raw app button; mission map node selected/deploy/route bot cung nhac.
+  - Test strict `UI_SPEC.md` compliance: `Assets/UI/button_command.png` la button background duy nhat cho clickable action, Point filter, button states chi tint/press offset + subtle scale, text khong shadow/outline, menu 220x72 gap 14, popup 172x58, secondary 188x58.
+  - Test mission map hover/touch: node hover scale ro, selected node pulse nhe, deploy co tactical transition truoc khi vao GameScene.
+  - Test frontend ambient FX: Menu/Settings/HowToPlay/MissionMap co diagonal dark pixel rain/debris nhe, khong che UI.
+  - Test end report: Victory/Defeat hien Mission/Wave/Enemies/Energy/Play time voi icon chip nho va 3 nut fixed-size.
+  - Test UI sizing correction: main menu buttons khong con vuong/default 100x100; Settings Music/SFX slider khong de len chu; Deploy button tren mission map khong stretch ngang; Victory/Defeat modal bot trong va chu doc hon.
+  - Test seed tray khi selected nhung khong du energy: label/icon van doc ro, cost canh bao bang mau accent.
+  - Test GameScene board grid: grid that cua gameplay ro hon generated board cell art va khong lam roi mat khi dat unit/enemy.
+  - Test GameScene board underlay: vung den quanh board co hangar/command-deck detail nhe, khong tranh voi board/unit/HUD.
+  - Test enemy entry/right rail polish: static red rectangle/stripe tren board da giam; rail cannon khi fire van giu laser beam do manh nhu ban truoc.
+  - Test Victory/Defeat end scene: title/subtitle can giua tot, title pulse ro hon, report icon chips/rows can giua va buttons fixed-size bang `button_command`.
+  - Test Unity Console khong con warning `Unit 1` transition dung parameter `Walking` bi thieu.
+  - Test pacing moi: base enemy speed `0.27`, Fast enemy speed modifier `1.28x`; Level 4+ van tang do kho bang enemy mix/mechanics thay vi day toc do qua cao.
 
 ### Codex
 
@@ -37,6 +55,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - commit checkpoint sau khi check pass.
 - Follow Codex workflow source-of-truth trong `PROJECT_CONTEXT.md` truoc moi feature lon; `TASKS.md` chi giu current work/next work de tranh duplicate rule.
 - Khi lam UI/UX pass, doc `NEWS_TASK.md` va dong bo semantic color rules vao ca `FrontendUiController` va `GameUiController.UiFactory` neu component co factory rieng.
+- Khi lam UI scene/button/modal, doc `UI_SPEC.md` truoc; khong them button style ngoai `Assets/UI/button_command.png` va ColorBlock tint states.
 - Kiem tra/sua mismatch giua code C# va Unity data khi chu project bao loi.
 - Neu production foundation pass co loi, sua ngay: pooling state, VFX fallback, tutorial hint, level catalog.
 - Ho tro setup `DamageStages`, `CharacterAnimator`, Animator Controller, prefab references.
@@ -46,6 +65,17 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Nang cap VFX death rieng cho bunker/object tinh va VFX beam Rail Cannon khi co art/VFX prefab.
 - Chay/cai tien AI QA report khi Unity Editor dong hoac qua menu trong Editor.
 - Sau khi vertical slice on, danh gia co nen nang `GameBalance` len ScriptableObject/level config hay giu MonoBehaviour tren scene.
+- Generated art audit/tool pass:
+  - `Assets/Art` co nhieu PNG moi dung naming pack;
+  - cac runtime sprite cu `bullet/bunker/droneemp/energyorb/lawnmower` dang bi delete nen prefab co missing GUID neu chua apply mapping moi;
+  - da them va chay Editor menu `Tools > Art > Apply Generated Sprites To Prefabs` de map sprite moi sau khi Unity import/meta hop le;
+  - static preview pass da map `Unit`, `SnowGun`, `Enemy`, `ArmorEnemy`, tao `FastEnemy`/`ShieldEnemy`, va gan vao `GameScene`/`SampleScene`;
+  - tao `FrostProjectile.prefab` tu `Bullet.prefab`, gan `sprite_projectile_frost_256`, va cho `SnowGun` dung projectile rieng;
+  - cac prefab co `SpriteSkin` dang tam tat SpriteSkin vi PNG moi chua rig/cat layer; buoc rig final se bat lai SpriteSkin/Animator dung asset rig;
+  - scale/import convention: Sprite Mode Single, Point filter, PPU theo canh lon nhat texture, prefab `SpriteRenderer.size = 1x1`; neu gameplay can nho/lon hon thi tune prefab Transform scale;
+  - DONE: `GeneratedArtApplier` hien map them `menu_hero`, `board_coreline_combat_grid_5x9`, `button`, `ui_panel`, seed icons, board sprite refs, va goi rebuild sprite VFX prefabs cho `GameScene`/`SampleScene`;
+  - NOTE: Turret/SnowGun seed icon hien tam dung gameplay sprite neu chua co `icon_turret_256`/`icon_snowgun_256`; `ArcReactor` gameplay board sprite van can `sprite_arc_reactor_256.png` neu muon thay icon bang object tren board.
+  - AI QA sau generated art import: `0` fail, `1` expected warn (`LevelManager.unlockAllLevelsForTesting`).
 
 ### Done gan day
 
@@ -211,9 +241,30 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `CombatVfx` fallback them muzzle embers, hit core, death cross spark, EMP sparks, Rail Cannon beam fallback, energy collect pop.
 - VFX prefab generation status:
   - Code builder da co: `Tools > VFX > Rebuild Core VFX Prefabs`.
-  - DONE: da generate `Assets/Prefabs/VFX/*` va gan vao `CombatVfxSettings` trong `GameScene`.
+  - DONE: da generate `Assets/Prefabs/VFX/*` bang generated `vfx_*_256.png` neu co, fallback particle neu thieu sprite, va gan vao `CombatVfxSettings` trong `GameScene`/`SampleScene`.
   - AI QA sau khi generate: `0` fail, `1` expected release warning (`unlockAllLevelsForTesting`).
-
+- VFX/modal readability pass:
+  - `vfx_muzzle_flash_256`, `vfx_emp_pulse_256`, `vfx_enemy_death_burst_256`, `vfx_hit_spark_256`, `vfx_rail_beam_source_256` da clean alpha nen background toi/vuong khong nen render nua;
+  - muzzle flash prefab da giam scale va `CombatVfx` spawn lech nhe sang phai tu `muzzlePoint`;
+  - EMP pulse va energy collect pop da giam scale/count/lifetime de khong che board;
+  - Victory/Defeat modal da doi sang dark neutral panel, bo result glow/sweep/core rectangle va terminal backdrop;
+  - board background trong `GameScene`/`SampleScene` dung `board_coreline_combat_grid_5x9.png` full opacity.
+  - `GeneratedArtApplier` gio dung `board_coreline_combat_grid_5x9.png` cho GameScene board; khong tu ghi de khi chua duoc duyet.
+  - AI QA sau tuning: `0` fail, `1` expected warn (`LevelManager.unlockAllLevelsForTesting`).
+- Runtime UI/VFX feedback pass:
+  - Energy collect pulse tang tu `0.28` len `0.48`, particle collect tang count/size/lifetime nhe.
+  - DroneEMP/EMP pulse scale theo radius lon hon de khong bi qua be.
+  - Seed tray thu gon, seed card doi sang dark command slot, icon bay rieng, selected glow/strip thay vi nen cyan day.
+  - Frontend/main-menu buttons va in-game generated buttons dung shared `button_command`; khong ve notch/stripe button bang raw rectangle.
+  - Mission map selected node, deploy button va route line duoc giam cam giac app/cung nhac.
+- Asset cleanup pass:
+  - Official GameScene board asset is now `Assets/Art/board_coreline_combat_grid_5x9.png`.
+  - Temporary board test assets, old reference-image folder, legacy square button, and unused legacy gameplay sprites were removed after GUID audit.
+  - `GeneratedArtApplier` and docs now point to the official board/button asset names; do not reintroduce stale test/reference names.
+- GameScene visual/end-state pass:
+  - Board underlay adds visible dim hangar panels/service bays/cables/catwalk blocks around the board to reduce flat black empty space.
+  - Right entry rail code-drawn red shapes were toned down to subtle glow/ticks; rail cannon fire keeps the previous strong red laser beam because it reads better in play.
+  - Victory/Defeat terminal now behaves as a full-screen end scene with result title pulse, centered report icon chips/rows, and fixed-size command buttons.
 ---
 
 ## Next
@@ -225,12 +276,12 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
    - Remaining: art/prefab identity rieng cho Fast/Shield.
    - Remaining: one more balance pass after level 4-10 playtest.
 2. Phase 2 — Visual/audio production pass:
-   - production board/background for First Contact;
-   - UI skin/icon set replacing code-generated rectangles;
-   - VFX prefab replacements for generated effects;
+   - DONE baseline: generated board/background for First Contact is wired into frontend/GameScene board views;
+   - DONE baseline: generated UI panel/button skin and seed icons are wired into runtime UI factories;
+   - DONE baseline: generated VFX sprite prefabs replace the old particle-only VFX prefabs;
    - animation polish for core unit/enemy set;
    - PARTIAL: BGM support + music settings slider + placeholder ambient loop.
-   - PARTIAL: procedural visual polish pass da nang chat luong UI/board/VFX placeholder, nhung chua thay the asset final.
+   - PARTIAL: procedural + generated-art visual polish da thay placeholder rectangle/particle chinh, nhung van can rig/animation/audio final de dat store quality.
    - Remaining: final music track and richer audio layering.
 3. Phase 3 — Campaign content:
    - DONE baseline: level 1-10 data pack;
@@ -251,7 +302,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Bunker death: smoke puff, sparks, metal bits, sound.
   - DroneEMP: EMP pulse.
   - Enemy death: co the giu animation rig truoc, VFX sau.
-- Thay code-generated VFX bang prefab VFX dep hon khi visual direction on dinh.
+- Tinh chinh sprite VFX prefab moi khi Play Mode test xong: scale/timing/alpha cho muzzle, hit, death, EMP, bunker break, Rail Cannon beam.
 - Them weapon moi de dung `ProjectileHitEffect` knockback/stun khi can mo rong counter-play.
 - Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
 - Khi test xong level pack, tat `LevelManager.unlockAllLevelsForTesting` truoc release/build review neu muon restore unlock tuan tu.

@@ -14,7 +14,7 @@ public partial class GameUiController
         SetAnchor((RectTransform)levelSelectOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         RectTransform card = CreatePanel("LevelSelectCard", levelSelectOverlay.transform, new Color(0.06f, 0.075f, 0.1f, 0.98f));
-        AddFrame(card, new Color(0.14f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
+        AddFrame(card, new Color(0.11f, 0.32f, 0.39f, 0.92f), new Vector2(2f, -2f));
         AddCornerTicks(card, new Color(accentColor.r, accentColor.g, accentColor.b, 0.48f));
         SetAnchor(card, new Vector2(0.035f, 0.08f), new Vector2(0.965f, 0.92f), Vector2.zero, Vector2.zero);
 
@@ -58,7 +58,9 @@ public partial class GameUiController
 
         Button closeButton = CreateButton("CloseButton", card, "BACK", 20, panelSoftColor, Color.white);
         closeButton.onClick.AddListener(CloseLevelSelect);
-        SetAnchor((RectTransform)closeButton.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-398f, 30f), new Vector2(-210f, 82f));
+        SetAnchor((RectTransform)closeButton.transform, new Vector2(1f, 0f), new Vector2(1f, 0f),
+            new Vector2(-398f, 28f),
+            new Vector2(-398f + UiSpec.SecondaryButtonWidth, 28f + UiSpec.SecondaryButtonHeight));
 
         levelSelectOverlay.SetActive(false);
     }
@@ -66,9 +68,9 @@ public partial class GameUiController
     void BuildMissionDetailPanel(RectTransform card)
     {
         missionDetailPanel = CreatePanel("MissionDetail", card, new Color(0.035f, 0.048f, 0.07f, 0.96f));
-        AddFrame(missionDetailPanel, new Color(0.1f, 0.2f, 0.27f, 0.9f));
+        AddFrame(missionDetailPanel, new Color(0.1f, 0.23f, 0.3f, 0.88f));
         AddCardAccent(missionDetailPanel);
-        AddCornerTicks(missionDetailPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.42f));
+        AddCornerTicks(missionDetailPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.4f));
         SetAnchor(missionDetailPanel, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-420f, 104f), new Vector2(-46f, -132f));
 
         missionStatusText = CreateText("Status", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -106,15 +108,24 @@ public partial class GameUiController
         missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
         SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 96f), new Vector2(-24f, 154f));
 
-        missionDeployButton = CreateButton("DeployButton", missionDetailPanel, "DEPLOY", 22, accentColor, new Color(0.02f, 0.06f, 0.08f, 1f));
+        missionDeployButton = CreateButton("DeployButton", missionDetailPanel, "DEPLOY", 16, UiSpec.ButtonNormal, UiSpec.Text);
         missionDeployButton.onClick.AddListener(DeploySelectedMission);
         missionDeployButtonText = missionDeployButton.GetComponentInChildren<TextMeshProUGUI>();
-        AddFrame((RectTransform)missionDeployButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
-        SetAnchor((RectTransform)missionDeployButton.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 20f), new Vector2(-24f, 84f));
+        SetAnchor((RectTransform)missionDeployButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, 22f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, 22f + UiSpec.SecondaryButtonHeight));
     }
 
     void BuildCampaignMapField(RectTransform parent)
     {
+        if (boardBackgroundSprite != null)
+        {
+            Image boardArt = CreateImage("GeneratedBoardArt", parent, new Color(1f, 1f, 1f, 0.52f));
+            ApplySprite(boardArt, boardBackgroundSprite, new Color(1f, 1f, 1f, 0.52f), false);
+            boardArt.raycastTarget = false;
+            SetAnchor(boardArt.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        }
+
         Image defenseField = CreateImage("MapDefenseField", parent, new Color(accentColor.r, accentColor.g, accentColor.b, 0.08f));
         defenseField.raycastTarget = false;
         SetAnchor(defenseField.rectTransform, new Vector2(0f, 0f), new Vector2(0.12f, 1f), Vector2.zero, Vector2.zero);
@@ -201,6 +212,10 @@ public partial class GameUiController
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
             button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            UiInteractMotion motion = go.AddComponent<UiInteractMotion>();
+            motion.hoverScale = 1.08f;
+            motion.selectedScale = 1.06f;
+            motion.pulseAmplitude = 0.022f;
             button.onClick.AddListener(() => SelectCampaignLevel(capturedLevel));
 
             TextMeshProUGUI label = CreateText("Number", go.transform, "", finale ? 25 : 22, FontStyle.Bold, TextAnchor.MiddleCenter);
@@ -273,6 +288,9 @@ public partial class GameUiController
                     : (unlocked ? warningColor : disabledColor);
 
             button.button.interactable = unlocked;
+            UiInteractMotion motion = button.button.GetComponent<UiInteractMotion>();
+            if (motion != null)
+                motion.SetSelected(selected && unlocked);
         }
 
         RefreshCampaignDetail();
@@ -541,6 +559,14 @@ public partial class GameUiController
     void DeploySelectedMission()
     {
         if (LevelManager.Instance == null || selectedCampaignLevel == null) return;
-        SelectLevel(selectedCampaignLevel);
+
+        LevelDefinition level = selectedCampaignLevel;
+        AudioManager.PlaySfx(SfxType.UiClick);
+        Time.timeScale = 1f;
+        UiSceneTransition.Play(this, (RectTransform)canvas.transform, $"DEPLOYING SECTOR {level.levelNumber:00}", () =>
+        {
+            if (LevelManager.Instance != null)
+                LevelManager.Instance.SelectLevelAndReload(level);
+        });
     }
 }

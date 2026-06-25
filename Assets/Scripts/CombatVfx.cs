@@ -8,7 +8,8 @@ public static class CombatVfx
 
     public static void PlayMuzzleFlash(Vector3 position)
     {
-        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.muzzleFlashPrefab : null, position))
+        Vector3 muzzleVfxPosition = position + Vector3.right * 0.2f;
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.muzzleFlashPrefab : null, muzzleVfxPosition))
             return;
         if (!FallbackEnabled()) return;
 
@@ -103,7 +104,8 @@ public static class CombatVfx
 
     public static void PlayPulse(Vector3 position, float radius, Color color)
     {
-        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.empPulsePrefab : null, position))
+        float spriteScale = Mathf.Clamp(radius * 0.95f, 0.52f, 1.45f);
+        if (TryPlayPrefab(CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.empPulsePrefab : null, position, spriteScale))
             return;
         if (!FallbackEnabled()) return;
 
@@ -165,23 +167,43 @@ public static class CombatVfx
 
     public static void PlayEnergyCollect(Vector3 position)
     {
-        if (!FallbackEnabled()) return;
+        GameObject pulsePrefab = CombatVfxSettings.Instance != null ? CombatVfxSettings.Instance.empPulsePrefab : null;
+        bool playedSpritePulse = TryPlayPrefab(pulsePrefab, position, 0.48f);
+        if (!playedSpritePulse && !FallbackEnabled()) return;
 
         position.z = -3f;
-        PlayPulse(position, 0.55f, new Color(0.35f, 0.95f, 1f, 0.72f));
-        CreateParticleBurst("EnergyCollect", position, 14, 0.12f,
-            new ParticleSystem.MinMaxCurve(0.18f, 0.32f),
-            new ParticleSystem.MinMaxCurve(0.45f, 1.05f),
-            new ParticleSystem.MinMaxCurve(0.045f, 0.095f),
-            new ParticleSystem.MinMaxGradient(new Color(0.72f, 1f, 1f, 0.95f), new Color(0.12f, 0.82f, 0.95f, 0.42f)),
-            0.09f, -0.08f, 0.55f);
+        if (!playedSpritePulse)
+            PlayPulse(position, 0.34f, new Color(0.35f, 0.95f, 1f, 0.68f));
+
+        CreateParticleBurst("EnergyCollect", position, 14, 0.1f,
+            new ParticleSystem.MinMaxCurve(0.13f, 0.24f),
+            new ParticleSystem.MinMaxCurve(0.34f, 0.82f),
+            new ParticleSystem.MinMaxCurve(0.035f, 0.075f),
+            new ParticleSystem.MinMaxGradient(new Color(0.72f, 1f, 1f, 0.88f), new Color(0.12f, 0.82f, 0.95f, 0.34f)),
+            0.07f, -0.04f, 0.44f);
     }
 
     private static bool TryPlayPrefab(GameObject prefab, Vector3 position)
     {
+        return TryPlayPrefab(prefab, position, 1f);
+    }
+
+    private static bool TryPlayPrefab(GameObject prefab, Vector3 position, float scaleMultiplier)
+    {
         if (prefab == null) return false;
         position.z = -3f;
-        Object.Instantiate(prefab, position, Quaternion.identity);
+        GameObject instance = Object.Instantiate(prefab, position, Quaternion.identity);
+        if (!Mathf.Approximately(scaleMultiplier, 1f))
+        {
+            Vector3 multiplier = new Vector3(scaleMultiplier, scaleMultiplier, 1f);
+            foreach (VfxAutoDestroy effect in instance.GetComponentsInChildren<VfxAutoDestroy>())
+            {
+                if (!effect.animateSprite) continue;
+                effect.startScale = Vector3.Scale(effect.startScale, multiplier);
+                effect.endScale = Vector3.Scale(effect.endScale, multiplier);
+                effect.transform.localScale = effect.startScale;
+            }
+        }
         return true;
     }
 

@@ -12,57 +12,58 @@ public partial class GameUiController
         mainMenuOverlay = new GameObject("MainMenuOverlay", typeof(RectTransform), typeof(Image));
         mainMenuOverlay.transform.SetParent(parent, false);
         Image overlayImage = mainMenuOverlay.GetComponent<Image>();
-        overlayImage.color = new Color(0.002f, 0.006f, 0.01f, 0.985f);
+        overlayImage.color = UiSpec.Background;
         SetAnchor((RectTransform)mainMenuOverlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         BuildMainMenuBackground(mainMenuOverlay.transform);
 
-        RectTransform titleBlock = CreatePanel("TitleBlock", mainMenuOverlay.transform, new Color(0.018f, 0.03f, 0.045f, 0.44f));
-        AddFrame(titleBlock, new Color(0.04f, 0.21f, 0.28f, 0.85f), new Vector2(2f, -2f));
-        SetAnchor(titleBlock, new Vector2(0.08f, 0.42f), new Vector2(0.62f, 0.72f), Vector2.zero, Vector2.zero);
-        AddCardAccent(titleBlock);
-        AddCornerTicks(titleBlock, new Color(accentColor.r, accentColor.g, accentColor.b, 0.55f));
+        RectTransform titleBlock = new GameObject("TitleBlock", typeof(RectTransform)).GetComponent<RectTransform>();
+        titleBlock.SetParent(mainMenuOverlay.transform, false);
+        SetAnchor(titleBlock, new Vector2(0.075f, 0.42f), new Vector2(0.62f, 0.74f), Vector2.zero, Vector2.zero);
 
-        TextMeshProUGUI title = CreateText("Title", titleBlock, "CORELINE DEFENSE", 72, FontStyle.Bold, TextAnchor.MiddleLeft);
-        title.color = Color.white;
-        title.characterSpacing = 8f;
-        SetAnchor(title.rectTransform, new Vector2(0f, 0.46f), new Vector2(1f, 1f), new Vector2(42f, 0f), new Vector2(-30f, -16f));
+        TextMeshProUGUI title = CreateText("Title", titleBlock, "CORELINE DEFENSE", 82, FontStyle.Bold, TextAnchor.MiddleLeft);
+        title.color = UiSpec.Text;
+        title.characterSpacing = 0f;
+        title.gameObject.AddComponent<UiTitleFlicker>();
+        SetAnchor(title.rectTransform, new Vector2(0f, 0.46f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
 
-        mainMenuSubtitleText = CreateText("Subtitle", titleBlock, "", 22, FontStyle.Bold, TextAnchor.MiddleLeft);
-        mainMenuSubtitleText.color = new Color(0.82f, 0.95f, 1f, 1f);
-        SetAnchor(mainMenuSubtitleText.rectTransform, new Vector2(0f, 0.22f), new Vector2(1f, 0.48f), new Vector2(46f, 0f), new Vector2(-30f, 0f));
+        mainMenuSubtitleText = CreateText("Subtitle", titleBlock, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+        mainMenuSubtitleText.color = UiSpec.Text;
+        mainMenuSubtitleText.characterSpacing = 0f;
+        SetAnchor(mainMenuSubtitleText.rectTransform, new Vector2(0f, 0.22f), new Vector2(1f, 0.48f), Vector2.zero, Vector2.zero);
 
-        TextMeshProUGUI buildText = CreateText("BuildText", titleBlock, "TACTICAL GRID DEFENSE  /  EARLY OPERATIONS", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
-        buildText.color = new Color(0.42f, 0.83f, 0.9f, 0.9f);
-        buildText.characterSpacing = 3f;
-        SetAnchor(buildText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.2f), new Vector2(46f, 8f), new Vector2(-30f, 0f));
+        TextMeshProUGUI buildText = CreateText("BuildText", titleBlock, "CORELINE NET ONLINE\nSELECT AN OPERATION", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
+        buildText.color = UiSpec.TextMuted;
+        buildText.characterSpacing = 0f;
+        SetAnchor(buildText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.2f), Vector2.zero, Vector2.zero);
 
-        RectTransform commandPanel = CreatePanel("CommandPanel", mainMenuOverlay.transform, new Color(0.025f, 0.034f, 0.052f, 0.94f));
-        AddFrame(commandPanel, new Color(0.07f, 0.26f, 0.34f, 0.95f), new Vector2(2f, -2f));
+        RectTransform commandPanel = CreateColorPanel("CommandPanel", mainMenuOverlay.transform, UiSpec.Panel);
+        AddFrame(commandPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.72f), new Vector2(2f, -2f));
         AddCardAccent(commandPanel);
-        AddCornerTicks(commandPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.6f));
-        SetAnchor(commandPanel, new Vector2(0.64f, 0.2f), new Vector2(0.92f, 0.78f), Vector2.zero, Vector2.zero);
+        AddCornerTicks(commandPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.5f));
+        SetAnchor(commandPanel, new Vector2(0.63f, 0.22f), new Vector2(0.93f, 0.78f), Vector2.zero, Vector2.zero);
 
-        TextMeshProUGUI commandTitle = CreateText("CommandTitle", commandPanel, "MISSION CONTROL", 25, FontStyle.Bold, TextAnchor.MiddleLeft);
-        commandTitle.color = new Color(0.9f, 0.97f, 1f, 1f);
-        commandTitle.characterSpacing = 5f;
-        SetAnchor(commandTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(34f, -72f), new Vector2(-24f, -22f));
-
-        TextMeshProUGUI commandStatus = CreateText("CommandStatus", commandPanel, "Campaign route armed. Choose your next move.", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
-        commandStatus.color = new Color(0.66f, 0.82f, 0.88f, 1f);
-        SetAnchor(commandStatus.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(34f, -116f), new Vector2(-24f, -78f));
+        TextMeshProUGUI commandTitle = CreateText("CommandTitle", commandPanel, "COMMAND", 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        commandTitle.color = UiSpec.TextMuted;
+        commandTitle.characterSpacing = 0f;
+        SetAnchor(commandTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -72f), new Vector2(-24f, -24f));
 
         RectTransform buttonColumn = new GameObject("ButtonColumn", typeof(RectTransform), typeof(VerticalLayoutGroup)).GetComponent<RectTransform>();
         buttonColumn.SetParent(commandPanel.transform, false);
-        SetAnchor(buttonColumn, new Vector2(0f, 0.16f), new Vector2(1f, 0.72f), new Vector2(34f, 0f), new Vector2(-34f, 0f));
+        SetAnchor(buttonColumn, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
         VerticalLayoutGroup layout = buttonColumn.GetComponent<VerticalLayoutGroup>();
-        layout.spacing = 14f;
-        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.padding = new RectOffset(
+            Mathf.RoundToInt(UiSpec.CommandPanelPadding),
+            Mathf.RoundToInt(UiSpec.CommandPanelPadding),
+            86,
+            Mathf.RoundToInt(UiSpec.CommandPanelPadding));
+        layout.spacing = UiSpec.MenuButtonGap;
+        layout.childAlignment = TextAnchor.UpperCenter;
         layout.childControlWidth = true;
         layout.childControlHeight = true;
-        layout.childForceExpandWidth = true;
-        layout.childForceExpandHeight = true;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = false;
 
         Button startButton = CreateMainMenuButton("StartButton", buttonColumn, "START GAME", true);
         startButton.onClick.AddListener(() =>
@@ -78,16 +79,32 @@ public partial class GameUiController
         Button howToPlayButton = CreateMainMenuButton("HowToPlayButton", buttonColumn, "HOW TO PLAY", false);
         howToPlayButton.onClick.AddListener(OpenHowToPlay);
 
-        TextMeshProUGUI footer = CreateText("Footer", commandPanel, "MISSION MAP ONLINE", 14, FontStyle.Bold, TextAnchor.MiddleLeft);
-        footer.color = new Color(0.42f, 0.75f, 0.82f, 0.65f);
-        footer.characterSpacing = 3f;
-        SetAnchor(footer.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.16f), new Vector2(34f, 10f), new Vector2(-24f, -6f));
+        Button exitButton = CreateMainMenuButton("ExitButton", buttonColumn, "EXIT", false);
+        exitButton.onClick.AddListener(() =>
+        {
+            AudioManager.PlaySfx(SfxType.UiClick);
+            Application.Quit();
+        });
 
         mainMenuOverlay.SetActive(false);
     }
 
     void BuildMainMenuBackground(Transform parent)
     {
+        Sprite backdrop = menuHeroSprite;
+
+        if (backdrop != null)
+        {
+            Image hero = CreateImage("GeneratedMenuHero", parent, new Color(1f, 1f, 1f, 0.88f));
+            ApplySprite(hero, backdrop, new Color(1f, 1f, 1f, 0.9f), false);
+            hero.raycastTarget = false;
+            SetAnchor(hero.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            Image heroShade = CreateImage("GeneratedMenuHeroShade", parent, new Color(0f, 0f, 0f, 0.46f));
+            heroShade.raycastTarget = false;
+            SetAnchor(heroShade.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        }
+
         Image leftShade = CreateImage("LeftShade", parent, new Color(0.02f, 0.065f, 0.09f, 0.34f));
         SetAnchor(leftShade.rectTransform, new Vector2(0f, 0f), new Vector2(0.36f, 1f), Vector2.zero, Vector2.zero);
 
@@ -130,21 +147,21 @@ public partial class GameUiController
         sideLabel.characterSpacing = 5f;
         SetAnchor(sideLabel.rectTransform, new Vector2(0.08f, 0.78f), new Vector2(0.44f, 0.83f), Vector2.zero, Vector2.zero);
 
+        UiAmbientFx.Create((RectTransform)parent, 30);
+
         // Mission map now lives in its own scene; main menu stays focused on entry actions.
     }
 
     Button CreateMainMenuButton(string name, Transform parent, string text, bool primary)
     {
-        Color normal = primary ? accentColor : new Color(0.025f, 0.03f, 0.052f, 0.96f);
-        Color textColor = primary ? new Color(0.02f, 0.06f, 0.08f, 1f) : Color.white;
-        Button button = CreateButton(name, parent, text, 24, normal, textColor);
-        AddFrame((RectTransform)button.transform, primary
-            ? new Color(0.1f, 0.62f, 0.72f, 0.95f)
-            : new Color(0.07f, 0.2f, 0.28f, 0.9f));
+        Color textColor = text == "EXIT" ? UiSpec.Accent : UiSpec.Text;
+        Button button = CreateButton(name, parent, text, 16, UiSpec.ButtonNormal, textColor);
 
         LayoutElement layoutElement = button.gameObject.AddComponent<LayoutElement>();
-        layoutElement.minHeight = 62f;
-        layoutElement.preferredHeight = 66f;
+        layoutElement.minWidth = UiSpec.MenuButtonWidth;
+        layoutElement.preferredWidth = UiSpec.MenuButtonWidth;
+        layoutElement.minHeight = UiSpec.MenuButtonHeight;
+        layoutElement.preferredHeight = UiSpec.MenuButtonHeight;
         return button;
     }
 
@@ -224,7 +241,9 @@ public partial class GameUiController
 
         Button close = CreateButton("CloseButton", card, "BACK", 22, accentColor, Color.white);
         close.onClick.AddListener(CloseHowToPlay);
-        SetAnchor((RectTransform)close.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-120f, 28f), new Vector2(120f, 82f));
+        SetAnchor((RectTransform)close.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, 28f),
+            new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, 28f + UiSpec.SecondaryButtonHeight));
 
         howToPlayOverlay.SetActive(false);
     }
