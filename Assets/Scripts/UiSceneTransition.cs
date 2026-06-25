@@ -37,9 +37,9 @@ public static class UiSceneTransition
         TextMeshProUGUI text = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI)).GetComponent<TextMeshProUGUI>();
         text.transform.SetParent(overlay.transform, false);
         text.text = label;
-        text.fontSize = 28f;
-        text.fontSizeMin = 28f;
-        text.fontSizeMax = 28f;
+        text.fontSize = 56f;
+        text.fontSizeMin = 56f;
+        text.fontSizeMax = 56f;
         text.enableAutoSizing = false;
         text.fontStyle = FontStyles.Bold;
         text.alignment = TextAlignmentOptions.Center;

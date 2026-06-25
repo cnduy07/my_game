@@ -31,6 +31,7 @@ public class FrontendUiController : MonoBehaviour
     public Sprite boardBackgroundSprite;
     public Sprite buttonSprite;
     public Sprite panelSprite;
+    public Sprite bulletRainSprite;
 
     readonly Color bg = new Color(0.012f, 0.018f, 0.03f, 1f);
     readonly Color panel = new Color(0.035f, 0.05f, 0.075f, 0.94f);
@@ -222,6 +223,7 @@ public class FrontendUiController : MonoBehaviour
 
     void BindMainMenuUi()
     {
+        AddMainMenuEffects();
         BindButton("StartGame", () => Load(SceneNames.MissionMap));
         BindButton("Settings", () => Load(SceneNames.Settings));
         BindButton("HowToPlay", () => Load(SceneNames.HowToPlay));
@@ -428,7 +430,8 @@ public class FrontendUiController : MonoBehaviour
         railRect.anchoredPosition = new Vector2(80f, -120f);
         railRect.localRotation = Quaternion.Euler(0f, 0f, 16f);
 
-        UiAmbientFx.Create(root, 30);
+        bool mainMenu = ResolveMode() == FrontendScreenMode.MainMenu;
+        UiAmbientFx.Create(root, mainMenu ? 32 : 30, mainMenu ? bulletRainSprite : null, mainMenu);
     }
 
     void AddBackgroundGrid(RectTransform parent)
@@ -500,7 +503,7 @@ public class FrontendUiController : MonoBehaviour
 
         TextMeshProUGUI name = CreateText("Title", title, "CORELINE DEFENSE", 74, FontStyle.Bold, TextAnchor.MiddleLeft);
         name.characterSpacing = 6f;
-        name.gameObject.AddComponent<UiTitleFlicker>();
+        ConfigureTitleFlicker(name);
         SetAnchor(name.rectTransform, new Vector2(0f, 0.36f), Vector2.one, new Vector2(44f, 0f), new Vector2(-24f, -12f));
 
         TextMeshProUGUI sub = CreateText("Subtitle", title, "ROBOT SIEGE  /  TACTICAL GRID DEFENSE", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
@@ -550,6 +553,30 @@ public class FrontendUiController : MonoBehaviour
         signalText.color = new Color(0.7f, 0.94f, 1f, 0.86f);
         signalText.characterSpacing = 2f;
         SetAnchor(signalText.rectTransform, Vector2.zero, Vector2.one, new Vector2(34f, 0f), new Vector2(-24f, 0f));
+    }
+
+    void AddMainMenuEffects()
+    {
+        UiAmbientFx.Create(root, 32, bulletRainSprite, bulletRainSprite != null);
+        TextMeshProUGUI title = FindText("Title");
+        if (title != null && title.text.Contains("CORELINE"))
+            ConfigureTitleFlicker(title);
+    }
+
+    void ConfigureTitleFlicker(TextMeshProUGUI title)
+    {
+        if (title == null)
+            return;
+
+        UiTitleFlicker flicker = title.GetComponent<UiTitleFlicker>();
+        if (flicker == null)
+            flicker = title.gameObject.AddComponent<UiTitleFlicker>();
+
+        flicker.minBrightness = 0.68f;
+        flicker.maxBrightness = 1.12f;
+        flicker.flickerSpeed = 2.8f;
+        flicker.attackFlicker = 0.22f;
+        flicker.warningBlend = 0.78f;
     }
 
     void BuildSettings()

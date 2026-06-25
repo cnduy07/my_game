@@ -268,6 +268,7 @@ public static class GeneratedArtApplier
         Sprite board = LoadSprite($"{ArtFolder}/board_coreline_combat_grid_5x9.png");
         Sprite button = LoadSprite($"{UiFolder}/button_command.png");
         Sprite panel = LoadSprite($"{ArtFolder}/ui_panel_9slice_source_256.png");
+        Sprite bullet = LoadSprite($"{ArtFolder}/sprite_bullet_turret_256.png");
         Sprite arcIcon = LoadSprite($"{ArtFolder}/icon_arc_reactor_256.png");
         Sprite turretIcon = LoadSprite($"{ArtFolder}/sprite_turret_256.png");
         Sprite bunkerIcon = LoadSprite($"{ArtFolder}/icon_bunker_256.png");
@@ -283,6 +284,7 @@ public static class GeneratedArtApplier
             frontend.boardBackgroundSprite = board;
             frontend.buttonSprite = button;
             frontend.panelSprite = panel;
+            frontend.bulletRainSprite = bullet;
             EditorUtility.SetDirty(frontend);
             changed = true;
         }

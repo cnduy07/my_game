@@ -667,3 +667,15 @@ Hoàn thiện **gameplay loop bằng hình xám** trước khi đụng tới art
   - `Tools > Coreline > Rebuild All Frontend Authored UI`
 - Muc tieu: chu project mo scene trong Unity Editor la thay panel/button/text/background de tinh chinh bang tay; code chi xu ly navigation/settings/mission data.
 - Luu y: rebuild tool se ghi de `FrontendCanvas`, nen cac tinh chinh tay can duoc review truoc khi chay generator lai.
+
+### UI micro-polish pass - 2026-06-25
+- Checkpoint font/authored UI da commit + push truoc khi polish tiep.
+- GameScene OC row buttons:
+  - dung command button sprite thay nen rectangle thô;
+  - them lane pip, threat strip day, active duration strip, alert edge, va color state ro hon.
+- MainMenu:
+  - `FrontendUiController` co `bulletRainSprite` map toi `sprite_bullet_turret_256`;
+  - authored/generator path deu them horizontal bullet rain nhe;
+  - `UiTitleFlicker` them pha flicker do/vang kieu den canh bao trong dem.
+- Deploy transition:
+  - text transition tang size 28 -> 56 de doc ro hon khi vao GameScene.

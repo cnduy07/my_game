@@ -41,6 +41,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Test GameScene board grid: grid that cua gameplay ro hon generated board cell art va khong lam roi mat khi dat unit/enemy.
   - Test GameScene board underlay: vung den quanh board co hangar/command-deck detail nhe, khong tranh voi board/unit/HUD.
   - Test Thaleah Pixel Font pass: run `Tools > Coreline > Apply Thaleah Pixel Font`, then verify MainMenu/Settings/HowToPlay/MissionMap/GameScene TMP labels use Thaleah, have no text outline/shadow, use truncate overflow, and no TMP font warnings.
+  - Test UI polish pass: OC row buttons dung button skin/slot state moi, MainMenu co bullet sprite rain bay ngang nhe, title flicker do/vang nhu den canh bao, va deploy transition text lon gap doi.
   - Test enemy entry/right rail polish: static red rectangle/stripe tren board da giam; rail cannon khi fire van giu laser beam do manh nhu ban truoc.
   - Test Victory/Defeat end scene: title/subtitle can giua tot, title pulse ro hon, report icon chips/rows can giua va buttons fixed-size bang `button_command`.
   - Test Unity Console khong con warning `Unit 1` transition dung parameter `Walking` bi thieu.
@@ -85,6 +86,10 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - added shared `UiFont` runtime helper for generated and scene-authored TMP labels;
   - added `Tools > Coreline > Apply Thaleah Pixel Font` to create/apply `Assets/Resources/Fonts/ThaleahFat SDF.asset`;
   - frontend/game UI text factories now apply the shared font helper.
+- UI micro-polish pass:
+  - OC lane buttons use command-button skin with lane pip, threat strip, active strip, and clearer state colors;
+  - MainMenu supports horizontal `sprite_bullet_turret_256` rain and stronger red/amber title flicker;
+  - deploy scene transition text size increased from 28 to 56.
 - Runtime HUD rebuild da duoc chu project test OK trong Unity.
 - TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
 - Production foundation pass da duoc chu project test OK trong Unity.

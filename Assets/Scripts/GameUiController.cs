@@ -148,6 +148,8 @@ public partial class GameUiController : MonoBehaviour
         public Image frame;
         public Image threatFill;
         public Image fill;
+        public Image lanePip;
+        public Image alertEdge;
         public TextMeshProUGUI label;
     }
 
@@ -763,35 +765,47 @@ public partial class GameUiController : MonoBehaviour
             SetAnchor(rect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(12f, top - 50f - visualIndex * 58f), new Vector2(-12f, top - 4f - visualIndex * 58f));
 
             Image frame = go.GetComponent<Image>();
-            frame.color = panelSoftColor;
-            AddFrame(rect, new Color(0.1f, 0.2f, 0.27f, 0.8f));
-            AddCardAccent(rect);
+            ApplySprite(frame, buttonSprite, new Color(0.58f, 0.72f, 0.82f, 0.72f), false);
 
             Button button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.ColorTint;
             button.colors = BuildButtonColors(panelSoftColor, accentColor);
+            go.AddComponent<PixelButtonPressOffset>();
+            go.AddComponent<UiInteractMotion>();
             button.onClick.AddListener(() =>
             {
                 if (OverchargeSystem.Instance != null)
                     OverchargeSystem.Instance.TryActivate(rowIndex);
             });
 
+            Image lanePip = CreateImage("LanePip", go.transform, new Color(accentColor.r, accentColor.g, accentColor.b, 0.42f));
+            lanePip.raycastTarget = false;
+            SetAnchor(lanePip.rectTransform, new Vector2(0f, 0.18f), new Vector2(0f, 0.82f), new Vector2(8f, 0f), new Vector2(14f, 0f));
+
             Image threatFill = CreateImage("ThreatFill", go.transform, new Color(1f, 0.42f, 0.14f, 0.28f));
+            threatFill.raycastTarget = false;
             threatFill.type = Image.Type.Filled;
             threatFill.fillMethod = Image.FillMethod.Horizontal;
             threatFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-            SetAnchor(threatFill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            SetAnchor(threatFill.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(18f, 6f), new Vector2(-18f, 12f));
 
             Image fill = CreateImage("ActiveFill", go.transform, new Color(0.1f, 0.85f, 1f, 0.35f));
+            fill.raycastTarget = false;
             fill.type = Image.Type.Filled;
             fill.fillMethod = Image.FillMethod.Horizontal;
             fill.fillOrigin = (int)Image.OriginHorizontal.Left;
-            SetAnchor(fill.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            SetAnchor(fill.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(18f, 4f), new Vector2(-18f, 15f));
+
+            Image alertEdge = CreateImage("AlertEdge", go.transform, new Color(1f, 0.3f, 0.12f, 0.78f));
+            alertEdge.raycastTarget = false;
+            SetAnchor(alertEdge.rectTransform, new Vector2(1f, 0.18f), new Vector2(1f, 0.82f), new Vector2(-15f, 0f), new Vector2(-9f, 0f));
 
             TextMeshProUGUI label = CreateText("Label", go.transform, "", 19, FontStyle.Bold, TextAnchor.MiddleCenter);
-            SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+            label.characterSpacing = 1.2f;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 0f), new Vector2(-18f, 2f));
 
-            rowButtons.Add(new RowButton { button = button, frame = frame, threatFill = threatFill, fill = fill, label = label });
+            rowButtons.Add(new RowButton { button = button, frame = frame, threatFill = threatFill, fill = fill, lanePip = lanePip, alertEdge = alertEdge, label = label });
         }
     }
 
@@ -1005,11 +1019,11 @@ public partial class GameUiController : MonoBehaviour
             float pressure = overcharge.LanePressure01(row);
 
             if (active)
-                button.label.text = $"{row + 1}: {remaining:0.0}s";
+                button.label.text = $"{row + 1}  {remaining:0.0}s";
             else if (enemyCount > 0)
-                button.label.text = $"{row + 1}: {enemyCount} threat";
+                button.label.text = $"{row + 1}  {enemyCount} THREAT";
             else
-                button.label.text = $"{row + 1}: OC";
+                button.label.text = $"{row + 1}  OC";
 
             if (button.threatFill != null)
             {
@@ -1022,7 +1036,27 @@ public partial class GameUiController : MonoBehaviour
 
             button.fill.fillAmount = Mathf.Clamp01(fill);
             button.fill.gameObject.SetActive(active);
-            button.frame.color = active ? accentColor : (pressure >= 0.65f ? warningColor : (afford ? panelSoftColor : disabledColor));
+            if (button.alertEdge != null)
+            {
+                button.alertEdge.color = pressure >= 0.65f
+                    ? new Color(1f, 0.25f, 0.08f, 0.9f)
+                    : new Color(accentColor.r, accentColor.g, accentColor.b, 0.42f);
+                button.alertEdge.gameObject.SetActive(active || pressure >= 0.25f);
+            }
+
+            if (button.lanePip != null)
+            {
+                button.lanePip.color = active
+                    ? new Color(0.64f, 1f, 1f, 0.92f)
+                    : (pressure >= 0.65f ? new Color(1f, 0.48f, 0.16f, 0.86f) : new Color(accentColor.r, accentColor.g, accentColor.b, afford ? 0.48f : 0.22f));
+            }
+
+            button.frame.color = active
+                ? new Color(0.62f, 0.95f, 1f, 0.94f)
+                : (pressure >= 0.65f ? new Color(1f, 0.62f, 0.28f, 0.86f) : (afford ? new Color(0.58f, 0.72f, 0.82f, 0.72f) : new Color(0.34f, 0.38f, 0.44f, 0.42f)));
+            button.label.color = active || afford
+                ? UiSpec.Text
+                : new Color(0.56f, 0.6f, 0.66f, 0.9f);
             button.button.interactable = !active && afford;
         }
     }

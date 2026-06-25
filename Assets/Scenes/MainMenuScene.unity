@@ -172,6 +172,7 @@ MonoBehaviour:
   boardBackgroundSprite: {fileID: 21300000, guid: da6711c14bb693245917f66f7f2256ce, type: 3}
   buttonSprite: {fileID: 21300000, guid: b8a4b7cf7d2c4b79a0d2a27c23f1e6c9, type: 3}
   panelSprite: {fileID: 21300000, guid: d4dd9307f1ba6ce4486f225836859244, type: 3}
+  bulletRainSprite: {fileID: 21300000, guid: 41abbc4423c33854b83d21069dbf0811, type: 3}
 --- !u!1 &200000
 GameObject:
   m_ObjectHideFlags: 0
