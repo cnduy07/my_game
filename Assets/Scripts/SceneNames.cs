@@ -8,6 +8,7 @@ public static class SceneNames
     public const string HowToPlay = "HowToPlayScene";
     public const string MissionMap = "MissionMapScene";
     public const string Game = "GameScene";
+    public const string End = "EndScene";
 }
 
 public static class FrontendNavigation

@@ -29,21 +29,23 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - Kiem tra settings scene moi khong con chong chu, slider/toggle bam duoc tren desktop/mobile aspect.
   - Generated art import da apply prefab + scene mapping; can Play Mode smoke test Turret, SnowGun frost projectile, Basic/Armored/Fast/Shield enemy, Bullet, Bunker damage stages, DroneEMP, EnergyOrb collect, menu/mission/settings/how-to skin, board art, seed icons, muzzle/hit/death/EMP/Rail VFX.
   - Test VFX tuning pass: muzzle flash phai nho, nam ngay dau nong va huong sang phai; energy collect/EMP pulse da tang lai sau feedback qua be, nhung khong duoc che mat unit/enemy.
-  - Test Victory/Defeat modal moi: khong con terminal backdrop xanh/do toan man hinh, khong co hop mau/duong thang tu ve gay roi, cac button dung `button_command`, text can giua va doc ro.
+  - Test Victory/Defeat `EndScene`: win/loss phai load scene rieng, khong hien popup tren GameScene; layout giong MainMenu voi title/mission/buttons ben trai va command report stats ben phai.
   - GameScene board active hien tai phai dung `Assets/Art/board_coreline_combat_grid_5x9.png` full opacity; khong tu ghi de board runtime khi chua co phe duyet.
   - Test UI command pass moi: seed tray bottom dung `button_command` game-like hon, selected seed khong con full cyan app button; frontend main menu buttons dung shared `button_command` thay vi raw app button; mission map node selected/deploy/route bot cung nhac.
   - Test strict `UI_SPEC.md` compliance: `Assets/UI/button_command.png` la button background duy nhat cho clickable action, Point filter, button states chi tint/press offset + subtle scale, text khong shadow/outline, menu 220x72 gap 14, popup 172x58, secondary 188x58.
   - Test mission map hover/touch: node hover scale ro, selected node pulse nhe, deploy co tactical transition truoc khi vao GameScene.
   - Test frontend ambient FX: Menu/Settings/HowToPlay/MissionMap co diagonal dark pixel rain/debris nhe, khong che UI.
   - Test end report: Victory/Defeat hien Mission/Wave/Enemies/Energy/Play time voi icon chip nho va 3 nut fixed-size.
-  - Test UI sizing correction: main menu buttons khong con vuong/default 100x100; Settings Music/SFX slider khong de len chu; Deploy button tren mission map khong stretch ngang; Victory/Defeat modal bot trong va chu doc hon.
+  - Test UI sizing correction: main menu buttons khong con vuong/default 100x100; Settings Music/SFX slider khong de len chu; Deploy button tren mission map khong stretch ngang; Victory/Defeat `EndScene` khong con popup trong GameScene.
   - Test seed tray khi selected nhung khong du energy: label/icon van doc ro, cost canh bao bang mau accent.
   - Test GameScene board grid: grid that cua gameplay ro hon generated board cell art va khong lam roi mat khi dat unit/enemy.
   - Test GameScene board underlay: vung den quanh board co hangar/command-deck detail nhe, khong tranh voi board/unit/HUD.
   - Test Thaleah Pixel Font pass: run `Tools > Coreline > Apply Thaleah Pixel Font`, then verify MainMenu/Settings/HowToPlay/MissionMap/GameScene TMP labels use Thaleah, have no text outline/shadow, use truncate overflow, and no TMP font warnings.
   - Test UI polish pass: OC row buttons dung button skin/slot state moi, MainMenu co bullet sprite rain bay ngang nhe, title flicker do/vang nhu den canh bao, va deploy transition text lon gap doi.
   - Test enemy entry/right rail polish: static red rectangle/stripe tren board da giam; rail cannon khi fire van giu laser beam do manh nhu ban truoc.
-  - Test Victory/Defeat end scene: title/subtitle can giua tot, title pulse ro hon, report icon chips/rows can giua va buttons fixed-size bang `button_command`.
+  - Test Victory/Defeat end scene: mission name duoi game title du lon/de doc, command report stats khong de chu, 3 buttons fixed-size bang `button_command`.
+  - Test iPad/4:3 GameScene: board khong bi cat trai/phai, OC panel khong lan vao board, seed tray van bam duoc.
+  - Test MissionMap tren iOS simulator: enemy mix/recommended tools/pressure/reward/deploy khong con de chu khi co nhieu recommended tools.
   - Test Unity Console khong con warning `Unit 1` transition dung parameter `Walking` bi thieu.
   - Test pacing moi: base enemy speed `0.27`, Fast enemy speed modifier `1.28x`; Level 4+ van tang do kho bang enemy mix/mechanics thay vi day toc do qua cao.
 
@@ -90,6 +92,11 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - OC lane buttons use command-button skin with lane pip, threat strip, active strip, and clearer state colors;
   - MainMenu supports horizontal `sprite_bullet_turret_256` rain and stronger red/amber title flicker;
   - deploy scene transition text size increased from 28 to 56.
+- Responsive/end-state correction pass:
+  - `UiAmbientFx` rebuilds existing authored scene streaks so menu bullet rain animates instead of staying static.
+  - MissionMap detail panel uses compact recommended-tools text and tighter anchored layout to avoid iOS simulator overlap.
+  - GameScene camera/HUD now adapts to 4:3/tablet aspect so the board and OC panel remain separated.
+  - Added dedicated `EndScene` and route GameManager win/loss there after capturing mission stats.
 - Runtime HUD rebuild da duoc chu project test OK trong Unity.
 - TextMeshPro Essentials da duoc import; khong can dua `Examples & Extras` vao ban release.
 - Production foundation pass da duoc chu project test OK trong Unity.

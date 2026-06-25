@@ -498,7 +498,7 @@ public partial class GameUiController
         missionTypeText.text = CampaignIntel.NodeTypeLabel(nodeType);
         missionBriefingText.text = BuildLevelDetail(level, unlocked, completed);
         missionEnemyMixText.text = $"Enemy mix\n{CampaignIntel.BuildMixLabel(mix)}";
-        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedToolsStack(mix)}";
+        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedTools(mix).Replace(", ", " / ")}";
         missionPressureText.text = $"Pressure score: {CampaignIntel.PressureScore(level)}";
         missionRewardText.text = completed && !string.IsNullOrWhiteSpace(level.completionReward)
             ? level.completionReward

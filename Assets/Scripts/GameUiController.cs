@@ -128,6 +128,8 @@ public partial class GameUiController : MonoBehaviour
     int lastLevelCount = -1;
     bool modalBuilt;
     bool wasPausedBeforeLevelSelect;
+    Vector2Int lastResponsiveScreenSize;
+    bool lastResponsiveTabletLayout;
 
     class SeedCard
     {
@@ -173,6 +175,7 @@ public partial class GameUiController : MonoBehaviour
 
     void Start()
     {
+        FitGameplayCameraToBoard();
         BuildHud();
         if ((showMainMenuOnLaunch && !mainMenuShownThisSession) || shouldOpenMainMenuAfterReload)
             OpenMainMenu();
@@ -214,6 +217,7 @@ public partial class GameUiController : MonoBehaviour
         }
 
         RebuildDynamicUiIfNeeded();
+        ApplyResponsiveHudLayout();
         RefreshHud();
         RefreshModalState();
     }
@@ -285,8 +289,66 @@ public partial class GameUiController : MonoBehaviour
         BuildModal(safeAreaRoot);
         BuildLevelSelectOverlay(safeAreaRoot);
         RebuildDynamicUiIfNeeded();
+        ApplyResponsiveHudLayout(true);
         RefreshHud();
         RefreshModalState();
+    }
+
+    void FitGameplayCameraToBoard()
+    {
+        Camera cam = Camera.main;
+        GridManager gridManager = FindAnyObjectByType<GridManager>();
+        if (cam == null || !cam.orthographic || gridManager == null) return;
+
+        float aspect = Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
+        float boardWidth = gridManager.cols * gridManager.cellSize;
+        float boardHeight = gridManager.rows * gridManager.cellSize;
+        float horizontalPadding = aspect < 1.55f ? 3.0f : 2.1f;
+        float verticalPadding = 2.05f;
+        float requiredSize = Mathf.Max(
+            3.35f,
+            (boardHeight + verticalPadding) * 0.5f,
+            (boardWidth + horizontalPadding) / (2f * Mathf.Max(0.1f, aspect)));
+
+        Vector3 center = new Vector3(
+            gridManager.origin.x + (gridManager.cols - 1) * gridManager.cellSize * 0.5f,
+            gridManager.origin.y + (gridManager.rows - 1) * gridManager.cellSize * 0.5f,
+            0f);
+        Vector3 pos = cam.transform.position;
+        cam.orthographicSize = requiredSize;
+        cam.transform.position = new Vector3(center.x + (aspect < 1.55f ? 0.18f : 0.34f), center.y - 0.04f, pos.z);
+    }
+
+    bool IsTabletLayout()
+    {
+        return Screen.width > 0 && Screen.height > 0 && (float)Screen.width / Screen.height < 1.55f;
+    }
+
+    void ApplyResponsiveHudLayout(bool force = false)
+    {
+        Vector2Int currentSize = new Vector2Int(Screen.width, Screen.height);
+        bool tablet = IsTabletLayout();
+        if (!force && currentSize == lastResponsiveScreenSize && tablet == lastResponsiveTabletLayout)
+            return;
+
+        lastResponsiveScreenSize = currentSize;
+        lastResponsiveTabletLayout = tablet;
+        FitGameplayCameraToBoard();
+
+        if (overchargePanel != null)
+        {
+            SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f),
+                tablet ? new Vector2(-152f, -184f) : new Vector2(-190f, -206f),
+                tablet ? new Vector2(-8f, 184f) : new Vector2(-24f, 206f));
+        }
+
+        if (overchargeCostText != null)
+        {
+            overchargeCostText.fontSizeMax = tablet ? 18f : 22f;
+            overchargeCostText.fontSizeMin = tablet ? 15f : 22f;
+        }
+
+        ResizeSeedTray(lastSeedCount);
     }
 
     void EnsureEventSystem()
@@ -742,7 +804,8 @@ public partial class GameUiController : MonoBehaviour
         float contentWidth = seedCount * SeedCardWidth +
                              Mathf.Max(0, seedCount - 1) * SeedTraySpacing +
                              SeedTrayHorizontalPadding;
-        float width = Mathf.Clamp(contentWidth, SeedTrayMinWidth, SeedTrayMaxWidth);
+        float maxWidth = IsTabletLayout() ? 760f : SeedTrayMaxWidth;
+        float width = Mathf.Clamp(contentWidth, SeedTrayMinWidth, maxWidth);
         SetAnchor(seedTray, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-width * 0.5f, 14f), new Vector2(width * 0.5f, 112f));
     }
 
@@ -1067,6 +1130,12 @@ public partial class GameUiController : MonoBehaviour
 
         bool gameOver = GameManager.Instance != null && GameManager.Instance.IsGameOver;
         bool won = GameManager.Instance != null && GameManager.Instance.IsWon;
+        bool loadingEndScene = GameManager.Instance != null && GameManager.Instance.IsEndScenePending;
+        if (loadingEndScene)
+        {
+            modalOverlay.SetActive(false);
+            return;
+        }
 
         bool missionMapOpen = levelSelectOverlay != null && levelSelectOverlay.activeSelf;
         bool show = !mainMenuOpen && !missionMapOpen && (isPaused || gameOver || won);

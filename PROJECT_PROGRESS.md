@@ -124,6 +124,15 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - End scene title/subtitle moved lower for better centering, title pulse scale added, report panel narrowed/centered, and report rows now have backplates plus detailed icon chips instead of plain single-letter boxes.
 - Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
 
+## Responsive UI and dedicated EndScene pass - 2026-06-25
+- Fixed authored frontend ambient FX rebuild so MainMenu bullet rain uses moving runtime streaks instead of static baked children.
+- MissionMap detail panel now uses compact recommended-tools text and tighter anchored text/button bands to avoid iOS simulator text overlap.
+- GameScene now fits the world camera and HUD layout to tablet/4:3 aspect, reducing board cropping and keeping the OC panel outside the board.
+- Added real `Assets/Scenes/EndScene.unity` plus `EndRunSummary`/`EndSceneController`; `GameManager` captures win/loss stats and loads `EndScene` instead of showing the GameScene terminal popup.
+- Follow-up correction: GameScene hides the terminal modal immediately while EndScene is pending, and EndScene now mirrors MainMenu composition: title/mission/buttons on the left, command report stats on the right, and the same bullet-rain/title-flicker visual language.
+- Follow-up device fix: EndScene background and ambient FX now render under a full-screen root outside SafeArea, while interactive content remains SafeArea-fitted; horizontal bullet rain sprite display size doubled.
+- Verify: `dotnet build Assembly-CSharp.csproj --no-restore` pass with 0 warnings/errors.
+
 ---
 
 ## ✅ ĐÃ LÀM

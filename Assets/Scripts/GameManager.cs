@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // Owns match terminal state and lane failsafes.
 public class GameManager : MonoBehaviour
@@ -11,6 +13,8 @@ public class GameManager : MonoBehaviour
     private Lawnmower[] perRow;
     public bool IsGameOver { get; private set; }
     public bool IsWon { get; private set; }
+    public bool IsEndScenePending { get; private set; }
+    bool endSceneLoadStarted;
 
     void Awake()
     {
@@ -53,7 +57,8 @@ public class GameManager : MonoBehaviour
         if (IsGameOver || IsWon) return;
         IsGameOver = true;
         AudioManager.PlaySfx(SfxType.GameOver);
-        Time.timeScale = 0f;
+        EndRunSummary.Capture(false, row);
+        StartCoroutine(LoadEndSceneAfterDelay(0.05f));
     }
 
     public void Win()
@@ -63,6 +68,17 @@ public class GameManager : MonoBehaviour
         IsWon = true;
         if (LevelManager.Instance != null) LevelManager.Instance.MarkCurrentLevelCompleted();
         AudioManager.PlaySfx(SfxType.Win);
-        Time.timeScale = 0f;
+        EndRunSummary.Capture(true, -1);
+        StartCoroutine(LoadEndSceneAfterDelay(0.05f));
+    }
+
+    IEnumerator LoadEndSceneAfterDelay(float delay)
+    {
+        if (endSceneLoadStarted) yield break;
+        endSceneLoadStarted = true;
+        IsEndScenePending = true;
+        yield return new WaitForSecondsRealtime(delay);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneNames.End);
     }
 }

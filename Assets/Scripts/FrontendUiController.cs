@@ -286,6 +286,7 @@ public class FrontendUiController : MonoBehaviour
         missionToolsText = FindText("Tools", detailPanel);
         missionPressureText = FindText("Pressure", detailPanel);
         missionRewardText = FindText("Reward", detailPanel);
+        ApplyMissionDetailCompactLayout();
 
         deployButton = FindComponent<Button>("DeployButton");
         if (deployButton != null)
@@ -740,6 +741,54 @@ public class FrontendUiController : MonoBehaviour
         SetAnchor((RectTransform)deployButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, 22f),
             new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, 22f + UiSpec.SecondaryButtonHeight));
+        ApplyMissionDetailCompactLayout();
+    }
+
+    void ApplyMissionDetailCompactLayout()
+    {
+        if (detailPanel == null) return;
+
+        ConfigureMissionText(missionStatusText, 14, 12);
+        ConfigureMissionText(missionDevModeText, 11, 10);
+        ConfigureMissionText(missionTitleText, 24, 17);
+        ConfigureMissionText(missionTypeText, 15, 12);
+        ConfigureMissionText(missionBriefingText, 14, 11);
+        ConfigureMissionText(missionEnemyMixText, 13, 10);
+        ConfigureMissionText(missionToolsText, 13, 10);
+        ConfigureMissionText(missionPressureText, 13, 10);
+        ConfigureMissionText(missionRewardText, 13, 10);
+
+        SetMissionAnchor(missionStatusText, new Vector2(0f, 1f), new Vector2(0.55f, 1f), new Vector2(24f, -42f), new Vector2(-8f, -14f));
+        SetMissionAnchor(missionDevModeText, new Vector2(0.45f, 1f), new Vector2(1f, 1f), new Vector2(8f, -42f), new Vector2(-22f, -14f));
+        SetMissionAnchor(missionTitleText, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -86f), new Vector2(-24f, -44f));
+        SetMissionAnchor(missionTypeText, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -116f), new Vector2(-24f, -84f));
+        SetMissionAnchor(missionBriefingText, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -218f), new Vector2(-24f, -126f));
+        SetMissionAnchor(missionEnemyMixText, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -282f), new Vector2(-24f, -224f));
+        SetMissionAnchor(missionToolsText, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -348f), new Vector2(-24f, -288f));
+        SetMissionAnchor(missionPressureText, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 98f), new Vector2(-24f, 124f));
+        SetMissionAnchor(missionRewardText, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 66f), new Vector2(-24f, 94f));
+
+        if (deployButton != null)
+        {
+            SetAnchor((RectTransform)deployButton.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, 12f),
+                new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, 12f + UiSpec.SecondaryButtonHeight));
+        }
+    }
+
+    void ConfigureMissionText(TextMeshProUGUI text, float maxSize, float minSize)
+    {
+        if (text == null) return;
+        text.enableAutoSizing = true;
+        text.fontSizeMax = maxSize;
+        text.fontSizeMin = minSize;
+        text.overflowMode = TextOverflowModes.Truncate;
+    }
+
+    void SetMissionAnchor(TextMeshProUGUI text, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+    {
+        if (text == null) return;
+        SetAnchor(text.rectTransform, anchorMin, anchorMax, offsetMin, offsetMax);
     }
 
     void RebuildMissionNodes()
@@ -904,7 +953,7 @@ public class FrontendUiController : MonoBehaviour
             ? "Complete the previous mission to unlock this sector."
             : (!string.IsNullOrWhiteSpace(level.missionBriefing) ? level.missionBriefing : "Ready for deployment.");
         missionEnemyMixText.text = $"Enemy mix\n{CampaignIntel.BuildMixLabel(mix)}";
-        missionToolsText.text = $"Recommended tools\n{CampaignIntel.BuildRecommendedToolsStack(mix)}";
+        missionToolsText.text = $"Recommended tools\n{BuildCompactRecommendedTools(mix)}";
         missionPressureText.text = $"Pressure score: {CampaignIntel.PressureScore(level)}";
         missionRewardText.text = completed && !string.IsNullOrWhiteSpace(level.completionReward)
             ? level.completionReward
@@ -912,6 +961,12 @@ public class FrontendUiController : MonoBehaviour
 
         deployButton.interactable = unlocked;
         deployButtonText.text = unlocked ? "DEPLOY" : "LOCKED";
+    }
+
+    string BuildCompactRecommendedTools(EnemyMix mix)
+    {
+        string tools = CampaignIntel.BuildRecommendedTools(mix);
+        return tools.Replace(", ", " / ");
     }
 
     void FocusSelectedMission()

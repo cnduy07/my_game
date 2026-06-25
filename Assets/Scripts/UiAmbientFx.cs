@@ -25,6 +25,7 @@ public class UiAmbientFx : MonoBehaviour
         if (existing != null && existing.TryGetComponent(out UiAmbientFx existingFx))
         {
             existingFx.Configure(projectileSprite, horizontalProjectiles);
+            existingFx.Rebuild(Mathf.Clamp(count, 8, existingFx.streaks.Length));
             return existingFx;
         }
 
@@ -38,7 +39,7 @@ public class UiAmbientFx : MonoBehaviour
 
         UiAmbientFx fx = layer.gameObject.AddComponent<UiAmbientFx>();
         fx.Configure(projectileSprite, horizontalProjectiles);
-        fx.Build(Mathf.Clamp(count, 8, fx.streaks.Length));
+        fx.Rebuild(Mathf.Clamp(count, 8, fx.streaks.Length));
         return fx;
     }
 
@@ -46,6 +47,15 @@ public class UiAmbientFx : MonoBehaviour
     {
         projectileSprite = sprite;
         horizontalProjectiles = horizontal && sprite != null;
+    }
+
+    void Rebuild(int count)
+    {
+        ClearChildren();
+        for (int i = 0; i < streaks.Length; i++)
+            streaks[i] = null;
+
+        Build(count);
     }
 
     void Build(int count)
@@ -62,7 +72,7 @@ public class UiAmbientFx : MonoBehaviour
             streakRect.anchorMax = new Vector2(0f, 1f);
             streakRect.pivot = new Vector2(0.5f, 0.5f);
             streakRect.sizeDelta = horizontalProjectiles
-                ? new Vector2(Random.Range(34f, 62f), Random.Range(12f, 20f))
+                ? new Vector2(Random.Range(68f, 124f), Random.Range(24f, 40f))
                 : new Vector2(Random.Range(44f, 180f), Random.Range(2f, 5f));
             streakRect.localRotation = Quaternion.Euler(0f, 0f, horizontalProjectiles ? Random.Range(-4f, 3f) : -18f);
 
@@ -92,6 +102,18 @@ public class UiAmbientFx : MonoBehaviour
                 phase = Random.Range(0f, 100f)
             };
             ResetStreak(streaks[i], true);
+        }
+    }
+
+    void ClearChildren()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            GameObject child = transform.GetChild(i).gameObject;
+            if (Application.isPlaying)
+                Destroy(child);
+            else
+                DestroyImmediate(child);
         }
     }
 
