@@ -216,11 +216,12 @@ public class EndSceneController : MonoBehaviour
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
         go.transform.SetParent(parent, false);
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
+        float readableSize = ReadableTextSize(size);
         label.text = value;
-        label.fontSize = size;
+        label.fontSize = readableSize;
         label.enableAutoSizing = true;
-        label.fontSizeMax = size;
-        label.fontSizeMin = Mathf.Max(8, size - 8);
+        label.fontSizeMax = readableSize;
+        label.fontSizeMin = Mathf.Max(12f, readableSize * 0.65f);
         label.fontStyle = style == FontStyle.Bold ? FontStyles.Bold : FontStyles.Normal;
         label.alignment = ToTmpAlignment(alignment);
         label.color = text;
@@ -230,6 +231,17 @@ public class EndSceneController : MonoBehaviour
         label.overflowMode = TextOverflowModes.Truncate;
         UiFont.Apply(label);
         return label;
+    }
+
+    float ReadableTextSize(float size)
+    {
+        if (size >= 56f)
+            return size;
+
+        if (size >= 34f)
+            return Mathf.Ceil(size * 1.22f);
+
+        return Mathf.Ceil(Mathf.Max(22f, size * 1.55f));
     }
 
     Button CreateButton(string name, Transform parent, string labelText, int size, Color textColor)
@@ -254,10 +266,26 @@ public class EndSceneController : MonoBehaviour
         go.AddComponent<UiInteractMotion>();
 
         TextMeshProUGUI label = CreateText("Text", go.transform, labelText, size, FontStyle.Bold, TextAnchor.MiddleCenter);
+        float buttonTextSize = ButtonTextSize(size, labelText);
+        label.fontSize = buttonTextSize;
+        label.fontSizeMax = buttonTextSize;
+        label.fontSizeMin = Mathf.Max(12f, buttonTextSize * 0.65f);
         label.color = textColor;
         label.textWrappingMode = TextWrappingModes.NoWrap;
-        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(8f, 0f), new Vector2(-8f, 0f));
+        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 0f), new Vector2(-14f, 0f));
         return button;
+    }
+
+    float ButtonTextSize(float size, string textValue)
+    {
+        float target = Mathf.Ceil(Mathf.Max(18f, size * 1.2f));
+        int length = string.IsNullOrWhiteSpace(textValue) ? 0 : textValue.Trim().Length;
+        if (length >= 14)
+            target = Mathf.Min(target, 19f);
+        else if (length >= 10)
+            target = Mathf.Min(target, 21f);
+
+        return target;
     }
 
     void ApplySprite(Image image, Sprite sprite, Color color, bool preserveAspect)

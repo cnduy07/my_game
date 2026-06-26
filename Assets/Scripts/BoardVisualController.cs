@@ -14,12 +14,13 @@ public class BoardVisualController : MonoBehaviour
 
     [Header("Generated Art")]
     public Sprite boardBackgroundSprite;
+    public Sprite airplaneSprite;
     [Range(0f, 1f)] public float boardBackgroundOpacity = 0.78f;
 
     [Header("Geometry")]
     public float outerPadding = 0.36f;
-    public float backdropPaddingX = 3.35f;
-    public float backdropPaddingY = 1.65f;
+    public float backdropPaddingX = 7.2f;
+    public float backdropPaddingY = 2.05f;
     public float gridLineWidth = 0.036f;
     public float accentLineWidth = 0.055f;
 
@@ -48,6 +49,7 @@ public class BoardVisualController : MonoBehaviour
 
         AddRect("Backdrop", center, boardSize + new Vector2(backdropPaddingX, backdropPaddingY), backdropColor, -44);
         AddHangarUnderlay(center, boardSize);
+        AddAirplanePatrolLayer(center, boardSize);
         AddBackdropPanels(center, boardSize);
         bool hasGeneratedBoard = boardBackgroundSprite != null;
         if (hasGeneratedBoard)
@@ -90,10 +92,14 @@ public class BoardVisualController : MonoBehaviour
             new Color(0.012f, 0.026f, 0.038f, 0.92f), -43);
         AddRect("HangarBackPlate", center, new Vector2(underlaySize.x * 0.82f, underlaySize.y * 0.76f),
             new Color(0.035f, 0.058f, 0.074f, 0.9f), -42);
+        AddRect("FarLeftHangarBay", center + new Vector2(-halfW * 0.39f, 0f), new Vector2(halfW * 0.58f, underlaySize.y * 0.82f),
+            new Color(0.01f, 0.052f, 0.064f, 0.72f), -42);
+        AddRect("FarRightBreachField", center + new Vector2(halfW * 0.39f, 0f), new Vector2(halfW * 0.58f, underlaySize.y * 0.82f),
+            new Color(0.07f, 0.018f, 0.02f, 0.5f), -42);
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 11; i++)
         {
-            float x = center.x - halfW * 0.42f + i * halfW * 0.14f;
+            float x = center.x - halfW * 0.48f + i * halfW * 0.096f;
             AddRect($"UnderlayTopRib_{i}", new Vector2(x, center.y + halfH * 0.39f),
                 new Vector2(0.7f, 0.16f), new Color(0.07f, 0.105f, 0.13f, 0.68f), -41);
             AddRect($"UnderlayBottomRib_{i}", new Vector2(x + 0.32f, center.y - halfH * 0.41f),
@@ -113,10 +119,50 @@ public class BoardVisualController : MonoBehaviour
                 new Vector2(0.06f, 0.32f), new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.28f), -39);
         }
 
+        for (int i = 0; i < 5; i++)
+        {
+            float y = center.y - halfH * 0.32f + i * halfH * 0.16f;
+            AddRect($"FarLeftDockLight_{i}", new Vector2(center.x - halfW * 0.66f, y), new Vector2(0.34f, 0.11f),
+                new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.28f), -39);
+            AddRect($"FarRightWarningLight_{i}", new Vector2(center.x + halfW * 0.66f, y + 0.13f), new Vector2(0.34f, 0.1f),
+                new Color(dangerLineColor.r, dangerLineColor.g, dangerLineColor.b, 0.24f), -39);
+        }
+
         AddRect("UnderlayTopCable", center + new Vector2(-0.7f, halfH * 0.46f),
             new Vector2(underlaySize.x * 0.66f, 0.07f), new Color(0.04f, 0.16f, 0.18f, 0.46f), -39);
         AddRect("UnderlayBottomCable", center + new Vector2(0.9f, -halfH * 0.47f),
             new Vector2(underlaySize.x * 0.62f, 0.06f), new Color(0.12f, 0.05f, 0.035f, 0.34f), -39);
+    }
+
+    void AddAirplanePatrolLayer(Vector2 center, Vector2 boardSize)
+    {
+        if (airplaneSprite == null)
+            return;
+
+        float left = grid.origin.x - grid.cellSize * 0.5f;
+        float right = grid.origin.x + (grid.cols - 0.5f) * grid.cellSize;
+        float bottom = grid.origin.y - grid.cellSize * 0.5f;
+        float top = grid.origin.y + (grid.rows - 0.5f) * grid.cellSize;
+
+        AddAirplanePatrol("AirplanePatrol_Left", new Vector2(left - 3.25f, bottom - 0.48f),
+            new Vector2(left - 0.84f, top + 0.68f), 0.68f, 5.8f, 0.1f);
+        AddAirplanePatrol("AirplanePatrol_Right", new Vector2(right + 3.15f, top + 0.54f),
+            new Vector2(right + 0.86f, bottom - 0.7f), 0.7f, 6.4f, 1.9f);
+        AddAirplanePatrol("AirplanePatrol_Top", new Vector2(left - 1.3f, top + 0.98f),
+            new Vector2(right + 1.55f, top + 0.76f), 0.52f, 8.1f, 3.1f);
+        AddAirplanePatrol("AirplanePatrol_Bottom", new Vector2(right + 1.15f, bottom - 0.96f),
+            new Vector2(left - 1.55f, bottom - 0.76f), 0.5f, 7.4f, 4.3f);
+    }
+
+    void AddAirplanePatrol(string name, Vector2 start, Vector2 end, float size, float duration, float phase)
+    {
+        SpriteRenderer renderer = AddSprite(name, start, Vector2.one * size, airplaneSprite,
+            new Color(1f, 1f, 1f, 0.88f), -33);
+        if (renderer == null)
+            return;
+
+        AirplanePatrol patrol = renderer.gameObject.AddComponent<AirplanePatrol>();
+        patrol.Configure(renderer, start, end, duration, phase);
     }
 
     void AddOuterDeckShapes(Vector2 center, Vector2 boardSize)
@@ -134,10 +180,14 @@ public class BoardVisualController : MonoBehaviour
             new Color(0.014f, 0.068f, 0.086f, 0.78f), -34);
         AddRect("OuterRightBreachWall", new Vector2(right + 0.72f, center.y), new Vector2(0.78f, boardSize.y * 0.92f),
             new Color(0.082f, 0.025f, 0.024f, 0.56f), -34);
+        AddRect("OuterLeftDeepDeck", new Vector2(left - 2.1f, center.y), new Vector2(1.72f, boardSize.y * 1.12f),
+            new Color(0.006f, 0.034f, 0.046f, 0.68f), -35);
+        AddRect("OuterRightDeepWall", new Vector2(right + 2.15f, center.y), new Vector2(1.82f, boardSize.y * 1.12f),
+            new Color(0.04f, 0.012f, 0.014f, 0.58f), -35);
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 9; i++)
         {
-            float x = left + 0.7f + i * 1.38f;
+            float x = left - 1.2f + i * 1.38f;
             AddRect($"TopDeckLamp_{i}", new Vector2(x, top + 0.42f), new Vector2(0.12f, 0.045f),
                 i % 2 == 0 ? new Color(accentLineColor.r, accentLineColor.g, accentLineColor.b, 0.52f) : new Color(1f, 0.58f, 0.12f, 0.44f), -33);
             AddRect($"BottomDeckLamp_{i}", new Vector2(x + 0.45f, bottom - 0.43f), new Vector2(0.12f, 0.045f),
@@ -311,7 +361,7 @@ public class BoardVisualController : MonoBehaviour
         return new Vector2(grid.cols * grid.cellSize, grid.rows * grid.cellSize);
     }
 
-    void AddRect(string name, Vector2 center, Vector2 size, Color color, int sortingOrder, float rotationDegrees = 0f)
+    SpriteRenderer AddRect(string name, Vector2 center, Vector2 size, Color color, int sortingOrder, float rotationDegrees = 0f)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(visualRoot, false);
@@ -323,11 +373,12 @@ public class BoardVisualController : MonoBehaviour
         renderer.sprite = PixelSprite();
         renderer.color = color;
         renderer.sortingOrder = sortingOrder;
+        return renderer;
     }
 
-    void AddSprite(string name, Vector2 center, Vector2 size, Sprite sprite, Color color, int sortingOrder)
+    SpriteRenderer AddSprite(string name, Vector2 center, Vector2 size, Sprite sprite, Color color, int sortingOrder)
     {
-        if (sprite == null) return;
+        if (sprite == null) return null;
 
         GameObject go = new GameObject(name);
         go.transform.SetParent(visualRoot, false);
@@ -343,6 +394,7 @@ public class BoardVisualController : MonoBehaviour
         renderer.sprite = sprite;
         renderer.color = color;
         renderer.sortingOrder = sortingOrder;
+        return renderer;
     }
 
     static Sprite PixelSprite()
@@ -357,5 +409,51 @@ public class BoardVisualController : MonoBehaviour
         pixelSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
         pixelSprite.hideFlags = HideFlags.HideAndDontSave;
         return pixelSprite;
+    }
+}
+
+class AirplanePatrol : MonoBehaviour
+{
+    SpriteRenderer target;
+    Vector3 start;
+    Vector3 end;
+    float duration;
+    float phase;
+    Color baseColor;
+
+    public void Configure(SpriteRenderer renderer, Vector2 from, Vector2 to, float seconds, float startPhase)
+    {
+        target = renderer;
+        start = new Vector3(from.x, from.y, 0.14f);
+        end = new Vector3(to.x, to.y, 0.14f);
+        duration = Mathf.Max(0.1f, seconds);
+        phase = startPhase;
+        baseColor = renderer != null ? renderer.color : Color.white;
+        transform.position = start;
+        FaceDirection(end - start);
+    }
+
+    void Update()
+    {
+        if (target == null)
+            return;
+
+        float progress = Mathf.Repeat((Time.unscaledTime + phase) / duration, 1f);
+        float eased = Mathf.SmoothStep(0f, 1f, progress);
+        transform.position = Vector3.Lerp(start, end, eased);
+        FaceDirection(end - start);
+
+        float fade = Mathf.Sin(progress * Mathf.PI);
+        float alpha = Mathf.Lerp(baseColor.a * 0.48f, baseColor.a, fade);
+        target.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
+    }
+
+    void FaceDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+            return;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 }

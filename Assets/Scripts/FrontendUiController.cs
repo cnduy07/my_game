@@ -67,6 +67,7 @@ public class FrontendUiController : MonoBehaviour
 
     void Start()
     {
+        AudioManager.EnsureInstance();
         EnsureRenderCamera();
         EnsureEventSystem();
 
@@ -154,6 +155,8 @@ public class FrontendUiController : MonoBehaviour
         UiFont.ApplyToChildren(root);
 
         FrontendScreenMode mode = ResolveMode();
+        if (mode != FrontendScreenMode.MainMenu)
+            ApplyReadableTextScale(root, true);
         if (!HasRequiredSceneAuthoredUi(mode))
         {
             canvas.gameObject.SetActive(false);
@@ -255,6 +258,7 @@ public class FrontendUiController : MonoBehaviour
         BindToggle(vibrationToggle, GameSettings.VibrationEnabled, value => GameSettings.VibrationEnabled = value);
 
         BindButton("BackButton", GoBack);
+        ApplySettingsReadableLayout();
     }
 
     void BindHowToPlayUi()
@@ -620,6 +624,7 @@ public class FrontendUiController : MonoBehaviour
         SetAnchor((RectTransform)back.transform, new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f),
             new Vector2(-UiSpec.SecondaryButtonWidth * 0.5f, -UiSpec.SecondaryButtonHeight * 0.5f),
             new Vector2(UiSpec.SecondaryButtonWidth * 0.5f, UiSpec.SecondaryButtonHeight * 0.5f));
+        ApplySettingsReadableLayout();
     }
 
     void BuildHowToPlay()
@@ -748,15 +753,15 @@ public class FrontendUiController : MonoBehaviour
     {
         if (detailPanel == null) return;
 
-        ConfigureMissionText(missionStatusText, 14, 12);
-        ConfigureMissionText(missionDevModeText, 11, 10);
-        ConfigureMissionText(missionTitleText, 24, 17);
-        ConfigureMissionText(missionTypeText, 15, 12);
-        ConfigureMissionText(missionBriefingText, 14, 11);
-        ConfigureMissionText(missionEnemyMixText, 13, 10);
-        ConfigureMissionText(missionToolsText, 13, 10);
-        ConfigureMissionText(missionPressureText, 13, 10);
-        ConfigureMissionText(missionRewardText, 13, 10);
+        ConfigureMissionText(missionStatusText, 17, 14);
+        ConfigureMissionText(missionDevModeText, 14, 12);
+        ConfigureMissionText(missionTitleText, 27, 20);
+        ConfigureMissionText(missionTypeText, 18, 14);
+        ConfigureMissionText(missionBriefingText, 17, 13);
+        ConfigureMissionText(missionEnemyMixText, 16, 12);
+        ConfigureMissionText(missionToolsText, 16, 12);
+        ConfigureMissionText(missionPressureText, 16, 12);
+        ConfigureMissionText(missionRewardText, 16, 12);
 
         SetMissionAnchor(missionStatusText, new Vector2(0f, 1f), new Vector2(0.55f, 1f), new Vector2(24f, -42f), new Vector2(-8f, -14f));
         SetMissionAnchor(missionDevModeText, new Vector2(0.45f, 1f), new Vector2(1f, 1f), new Vector2(8f, -42f), new Vector2(-22f, -14f));
@@ -779,9 +784,14 @@ public class FrontendUiController : MonoBehaviour
     void ConfigureMissionText(TextMeshProUGUI text, float maxSize, float minSize)
     {
         if (text == null) return;
+        bool buttonText = IsInsideButton(text.transform.parent);
+        float readableMax = buttonText ? ButtonTextSize(maxSize, text.text) : ReadableTextSize(maxSize);
         text.enableAutoSizing = true;
-        text.fontSizeMax = maxSize;
-        text.fontSizeMin = minSize;
+        text.fontSize = readableMax;
+        text.fontSizeMax = readableMax;
+        text.fontSizeMin = buttonText
+            ? Mathf.Max(12f, readableMax * 0.65f)
+            : Mathf.Max(ReadableTextSize(minSize), readableMax * 0.65f);
         text.overflowMode = TextOverflowModes.Truncate;
     }
 
@@ -862,11 +872,11 @@ public class FrontendUiController : MonoBehaviour
             number.color = selected ? new Color(0.82f, 1f, 1f, 1f) : Color.white;
             SetAnchor(number.rectTransform, new Vector2(0f, 0.42f), Vector2.one, new Vector2(8f, -2f), new Vector2(-8f, -2f));
 
-            TextMeshProUGUI type = CreateText("Type", go.transform, CampaignIntel.NodeTypeLabel(nodeType), 11, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI type = CreateText("Type", go.transform, CampaignIntel.NodeTypeLabel(nodeType), 12, FontStyle.Bold, TextAnchor.MiddleCenter);
             type.color = selected ? new Color(0.38f, 0.92f, 1f, 1f) : new Color(0.82f, 0.93f, 0.98f, 1f);
             SetAnchor(type.rectTransform, new Vector2(0f, 0.16f), new Vector2(1f, 0.48f), new Vector2(5f, 0f), new Vector2(-5f, 0f));
 
-            TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI status = CreateText("Status", go.transform, unlocked ? (completed ? "CLEAR" : "READY") : "LOCKED", 12, FontStyle.Bold, TextAnchor.MiddleCenter);
             status.color = selected ? new Color(0.82f, 1f, 1f, 0.92f) : (unlocked ? Color.white : new Color(0.6f, 0.64f, 0.68f, 1f));
             SetAnchor(status.rectTransform, Vector2.zero, new Vector2(1f, 0.22f), new Vector2(5f, 0f), new Vector2(-5f, 1f));
         }
@@ -1058,7 +1068,7 @@ public class FrontendUiController : MonoBehaviour
         heading.characterSpacing = 5f;
         SetAnchor(heading.rectTransform, new Vector2(0.08f, 0.82f), new Vector2(0.92f, 0.94f), Vector2.zero, Vector2.zero);
 
-        TextMeshProUGUI sub = CreateText("ScreenSubtitle", root, subtitle, 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        TextMeshProUGUI sub = CreateText("ScreenSubtitle", root, subtitle, 21, FontStyle.Bold, TextAnchor.MiddleCenter);
         sub.color = new Color(0.66f, 0.86f, 0.92f, 1f);
         sub.characterSpacing = 2f;
         SetAnchor(sub.rectTransform, new Vector2(0.18f, 0.78f), new Vector2(0.82f, 0.83f), Vector2.zero, Vector2.zero);
@@ -1073,10 +1083,10 @@ public class FrontendUiController : MonoBehaviour
 
     void CreateSliderRow(RectTransform parent, string label, float value, float y, UnityEngine.Events.UnityAction<float> onChanged, out TextMeshProUGUI valueText)
     {
-        TextMeshProUGUI labelText = CreateText($"{label}Label", parent, label, 21, FontStyle.Bold, TextAnchor.MiddleLeft);
+        TextMeshProUGUI labelText = CreateText($"{label}Label", parent, label, 24, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(labelText.rectTransform, new Vector2(0.08f, y + 0.06f), new Vector2(0.32f, y + 0.18f), Vector2.zero, Vector2.zero);
 
-        valueText = CreateText($"{label}Value", parent, Percent(value), 19, FontStyle.Bold, TextAnchor.MiddleRight);
+        valueText = CreateText($"{label}Value", parent, Percent(value), 22, FontStyle.Bold, TextAnchor.MiddleRight);
         valueText.color = new Color(0.8f, 0.92f, 0.96f, 1f);
         SetAnchor(valueText.rectTransform, new Vector2(0.78f, y + 0.06f), new Vector2(0.92f, y + 0.18f), Vector2.zero, Vector2.zero);
 
@@ -1117,6 +1127,14 @@ public class FrontendUiController : MonoBehaviour
     Button CreateMenuButton(string name, Transform parent, string text, bool primary, UnityEngine.Events.UnityAction action)
     {
         Button button = CreateButton(name, parent, text, 16, UiSpec.ButtonNormal, text == "EXIT" ? UiSpec.Accent : UiSpec.Text);
+        TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
+        if (label != null)
+        {
+            label.fontSize = 16f;
+            label.fontSizeMax = 16f;
+            label.fontSizeMin = 16f;
+        }
+
         button.onClick.AddListener(action);
         LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
         layout.minWidth = UiSpec.MenuButtonWidth;
@@ -1140,9 +1158,13 @@ public class FrontendUiController : MonoBehaviour
         go.AddComponent<UiInteractMotion>();
 
         TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
+        float buttonTextSize = ButtonTextSize(size, text);
+        label.fontSize = buttonTextSize;
+        label.fontSizeMax = buttonTextSize;
+        label.fontSizeMin = Mathf.Max(12f, buttonTextSize * 0.65f);
         label.color = textColor;
         label.textWrappingMode = TextWrappingModes.NoWrap;
-        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 0f), new Vector2(-14f, 0f));
         return button;
     }
 
@@ -1187,7 +1209,7 @@ public class FrontendUiController : MonoBehaviour
         Image check = CreateImage("Knob", box.transform, accent);
         SetAnchor(check.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(3f, -9f), new Vector2(21f, 9f));
 
-        TextMeshProUGUI label = CreateText("Label", rootObj.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        TextMeshProUGUI label = CreateText("Label", rootObj.transform, labelText, 23, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(label.rectTransform, new Vector2(0f, 0f), Vector2.one, new Vector2(52f, 0f), Vector2.zero);
 
         toggle.targetGraphic = box;
@@ -1220,6 +1242,62 @@ public class FrontendUiController : MonoBehaviour
             SetAnchor(knob.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
                 on ? new Vector2(23f, -9f) : new Vector2(3f, -9f),
                 on ? new Vector2(41f, 9f) : new Vector2(21f, 9f));
+        }
+    }
+
+    void ApplySettingsReadableLayout()
+    {
+        SetTextSize(FindText("ScreenTitle"), 60f, 52f);
+        SetTextSize(FindText("ScreenSubtitle"), 21f, 18f);
+        SetTextSize(FindText("MusicLabel"), 24f, 20f);
+        SetTextSize(FindText("MusicValue"), 22f, 18f);
+        SetTextSize(FindText("SFXLabel"), 24f, 20f);
+        SetTextSize(FindText("SFXValue"), 22f, 18f);
+
+        TextMeshProUGUI reduceLabel = reduceShakeToggle != null ? FindText("Label", reduceShakeToggle.transform) : null;
+        TextMeshProUGUI vibrationLabel = vibrationToggle != null ? FindText("Label", vibrationToggle.transform) : null;
+        SetTextSize(reduceLabel, 23f, 18f);
+        SetTextSize(vibrationLabel, 23f, 18f);
+
+        Button back = FindComponent<Button>("BackButton");
+        TextMeshProUGUI backText = back != null ? back.GetComponentInChildren<TextMeshProUGUI>() : null;
+        SetTextSize(backText, 18f, 16f);
+    }
+
+    void SetTextSize(TextMeshProUGUI text, float maxSize, float minSize)
+    {
+        if (text == null)
+            return;
+
+        float readableMax = ReadableTextSize(maxSize);
+        text.enableAutoSizing = true;
+        text.fontSize = readableMax;
+        text.fontSizeMax = readableMax;
+        text.fontSizeMin = Mathf.Max(ReadableTextSize(minSize), readableMax * 0.65f);
+    }
+
+    void ApplyReadableTextScale(Transform textRoot, bool scaleAllText)
+    {
+        if (textRoot == null)
+            return;
+
+        TextMeshProUGUI[] labels = textRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TextMeshProUGUI label = labels[i];
+            if (label == null)
+                continue;
+
+            float current = Mathf.Max(label.fontSize, label.fontSizeMax, label.fontSizeMin);
+            bool buttonText = IsInsideButton(label.transform.parent);
+            if (!scaleAllText && !buttonText)
+                continue;
+
+            float readable = buttonText ? ButtonTextSize(current, label.text) : ReadableTextSize(current);
+            label.enableAutoSizing = true;
+            label.fontSize = readable;
+            label.fontSizeMax = readable;
+            label.fontSizeMin = Mathf.Max(12f, readable * 0.65f);
         }
     }
 
@@ -1270,11 +1348,12 @@ public class FrontendUiController : MonoBehaviour
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
         go.transform.SetParent(parent, false);
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
+        float readableSize = IsInsideButton(parent) ? ButtonTextSize(size, text) : ReadableTextSize(size);
         label.text = text;
-        label.fontSize = size;
+        label.fontSize = readableSize;
         label.enableAutoSizing = true;
-        label.fontSizeMax = size;
-        label.fontSizeMin = size;
+        label.fontSizeMax = readableSize;
+        label.fontSizeMin = Mathf.Max(12f, readableSize * 0.65f);
         label.fontStyle = ToTmpFontStyle(style);
         label.alignment = ToTmpAlignment(alignment);
         label.color = UiSpec.Text;
@@ -1284,6 +1363,43 @@ public class FrontendUiController : MonoBehaviour
         label.overflowMode = TextOverflowModes.Truncate;
         UiFont.Apply(label);
         return label;
+    }
+
+    float ReadableTextSize(float size)
+    {
+        if (size >= 56f)
+            return size;
+
+        if (size >= 34f)
+            return Mathf.Ceil(size * 1.22f);
+
+        return Mathf.Ceil(Mathf.Max(22f, size * 1.55f));
+    }
+
+    float ButtonTextSize(float size, string text)
+    {
+        float target = Mathf.Ceil(Mathf.Max(18f, size * 1.2f));
+        int length = string.IsNullOrWhiteSpace(text) ? 0 : text.Trim().Length;
+        if (length >= 14)
+            target = Mathf.Min(target, 19f);
+        else if (length >= 10)
+            target = Mathf.Min(target, 21f);
+
+        return target;
+    }
+
+    bool IsInsideButton(Transform parent)
+    {
+        Transform current = parent;
+        while (current != null)
+        {
+            if (current.GetComponent<Button>() != null)
+                return true;
+
+            current = current.parent;
+        }
+
+        return false;
     }
 
     void AddFrame(RectTransform rect, Color color)

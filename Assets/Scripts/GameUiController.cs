@@ -175,6 +175,7 @@ public partial class GameUiController : MonoBehaviour
 
     void Start()
     {
+        AudioManager.EnsureInstance();
         FitGameplayCameraToBoard();
         BuildHud();
         if ((showMainMenuOnLaunch && !mainMenuShownThisSession) || shouldOpenMainMenuAfterReload)
@@ -344,8 +345,8 @@ public partial class GameUiController : MonoBehaviour
 
         if (overchargeCostText != null)
         {
-            overchargeCostText.fontSizeMax = tablet ? 18f : 22f;
-            overchargeCostText.fontSizeMin = tablet ? 15f : 22f;
+            overchargeCostText.fontSizeMax = ReadableTextSize(tablet ? 20f : 24f);
+            overchargeCostText.fontSizeMin = Mathf.Max(12f, overchargeCostText.fontSizeMax * 0.65f);
         }
 
         ResizeSeedTray(lastSeedCount);
@@ -369,24 +370,24 @@ public partial class GameUiController : MonoBehaviour
         AddFrame(energyBox, new Color(0.16f, 0.28f, 0.36f, 0.9f));
         SetAnchor(energyBox, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, -26f), new Vector2(294f, 26f));
 
-        energyText = CreateText("EnergyText", energyBox, "Energy: 0", 32, FontStyle.Bold, TextAnchor.MiddleLeft);
+        energyText = CreateText("EnergyText", energyBox, "Energy: 0", 36, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(energyText.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 0f), new Vector2(-12f, 0f));
 
         RectTransform levelBox = CreatePanel("LevelBox", topBar, new Color(0.05f, 0.068f, 0.095f, 0.96f));
         AddFrame(levelBox, new Color(0.14f, 0.23f, 0.3f, 0.9f));
         SetAnchor(levelBox, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-250f, -70f), new Vector2(250f, -16f));
 
-        levelText = CreateText("LevelText", levelBox, "", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
+        levelText = CreateText("LevelText", levelBox, "", 34, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(levelText.rectTransform, Vector2.zero, Vector2.one, new Vector2(12f, 0f), new Vector2(-12f, 0f));
 
         RectTransform waveBox = CreatePanel("WaveBox", topBar, new Color(0.05f, 0.068f, 0.095f, 0.96f));
         AddFrame(waveBox, new Color(0.14f, 0.23f, 0.3f, 0.9f));
         SetAnchor(waveBox, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-560f, -26f), new Vector2(-358f, 26f));
 
-        waveText = CreateText("WaveText", waveBox, "", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        waveText = CreateText("WaveText", waveBox, "", 25, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(waveText.rectTransform, Vector2.zero, Vector2.one, new Vector2(10f, 0f), new Vector2(-10f, 0f));
 
-        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSION", 19, panelSoftColor, accentColor);
+        levelSelectTopButton = CreateButton("LevelSelectButton", topBar, "MISSION", 22, panelSoftColor, accentColor);
         levelSelectTopButton.onClick.AddListener(OpenLevelSelect);
         AddFrame((RectTransform)levelSelectTopButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
         SetAnchor((RectTransform)levelSelectTopButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-338f, -26f), new Vector2(-196f, 26f));
@@ -404,7 +405,7 @@ public partial class GameUiController : MonoBehaviour
         tutorialPanel.GetComponent<Image>().raycastTarget = false;
         SetAnchor(tutorialPanel, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(34f, 184f), new Vector2(540f, 248f));
 
-        tutorialText = CreateText("Text", tutorialPanel, "", 22, FontStyle.Bold, TextAnchor.MiddleLeft);
+        tutorialText = CreateText("Text", tutorialPanel, "", 24, FontStyle.Bold, TextAnchor.MiddleLeft);
         tutorialText.color = new Color(0.86f, 0.96f, 1f, 1f);
         SetAnchor(tutorialText.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 8f), new Vector2(-18f, -8f));
         tutorialPanel.gameObject.SetActive(false);
@@ -418,7 +419,7 @@ public partial class GameUiController : MonoBehaviour
         AddCornerTicks(waveIntelPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.32f));
         SetAnchor(waveIntelPanel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-360f, -142f), new Vector2(360f, -96f));
 
-        waveIntelText = CreateText("Text", waveIntelPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        waveIntelText = CreateText("Text", waveIntelPanel, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
         waveIntelText.color = new Color(0.82f, 0.95f, 1f, 1f);
         SetAnchor(waveIntelText.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 2f), new Vector2(-14f, -2f));
         waveIntelPanel.gameObject.SetActive(false);
@@ -432,7 +433,7 @@ public partial class GameUiController : MonoBehaviour
         AddCornerTicks(commandStatusPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.28f));
         SetAnchor(commandStatusPanel, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-380f, 132f), new Vector2(380f, 176f));
 
-        commandStatusText = CreateText("Text", commandStatusPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+        commandStatusText = CreateText("Text", commandStatusPanel, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
         commandStatusText.color = new Color(0.86f, 0.96f, 1f, 1f);
         SetAnchor(commandStatusText.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 2f), new Vector2(-14f, -2f));
         commandStatusPanel.gameObject.SetActive(false);
@@ -462,7 +463,7 @@ public partial class GameUiController : MonoBehaviour
         AddCornerTicks(overchargePanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.34f));
         SetAnchor(overchargePanel, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-190f, -206f), new Vector2(-24f, 206f));
 
-        overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 22, FontStyle.Bold, TextAnchor.MiddleCenter);
+        overchargeCostText = CreateText("OverchargeCost", overchargePanel, "OC", 24, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(overchargeCostText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -50f), new Vector2(-10f, -8f));
     }
 
@@ -495,14 +496,14 @@ public partial class GameUiController : MonoBehaviour
         AddFrame(modalResultCore.rectTransform, new Color(0.1f, 0.32f, 0.38f, 0.34f));
         modalResultCore.gameObject.SetActive(false);
 
-        modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 32, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalTitleText = CreateText("ModalTitle", modalCard, "PAUSED", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(modalTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -76f), new Vector2(-28f, -22f));
 
-        modalSubtitleText = CreateText("ModalSubtitle", modalCard, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter);
+        modalSubtitleText = CreateText("ModalSubtitle", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
         modalSubtitleText.color = UiSpec.Text;
         SetAnchor(modalSubtitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(28f, -116f), new Vector2(-28f, -78f));
 
-        progressText = CreateText("ProgressText", modalCard, "", 14, FontStyle.Normal, TextAnchor.MiddleCenter);
+        progressText = CreateText("ProgressText", modalCard, "", 17, FontStyle.Normal, TextAnchor.MiddleCenter);
         progressText.color = UiSpec.TextMuted;
         SetAnchor(progressText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -166f), new Vector2(-52f, -126f));
 
@@ -514,7 +515,7 @@ public partial class GameUiController : MonoBehaviour
         BuildTerminalScene(terminalSceneBackdrop);
         terminalSceneBackdrop.gameObject.SetActive(false);
 
-        musicText = CreateText("MusicText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        musicText = CreateText("MusicText", modalCard, "", 23, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(musicText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -214f), new Vector2(-52f, -178f));
 
         musicSlider = CreateSlider("MusicSlider", modalCard, GameSettings.MusicVolume);
@@ -525,7 +526,7 @@ public partial class GameUiController : MonoBehaviour
             AudioManager.RefreshMusic();
         });
 
-        sfxText = CreateText("SfxText", modalCard, "", 20, FontStyle.Bold, TextAnchor.MiddleCenter);
+        sfxText = CreateText("SfxText", modalCard, "", 23, FontStyle.Bold, TextAnchor.MiddleCenter);
         SetAnchor(sfxText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(52f, -296f), new Vector2(-52f, -260f));
 
         sfxSlider = CreateSlider("SfxSlider", modalCard, GameSettings.SfxVolume);
@@ -540,23 +541,23 @@ public partial class GameUiController : MonoBehaviour
         SetAnchor((RectTransform)vibrationToggle.transform, new Vector2(0.5f, 1f), new Vector2(1f, 1f), new Vector2(18f, -388f), new Vector2(-110f, -348f));
         vibrationToggle.onValueChanged.AddListener(value => GameSettings.VibrationEnabled = value);
 
-        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 14, UiSpec.ButtonNormal, UiSpec.Text);
+        resumeButton = CreateButton("ResumeButton", modalCard, "RESUME", 18, UiSpec.ButtonNormal, UiSpec.Text);
         resumeButton.onClick.AddListener(TogglePause);
         AddFrame((RectTransform)resumeButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
 
-        restartButton = CreateButton("RestartButton", modalCard, "RESTART", 14, UiSpec.ButtonNormal, UiSpec.Text);
+        restartButton = CreateButton("RestartButton", modalCard, "RESTART", 18, UiSpec.ButtonNormal, UiSpec.Text);
         restartButton.onClick.AddListener(RestartLevel);
         AddFrame((RectTransform)restartButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSION", 14, UiSpec.ButtonNormal, UiSpec.Text);
+        modalLevelSelectButton = CreateButton("ModalLevelSelectButton", modalCard, "MISSION", 18, UiSpec.ButtonNormal, UiSpec.Text);
         modalLevelSelectButton.onClick.AddListener(OpenLevelSelect);
         AddFrame((RectTransform)modalLevelSelectButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        mainMenuButton = CreateButton("MainMenuButton", modalCard, "MAIN MENU", 14, UiSpec.ButtonNormal, UiSpec.Text);
+        mainMenuButton = CreateButton("MainMenuButton", modalCard, "MAIN MENU", 18, UiSpec.ButtonNormal, UiSpec.Text);
         mainMenuButton.onClick.AddListener(ReturnToMainMenu);
         AddFrame((RectTransform)mainMenuButton.transform, new Color(0.12f, 0.24f, 0.31f, 0.9f));
 
-        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 14, UiSpec.ButtonNormal, UiSpec.Text);
+        nextLevelButton = CreateButton("NextLevelButton", modalCard, "NEXT", 18, UiSpec.ButtonNormal, UiSpec.Text);
         nextLevelButton.onClick.AddListener(GoToNextLevel);
         nextLevelButtonText = nextLevelButton.GetComponentInChildren<TextMeshProUGUI>();
         AddFrame((RectTransform)nextLevelButton.transform, new Color(0.08f, 0.55f, 0.65f, 0.9f));
@@ -589,11 +590,11 @@ public partial class GameUiController : MonoBehaviour
             AddFrame(icon.rectTransform, new Color(UiSpec.Border.r, UiSpec.Border.g, UiSpec.Border.b, 0.5f));
             AddStatIconDetails(icon.rectTransform, i);
 
-            TextMeshProUGUI glyph = CreateText("Glyph", icon.transform, glyphs[i], 9, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI glyph = CreateText("Glyph", icon.transform, glyphs[i], 11, FontStyle.Bold, TextAnchor.MiddleCenter);
             glyph.color = new Color(UiSpec.Text.r, UiSpec.Text.g, UiSpec.Text.b, 0.86f);
             SetAnchor(glyph.rectTransform, new Vector2(0.32f, 0f), Vector2.one, Vector2.zero, Vector2.zero);
 
-            TextMeshProUGUI value = CreateText("Value", row, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+            TextMeshProUGUI value = CreateText("Value", row, "", 20, FontStyle.Bold, TextAnchor.MiddleLeft);
             value.color = UiSpec.Text;
             modalStatTexts[i] = value;
             SetAnchor(value.rectTransform, Vector2.zero, Vector2.one, new Vector2(72f, 0f), new Vector2(-16f, 0f));
@@ -773,11 +774,11 @@ public partial class GameUiController : MonoBehaviour
             icon.preserveAspect = true;
             SetAnchor(icon.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(12f, 13f), new Vector2(62f, -13f));
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 15, FontStyle.Bold, TextAnchor.MiddleLeft);
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
             label.characterSpacing = 1f;
             SetAnchor(label.rectTransform, new Vector2(0f, 0.42f), new Vector2(1f, 1f), new Vector2(70f, -5f), new Vector2(-8f, -4f));
 
-            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 14, FontStyle.Bold, TextAnchor.MiddleLeft);
+            TextMeshProUGUI cost = CreateText("Cost", go.transform, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
             cost.color = new Color(0.88f, 0.96f, 1f, 1f);
             cost.characterSpacing = 1f;
             SetAnchor(cost.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.42f), new Vector2(70f, 4f), new Vector2(-8f, -2f));
@@ -863,7 +864,7 @@ public partial class GameUiController : MonoBehaviour
             alertEdge.raycastTarget = false;
             SetAnchor(alertEdge.rectTransform, new Vector2(1f, 0.18f), new Vector2(1f, 0.82f), new Vector2(-15f, 0f), new Vector2(-9f, 0f));
 
-            TextMeshProUGUI label = CreateText("Label", go.transform, "", 19, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI label = CreateText("Label", go.transform, "", 21, FontStyle.Bold, TextAnchor.MiddleCenter);
             label.characterSpacing = 1.2f;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 0f), new Vector2(-18f, 2f));
@@ -1183,17 +1184,17 @@ public partial class GameUiController : MonoBehaviour
             modalStatsPanel.gameObject.SetActive(terminal);
         if (progressText != null)
             progressText.gameObject.SetActive(!terminal);
-        modalTitleText.fontSize = terminal ? 68f : 32f;
+        modalTitleText.fontSize = terminal ? 68f : ReadableTextSize(38f);
         modalTitleText.fontSizeMax = modalTitleText.fontSize;
-        modalTitleText.fontSizeMin = modalTitleText.fontSize;
+        modalTitleText.fontSizeMin = Mathf.Max(12f, modalTitleText.fontSize * 0.65f);
         modalTitleText.characterSpacing = terminal ? 5f : 0f;
-        modalSubtitleText.fontSize = terminal ? 24f : 16f;
+        modalSubtitleText.fontSize = terminal ? ReadableTextSize(24f) : ReadableTextSize(20f);
         modalSubtitleText.fontSizeMax = modalSubtitleText.fontSize;
-        modalSubtitleText.fontSizeMin = modalSubtitleText.fontSize;
+        modalSubtitleText.fontSizeMin = Mathf.Max(12f, modalSubtitleText.fontSize * 0.65f);
         modalSubtitleText.characterSpacing = terminal ? 3f : 0f;
-        progressText.fontSize = terminal ? 16f : 14f;
+        progressText.fontSize = terminal ? ReadableTextSize(18f) : ReadableTextSize(17f);
         progressText.fontSizeMax = progressText.fontSize;
-        progressText.fontSizeMin = progressText.fontSize;
+        progressText.fontSizeMin = Mathf.Max(12f, progressText.fontSize * 0.65f);
         if (!terminal)
         {
             modalTitleText.rectTransform.localScale = Vector3.one;

@@ -70,11 +70,12 @@ public partial class GameUiController
         GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
         go.transform.SetParent(parent, false);
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
+        float readableSize = IsInsideButton(parent) ? ButtonTextSize(size, text) : ReadableTextSize(size);
         label.text = text;
-        label.fontSize = size;
+        label.fontSize = readableSize;
         label.enableAutoSizing = true;
-        label.fontSizeMax = size;
-        label.fontSizeMin = size;
+        label.fontSizeMax = readableSize;
+        label.fontSizeMin = Mathf.Max(12f, readableSize * 0.65f);
         label.fontStyle = ToTmpFontStyle(style);
         label.alignment = ToTmpAlignment(alignment);
         label.color = UiSpec.Text;
@@ -84,6 +85,46 @@ public partial class GameUiController
         label.overflowMode = TextOverflowModes.Truncate;
         UiFont.Apply(label);
         return label;
+    }
+
+    float ReadableTextSize(float size)
+    {
+        if (size >= 56f)
+            return size;
+
+        if (size >= 34f)
+            return Mathf.Ceil(size * 1.22f);
+
+        return Mathf.Ceil(Mathf.Max(22f, size * 1.55f));
+    }
+
+    float ButtonTextSize(float size, string text)
+    {
+        if (size >= 28f && string.IsNullOrEmpty(text))
+            return size;
+
+        float target = Mathf.Ceil(Mathf.Max(18f, size * 1.2f));
+        int length = string.IsNullOrWhiteSpace(text) ? 0 : text.Trim().Length;
+        if (length >= 14)
+            target = Mathf.Min(target, 19f);
+        else if (length >= 10)
+            target = Mathf.Min(target, 21f);
+
+        return target;
+    }
+
+    bool IsInsideButton(Transform parent)
+    {
+        Transform current = parent;
+        while (current != null)
+        {
+            if (current.GetComponent<Button>() != null)
+                return true;
+
+            current = current.parent;
+        }
+
+        return false;
     }
 
     Button CreateButton(string name, Transform parent, string text, int size, Color normal, Color textColor)
@@ -100,9 +141,13 @@ public partial class GameUiController
         go.AddComponent<UiInteractMotion>();
 
         TextMeshProUGUI label = CreateText("Text", go.transform, text, size, FontStyle.Bold, TextAnchor.MiddleCenter);
+        float buttonTextSize = ButtonTextSize(size, text);
+        label.fontSize = buttonTextSize;
+        label.fontSizeMax = buttonTextSize;
+        label.fontSizeMin = Mathf.Max(12f, buttonTextSize * 0.65f);
         label.color = textColor;
         label.textWrappingMode = TextWrappingModes.NoWrap;
-        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(6f, 0f), new Vector2(-6f, 0f));
+        SetAnchor(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 0f), new Vector2(-14f, 0f));
         return button;
     }
 
@@ -200,7 +245,7 @@ public partial class GameUiController
         Image check = CreateImage("Knob", box.transform, accentColor);
         SetAnchor(check.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(3f, -9f), new Vector2(21f, 9f));
 
-        TextMeshProUGUI label = CreateText("Label", root.transform, labelText, 20, FontStyle.Bold, TextAnchor.MiddleLeft);
+        TextMeshProUGUI label = CreateText("Label", root.transform, labelText, 23, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(label.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(52f, 0f), Vector2.zero);
 
         toggle.targetGraphic = box;

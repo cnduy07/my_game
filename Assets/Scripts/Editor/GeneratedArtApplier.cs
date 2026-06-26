@@ -18,7 +18,7 @@ public static class GeneratedArtApplier
         applied += ApplySpriteRenderer("Assets/Prefabs/DroneEMP.prefab", $"{ArtFolder}/sprite_drone_emp_256.png", "DroneEMP");
         applied += ApplySpriteRenderer("Assets/Prefabs/EnergyOrb.prefab", $"{ArtFolder}/sprite_energy_orb_256.png", "EnergyOrb");
         applied += ApplySpriteRenderer("Assets/Prefabs/Lawnmower.prefab", $"{ArtFolder}/sprite_rail_cannon_256.png", "Rail Cannon / Lawnmower");
-        applied += EnsurePrefabWithSprite("Assets/Prefabs/FrostProjectile.prefab", "Assets/Prefabs/Bullet.prefab", $"{ArtFolder}/sprite_projectile_frost_256.png", "FrostProjectile");
+        applied += EnsurePrefabWithSprite("Assets/Prefabs/FrostProjectile.prefab", "Assets/Prefabs/Bullet.prefab", $"{ArtFolder}/sprite_projectile_frost_256.png", "FrostProjectile", removeAnimator: true);
         applied += ApplyBunkerStages();
         applied += ApplyStaticPreviewSpriteRenderer("Assets/Prefabs/Unit.prefab", $"{ArtFolder}/sprite_turret_256.png", "Turret Unit");
         applied += ApplyStaticPreviewSpriteRenderer("Assets/Prefabs/SnowGun.prefab", $"{ArtFolder}/sprite_snowgun_256.png", "SnowGun");
@@ -123,7 +123,7 @@ public static class GeneratedArtApplier
         return EnsurePrefabWithSprite(prefabPath, sourcePrefabPath, spritePath, rootName, disableSpriteSkin: true);
     }
 
-    static int EnsurePrefabWithSprite(string prefabPath, string sourcePrefabPath, string spritePath, string rootName, bool disableSpriteSkin = false)
+    static int EnsurePrefabWithSprite(string prefabPath, string sourcePrefabPath, string spritePath, string rootName, bool disableSpriteSkin = false, bool removeAnimator = false)
     {
         if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null &&
             !AssetDatabase.CopyAsset(sourcePrefabPath, prefabPath))
@@ -132,7 +132,7 @@ public static class GeneratedArtApplier
             return 0;
         }
 
-        return ApplySpriteRendererInternal(prefabPath, spritePath, rootName, disableSpriteSkin, rootName);
+        return ApplySpriteRendererInternal(prefabPath, spritePath, rootName, disableSpriteSkin, rootName, removeAnimator);
     }
 
     static int AssignShooterProjectile(string shooterPrefabPath, string projectilePrefabPath, string label)
@@ -167,7 +167,7 @@ public static class GeneratedArtApplier
         }
     }
 
-    static int ApplySpriteRendererInternal(string prefabPath, string spritePath, string label, bool disableSpriteSkin, string rootName)
+    static int ApplySpriteRendererInternal(string prefabPath, string spritePath, string label, bool disableSpriteSkin, string rootName, bool removeAnimator = false)
     {
         Sprite sprite = LoadSprite(spritePath);
         if (sprite == null) return 0;
@@ -191,6 +191,9 @@ public static class GeneratedArtApplier
             if (disableSpriteSkin)
                 DisableSpriteSkin(root, label);
 
+            if (removeAnimator)
+                RemoveAnimator(root, label);
+
             PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             Debug.Log($"Applied {label} static preview sprite: {spritePath}");
             return 1;
@@ -208,6 +211,15 @@ public static class GeneratedArtApplier
 
         spriteSkin.enabled = false;
         Debug.Log($"Disabled SpriteSkin on {label} because generated preview PNG is not rigged yet.");
+    }
+
+    static void RemoveAnimator(GameObject root, string label)
+    {
+        Animator animator = root.GetComponentInChildren<Animator>(true);
+        if (animator == null) return;
+
+        Object.DestroyImmediate(animator);
+        Debug.Log($"Removed Animator on {label} so copied Bullet animation cannot tint the assigned sprite.");
     }
 
     static int AssignEnemyVariantPrefabs(string scenePath)
@@ -257,6 +269,7 @@ public static class GeneratedArtApplier
         ConfigureSpriteImport($"{ArtFolder}/icon_arc_reactor_256.png");
         ConfigureSpriteImport($"{ArtFolder}/icon_bunker_256.png");
         ConfigureSpriteImport($"{ArtFolder}/icon_drone_emp_256.png");
+        ConfigureSpriteImport($"{ArtFolder}/airplane_256.png");
         return 1;
     }
 
@@ -266,6 +279,7 @@ public static class GeneratedArtApplier
 
         Sprite menuHero = LoadSprite($"{ArtFolder}/menu_hero_coreline_outpost_256.png");
         Sprite board = LoadSprite($"{ArtFolder}/board_coreline_combat_grid_5x9.png");
+        Sprite airplane = LoadSprite($"{ArtFolder}/airplane_256.png");
         Sprite button = LoadSprite($"{UiFolder}/button_command.png");
         Sprite panel = LoadSprite($"{ArtFolder}/ui_panel_9slice_source_256.png");
         Sprite bullet = LoadSprite($"{ArtFolder}/sprite_bullet_turret_256.png");
@@ -307,6 +321,7 @@ public static class GeneratedArtApplier
         foreach (BoardVisualController boardVisual in Object.FindObjectsByType<BoardVisualController>(FindObjectsInactive.Include))
         {
             boardVisual.boardBackgroundSprite = board;
+            boardVisual.airplaneSprite = airplane;
             boardVisual.boardBackgroundOpacity = 1f;
             EditorUtility.SetDirty(boardVisual);
             changed = true;

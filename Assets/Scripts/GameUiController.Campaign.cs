@@ -73,38 +73,38 @@ public partial class GameUiController
         AddCornerTicks(missionDetailPanel, new Color(accentColor.r, accentColor.g, accentColor.b, 0.4f));
         SetAnchor(missionDetailPanel, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-420f, 104f), new Vector2(-46f, -132f));
 
-        missionStatusText = CreateText("Status", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionStatusText = CreateText("Status", missionDetailPanel, "", 19, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionStatusText.color = accentColor;
         SetAnchor(missionStatusText.rectTransform, new Vector2(0f, 1f), new Vector2(0.54f, 1f), new Vector2(24f, -44f), new Vector2(-8f, -12f));
 
-        missionDevModeText = CreateText("DevMode", missionDetailPanel, "", 13, FontStyle.Bold, TextAnchor.MiddleRight);
+        missionDevModeText = CreateText("DevMode", missionDetailPanel, "", 15, FontStyle.Bold, TextAnchor.MiddleRight);
         missionDevModeText.color = warningColor;
         SetAnchor(missionDevModeText.rectTransform, new Vector2(0.54f, 1f), new Vector2(1f, 1f), new Vector2(8f, -44f), new Vector2(-24f, -12f));
 
-        missionTitleText = CreateText("Title", missionDetailPanel, "", 28, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionTitleText = CreateText("Title", missionDetailPanel, "", 30, FontStyle.Bold, TextAnchor.MiddleLeft);
         SetAnchor(missionTitleText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -92f), new Vector2(-24f, -42f));
 
-        missionTypeText = CreateText("Type", missionDetailPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionTypeText = CreateText("Type", missionDetailPanel, "", 20, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionTypeText.color = new Color(0.82f, 0.93f, 0.98f, 1f);
         SetAnchor(missionTypeText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -126f), new Vector2(-24f, -92f));
 
-        missionBriefingText = CreateText("Briefing", missionDetailPanel, "", 17, FontStyle.Normal, TextAnchor.UpperLeft);
+        missionBriefingText = CreateText("Briefing", missionDetailPanel, "", 19, FontStyle.Normal, TextAnchor.UpperLeft);
         missionBriefingText.color = new Color(0.82f, 0.9f, 0.94f, 1f);
         SetAnchor(missionBriefingText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -236f), new Vector2(-24f, -136f));
 
-        missionEnemyMixText = CreateText("EnemyMix", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.UpperLeft);
+        missionEnemyMixText = CreateText("EnemyMix", missionDetailPanel, "", 19, FontStyle.Bold, TextAnchor.UpperLeft);
         missionEnemyMixText.color = Color.white;
         SetAnchor(missionEnemyMixText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -314f), new Vector2(-24f, -248f));
 
-        missionToolsText = CreateText("Tools", missionDetailPanel, "", 17, FontStyle.Bold, TextAnchor.UpperLeft);
+        missionToolsText = CreateText("Tools", missionDetailPanel, "", 19, FontStyle.Bold, TextAnchor.UpperLeft);
         missionToolsText.color = new Color(0.78f, 0.95f, 1f, 1f);
         SetAnchor(missionToolsText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -440f), new Vector2(-24f, -322f));
 
-        missionPressureText = CreateText("Pressure", missionDetailPanel, "", 16, FontStyle.Bold, TextAnchor.MiddleLeft);
+        missionPressureText = CreateText("Pressure", missionDetailPanel, "", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
         missionPressureText.color = warningColor;
         SetAnchor(missionPressureText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 154f), new Vector2(-24f, 190f));
 
-        missionRewardText = CreateText("Reward", missionDetailPanel, "", 16, FontStyle.Normal, TextAnchor.UpperLeft);
+        missionRewardText = CreateText("Reward", missionDetailPanel, "", 18, FontStyle.Normal, TextAnchor.UpperLeft);
         missionRewardText.color = new Color(0.78f, 0.88f, 0.94f, 1f);
         SetAnchor(missionRewardText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, 96f), new Vector2(-24f, 154f));
 
@@ -221,11 +221,11 @@ public partial class GameUiController
             TextMeshProUGUI label = CreateText("Number", go.transform, "", finale ? 25 : 22, FontStyle.Bold, TextAnchor.MiddleCenter);
             SetAnchor(label.rectTransform, new Vector2(0f, 0.42f), new Vector2(1f, 1f), new Vector2(8f, -2f), new Vector2(-8f, -2f));
 
-            TextMeshProUGUI type = CreateText("Type", go.transform, "", 12, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI type = CreateText("Type", go.transform, "", 13, FontStyle.Bold, TextAnchor.MiddleCenter);
             type.color = new Color(0.82f, 0.93f, 0.98f, 1f);
             SetAnchor(type.rectTransform, new Vector2(0f, 0.16f), new Vector2(1f, 0.5f), new Vector2(6f, 0f), new Vector2(-6f, 0f));
 
-            TextMeshProUGUI status = CreateText("Status", go.transform, "", 11, FontStyle.Bold, TextAnchor.MiddleCenter);
+            TextMeshProUGUI status = CreateText("Status", go.transform, "", 12, FontStyle.Bold, TextAnchor.MiddleCenter);
             SetAnchor(status.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.22f), new Vector2(6f, 0f), new Vector2(-6f, 1f));
 
             levelButtons.Add(new CampaignNode
@@ -506,7 +506,13 @@ public partial class GameUiController
 
         missionDeployButton.interactable = unlocked;
         if (missionDeployButtonText != null)
+        {
             missionDeployButtonText.text = current ? "RESTART SECTOR" : "DEPLOY";
+            float buttonTextSize = ButtonTextSize(16, missionDeployButtonText.text);
+            missionDeployButtonText.fontSize = buttonTextSize;
+            missionDeployButtonText.fontSizeMax = buttonTextSize;
+            missionDeployButtonText.fontSizeMin = Mathf.Max(12f, buttonTextSize * 0.65f);
+        }
     }
 
     void OpenLevelSelect()

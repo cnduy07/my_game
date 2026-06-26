@@ -671,10 +671,11 @@ MonoBehaviour:
   accentLineColor: {r: 0.08, g: 0.85, b: 0.96, a: 0.72}
   dangerLineColor: {r: 1, g: 0.24, b: 0.12, a: 0.62}
   boardBackgroundSprite: {fileID: 21300000, guid: da6711c14bb693245917f66f7f2256ce, type: 3}
+  airplaneSprite: {fileID: 21300000, guid: 1a0202ac5ea7c428dbf1ae0c5372abe5, type: 3}
   boardBackgroundOpacity: 1
   outerPadding: 0.36
-  backdropPaddingX: 3.35
-  backdropPaddingY: 1.65
+  backdropPaddingX: 7.2
+  backdropPaddingY: 2.05
   gridLineWidth: 0.025
   accentLineWidth: 0.055
 --- !u!1 &519420028

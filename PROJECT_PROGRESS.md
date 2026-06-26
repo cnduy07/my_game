@@ -118,6 +118,16 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - End-state action buttons remain fixed-size `button_command` buttons on the report panel.
 - Verify: `dotnet build Assembly-CSharp.csproj` pass; `dotnet build Assembly-CSharp-Editor.csproj` pass.
 
+## Screenshot feedback pass - 2026-06-26
+- Added generated `Assets/Art/coreline_defense_logo_1024.png` game logo at exact 1024x1024 with Unity Sprite importer metadata.
+- Configured user-added `Assets/Art/logo.png` as a single point-filtered Sprite and kept `SnowGun` firing `FrostProjectile` with `sprite_projectile_frost_256.png` without the copied Bullet animator tint.
+- Widened GameScene/SampleScene board backdrop padding and expanded `BoardVisualController` hangar side panels, deck ribs, side lights, and far wall layers so wide phone aspect ratios no longer expose flat black zones outside the board.
+- Raised small text in GameScene HUD/status panels, pause settings popup, pause action buttons, Settings scene audio/comfort labels, Mission Map detail copy, mission nodes, and the in-game mission overlay.
+- `AudioManager` now bootstraps before scene load, persists across scenes, loads `hidden_labs` from `Assets/Resources/Audio/Music`, and absorbs GameScene serialized SFX clips without destroying the shared `GameSystems` object.
+- Follow-up readability pass added centralized font scaling for generated GameScene/frontend/end-scene labels and scene-authored frontend UI, excluding the hand-tuned main menu scene. Labels below title size now use a 22px mobile-readable floor with stronger scaling, while autosizing can shrink to 65% for tight buttons/nodes.
+- Overflow correction split fixed-size button text from general readable text scaling, capping long button labels like `HOW TO PLAY` and `RESTART SECTOR` and adding wider label insets inside command buttons.
+- Replaced rejected procedural explosion/rocket flash strips with `Assets/Art/airplane_256.png` patrol sprites flying around the GameScene board underlay/black-zone edges.
+
 ## GameScene visual correction pass - 2026-06-25
 - Board underlay contrast increased and extra outer catwalk/machinery blocks were added above, below, left, and right of the board so the outer black zone reads as a dim hangar rather than empty background.
 - Rail cannon laser beam restored to the stronger previous red laser/prefab style after review; only the static board-side red entry shapes stay toned down.

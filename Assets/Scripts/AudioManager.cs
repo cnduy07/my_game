@@ -29,16 +29,23 @@ public class SfxClip
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    const string DefaultMusicResourcePath = "Audio/Music/hidden_labs";
 
     [Header("Music")]
     public AudioSource musicSource;
     public AudioClip backgroundMusic;
-    [Range(0f, 1f)] public float backgroundMusicVolume = 0.55f;
+    [Range(0f, 1f)] public float backgroundMusicVolume = 0.28f;
     public bool playMusicOnStart = true;
 
     [Header("SFX")]
     public AudioSource sfxSource;
     public SfxClip[] clips;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void BootstrapAudio()
+    {
+        EnsureInstance();
+    }
 
     void OnValidate()
     {
@@ -49,14 +56,19 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Instance.AbsorbSerializedConfig(this);
+            if (playMusicOnStart)
+                Instance.PlayMusic();
+            Destroy(this);
             return;
         }
 
         Instance = this;
+        DontDestroyOnLoad(gameObject);
 
         EnsureSources();
 
+        EnsureDefaultMusicClip();
         ApplyClipDefaults();
         ConfigureMusicSource();
     }
@@ -74,6 +86,7 @@ public class AudioManager : MonoBehaviour
 
     public static void PlaySfx(SfxType type)
     {
+        EnsureInstance(false);
         if (Instance != null)
             Instance.Play(type);
     }
@@ -100,8 +113,27 @@ public class AudioManager : MonoBehaviour
 
     public static void RefreshMusic()
     {
+        EnsureInstance();
         if (Instance != null)
             Instance.RefreshMusicVolume();
+    }
+
+    public static AudioManager EnsureInstance(bool startMusic = true)
+    {
+        if (Instance == null)
+        {
+            GameObject audioObject = new GameObject("AudioManager");
+            Instance = audioObject.AddComponent<AudioManager>();
+        }
+
+        Instance.EnsureSources();
+        Instance.EnsureDefaultMusicClip();
+        Instance.ConfigureMusicSource();
+
+        if (startMusic)
+            Instance.PlayMusic();
+
+        return Instance;
     }
 
     public void PlayMusic()
@@ -111,6 +143,29 @@ public class AudioManager : MonoBehaviour
         ConfigureMusicSource();
         if (!musicSource.isPlaying)
             musicSource.Play();
+    }
+
+    void AbsorbSerializedConfig(AudioManager source)
+    {
+        if (source == null)
+            return;
+
+        if (backgroundMusic == null && source.backgroundMusic != null)
+            backgroundMusic = source.backgroundMusic;
+
+        backgroundMusicVolume = source.backgroundMusicVolume;
+
+        if ((clips == null || clips.Length == 0) && source.clips != null && source.clips.Length > 0)
+            clips = source.clips;
+
+        ApplyClipDefaults();
+        ConfigureMusicSource();
+    }
+
+    void EnsureDefaultMusicClip()
+    {
+        if (backgroundMusic == null)
+            backgroundMusic = Resources.Load<AudioClip>(DefaultMusicResourcePath);
     }
 
     void EnsureSources()
