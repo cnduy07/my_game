@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public LevelDefinition currentLevel;
     public LevelCatalog levelCatalog;
     public bool applyLevelOnAwake = true;
-    public bool unlockAllLevelsForTesting = true;
+    public bool unlockAllLevelsForTesting = false;
 
     void Awake()
     {

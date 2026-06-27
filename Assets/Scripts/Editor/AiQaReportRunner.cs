@@ -595,7 +595,7 @@ public static class AiQaReportRunner
         sb.AppendLine("## Expected QA Baseline");
         sb.AppendLine();
         sb.AppendLine("- AI QA should report `0` fail.");
-        sb.AppendLine("- `LevelManager.unlockAllLevelsForTesting` warning is expected while campaign testing is open.");
+        sb.AppendLine("- `LevelManager.unlockAllLevelsForTesting` should stay disabled for sequential campaign progression.");
         sb.AppendLine();
 
         sb.AppendLine("## Campaign Map");

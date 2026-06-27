@@ -210,7 +210,7 @@ Current scale pass:
   - board/cell screen size duoc tang bang camera orthographic size `3.35`, khong doi `GridManager.cellSize`.
 - Day van la runtime generated UI; final release can UI skin/icon/panel sprite rieng.
 - Mission reward/unlock copy dang data-driven trong `LevelDefinition`, tranh hardcode content vao `GameUiController`.
-- Scene dev hien bat `LevelManager.unlockAllLevelsForTesting` de test nhanh level pack; production unlock rule van nam trong `PlayerProgress`.
+- Scene dev hien tat `LevelManager.unlockAllLevelsForTesting`; production unlock rule nam trong `PlayerProgress` va dang ap dung cho frontend mission map/in-game campaign overlay.
 - Tactical campaign map dang thay mission list cu:
   - route/node UI runtime-generated de test flow nhanh;
   - final art sau nay nen thay node icon/route/panel sprite bang UI skin rieng;
@@ -511,10 +511,10 @@ Khi co hon 1 level, can tach data:
 Hien tai v1:
 - `LevelDefinition` ScriptableObject gom level id/name/number va balance global.
 - `LevelManager` tren `GameSystems` resolve selected level tu `PlayerProgress`, apply `currentLevel` vao `GameBalance` luc Awake, va reload scene khi doi level.
-- `LevelManager.unlockAllLevelsForTesting` la dev/test override; khi bat, UI va select/reload cho phep chon moi mission nhung khong danh dau completed gia.
+- `LevelManager.unlockAllLevelsForTesting` la dev/test override; mac dinh va scene serialized hien tat. Khi bat thu cong, UI va select/reload cho phep chon moi mission nhung khong danh dau completed gia.
 - `PlayerProgress` dung PlayerPrefs de mark level complete khi `GameManager.Win()`, luu highest completed level, selected level, completed count, last completed level id, va save schema version.
 - `Assets/Levels/Level_01.asset` den `Level_10.asset` la campaign pack 1 data baseline.
-- `LevelCatalog.asset` dang chua 10 level; level unlock theo rule `levelNumber <= highestCompleted + 1` khi test override tat.
+- `LevelCatalog.asset` dang chua 10 level; level unlock theo rule `levelNumber <= highestCompleted + 1`, nen save moi chi mo level 1 va level 2 chi mo sau khi clear level 1.
 - `LevelDefinition.allowedUnitLabels` filter seed packet theo label hien co trong `GameBalance.units`.
 - `LevelDefinition.overchargeUnlocked` bat/tat `OverchargeSystem` theo mission.
 - `SeedBar` giu seed list goc va tao active seed list theo level; HUD tu rebuild khi seed count doi.

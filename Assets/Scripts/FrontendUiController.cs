@@ -23,7 +23,7 @@ public class FrontendUiController : MonoBehaviour
 
     public FrontendScreenMode screenMode = FrontendScreenMode.Auto;
     public LevelCatalog levelCatalog;
-    public bool unlockAllLevelsForTesting = true;
+    public bool unlockAllLevelsForTesting = false;
     public bool useSceneAuthoredUi = true;
 
     [Header("Generated Art")]

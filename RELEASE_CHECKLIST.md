@@ -32,7 +32,7 @@ File nay la checklist dai han de dua game len iOS App Store va Google Play.
 - Save/load progress.
 - Settings.
 - Level select/unlock flow.
-- Tat `LevelManager.unlockAllLevelsForTesting` truoc release/build review.
+- Verify `LevelManager.unlockAllLevelsForTesting` va `FrontendUiController.unlockAllLevelsForTesting` deu tat truoc release/build review.
 - Projectile effects va enemy counters co vai tro ro.
 
 ### Milestone 4: Mobile Optimization

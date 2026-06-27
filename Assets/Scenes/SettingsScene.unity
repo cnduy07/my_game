@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FrontendUiController
   screenMode: 2
   levelCatalog: {fileID: 11400000, guid: dea6b9a5f4fa40b6896c13eed90d0eb7, type: 2}
-  unlockAllLevelsForTesting: 1
+  unlockAllLevelsForTesting: 0
   useSceneAuthoredUi: 1
   menuHeroSprite: {fileID: 21300000, guid: 83e04a5beedc0084385b083a13e0fa21, type: 3}
   boardBackgroundSprite: {fileID: 21300000, guid: da6711c14bb693245917f66f7f2256ce, type: 3}

@@ -188,7 +188,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
   - `LevelCatalog` co 5 level.
 - Mission select testability + QA tuning checks:
   - level select dung `ScrollRect` nen list 5+ level khong tran card;
-  - `LevelManager.unlockAllLevelsForTesting` dang bat trong scene de test nhanh tat ca level;
+  - `LevelManager.unlockAllLevelsForTesting` da tat trong scene de giu unlock tuan tu;
   - Fast/Shield tuning doc tu `EnemySpawner.GetTypeModifier`;
   - AI QA fail/warn neu Fast/Shield mat identity so lieu.
 - Projectile effect content pass:
@@ -323,7 +323,7 @@ File nay la bang viec hien hanh. Cap nhat thuong xuyen sau moi phien lam viec.
 - Tinh chinh sprite VFX prefab moi khi Play Mode test xong: scale/timing/alpha cho muzzle, hit, death, EMP, bunker break, Rail Cannon beam.
 - Them weapon moi de dung `ProjectileHitEffect` knockback/stun khi can mo rong counter-play.
 - Chay `Tools > AI QA > Run Full Check` va doc `AIReports/latest_ai_qa_report.md`.
-- Khi test xong level pack, tat `LevelManager.unlockAllLevelsForTesting` truoc release/build review neu muon restore unlock tuan tu.
+- Truoc release/build review, verify `LevelManager.unlockAllLevelsForTesting` va `FrontendUiController.unlockAllLevelsForTesting` van tat.
 - Them object pooling cho projectile, enemy, energy orb, VFX khi bat dau toi uu mobile.
 - Tach `GameBalance` thanh ScriptableObject/level data khi bat dau co nhieu level.
 - Them/replace hit flash/hit sound bang prefab/audio final cho enemy va bunker.

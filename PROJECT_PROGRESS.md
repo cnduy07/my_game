@@ -584,7 +584,7 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 
 ### Mission select dev unlock + QA tuning checks — 2026-06-23
 - Sua level select popup thanh `ScrollRect`/viewport/content dung uGUI de list 5+ mission khong tran khoi card.
-- Them `LevelManager.unlockAllLevelsForTesting`; scene hien dang bat flag nay de test nhanh tat ca level ma khong ghi gia progress completed vao `PlayerPrefs`.
+- Them `LevelManager.unlockAllLevelsForTesting`; tai thoi diem nay scene bat flag de test nhanh tat ca level ma khong ghi gia progress completed vao `PlayerPrefs`.
 - Production unlock rule van giu trong `PlayerProgress.IsLevelUnlocked`; khi gan release co the tat test flag de quay lai unlock tuan tu.
 - Chuan hoa Fast/Shield tuning vao `EnemySpawner.GetTypeModifier`, de runtime va QA report dung cung mot source so lieu.
 - AI QA check them:
@@ -592,6 +592,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
   - Fast phai health thap hon + speed cao hon baseline;
   - Shield phai health cao hon + speed thap hon + resist projectile + vulnerable EMP.
 - Balance report hien `Enemy Type Tuning` de Codex kiem soat stat identity bang so lieu, khong bat chu project do bang cam giac.
+
+### Campaign sequential unlock enforcement - 2026-06-27
+- Tat `unlockAllLevelsForTesting` mac dinh trong `LevelManager` va `FrontendUiController`.
+- Cap nhat `MainMenuScene`, `MissionMapScene`, `SettingsScene`, `HowToPlayScene`, `GameScene`, va `SampleScene` de serialized override deu la `0`.
+- Current rule: save moi chi mo level 1; level 2 mo khi `GameManager.Win()` goi `LevelManager.MarkCurrentLevelCompleted()` va `PlayerProgress.HighestCompletedLevel` dat 1.
+- AI QA playtest checklist bay gio yeu cau test override giu tat de campaign progression di tuan tu.
 
 ### Projectile effect content pass — 2026-06-23
 - Fix QA warning Level_05 completion reward bang cach quote YAML reward co dau `:`.

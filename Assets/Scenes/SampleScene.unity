@@ -517,7 +517,7 @@ MonoBehaviour:
   currentLevel: {fileID: 11400000, guid: f49c8b5fbecf4fe5ac79142d98e02fe7, type: 2}
   levelCatalog: {fileID: 11400000, guid: dea6b9a5f4fa40b6896c13eed90d0eb7, type: 2}
   applyLevelOnAwake: 1
-  unlockAllLevelsForTesting: 1
+  unlockAllLevelsForTesting: 0
 --- !u!114 &53209496
 MonoBehaviour:
   m_ObjectHideFlags: 0
