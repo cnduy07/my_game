@@ -14,6 +14,21 @@ public static class EndRunSummary
     public static float PlayTimeSeconds { get; private set; }
     public static string Intel { get; private set; } = "";
 
+    public static void Clear()
+    {
+        HasData = false;
+        Won = false;
+        BreachedRow = -1;
+        MissionName = "Unknown Sector";
+        MissionNumber = 0;
+        WaveReached = 0;
+        WaveTotal = 0;
+        EnemiesKilled = 0;
+        EnergyCollected = 0;
+        PlayTimeSeconds = 0f;
+        Intel = "";
+    }
+
     public static void Capture(bool won, int breachedRow)
     {
         Won = won;
@@ -27,8 +42,8 @@ public static class EndRunSummary
             : (won ? "Sector secured. Route remains online." : "Coreline breached. Rebuild the defense grid.");
 
         EnemySpawner spawner = EnemySpawner.Instance;
-        WaveReached = spawner != null ? Mathf.Clamp(spawner.CurrentWave, 1, Mathf.Max(1, spawner.WaveCount)) : 1;
         WaveTotal = spawner != null ? Mathf.Max(1, spawner.WaveCount) : 1;
+        WaveReached = spawner != null ? spawner.ReportWaveReached(won) : (won ? WaveTotal : 0);
 
         GameStatsTracker stats = GameStatsTracker.Instance;
         EnemiesKilled = stats != null ? stats.EnemiesKilled : 0;

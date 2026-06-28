@@ -8,9 +8,25 @@ public class GameStatsTracker : MonoBehaviour
     public int EnemiesKilled { get; private set; }
     public int EnergyCollected { get; private set; }
 
+    public static GameStatsTracker EnsureInstance()
+    {
+        if (Instance != null)
+            return Instance;
+
+        GameObject tracker = new GameObject("GameStatsTracker");
+        return tracker.AddComponent<GameStatsTracker>();
+    }
+
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        EndRunSummary.Clear();
         startTime = Time.time;
         EnemiesKilled = 0;
         EnergyCollected = 0;

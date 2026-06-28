@@ -599,6 +599,12 @@ Phòng thủ: súng turret hiện đại + lô cốt bọc giáp + lõi năng l�
 - Current rule: save moi chi mo level 1; level 2 mo khi `GameManager.Win()` goi `LevelManager.MarkCurrentLevelCompleted()` va `PlayerProgress.HighestCompletedLevel` dat 1.
 - AI QA playtest checklist bay gio yeu cau test override giu tat de campaign progression di tuan tu.
 
+### EndScene report accuracy fix - 2026-06-28
+- `GameManager.Awake()` bootstrap `GameStatsTracker` neu scene chua gan component, sua loi EndScene report hien kills/energy/time = 0.
+- `GameStatsTracker.Awake()` clear `EndRunSummary` khi bat dau tran moi de EndScene khong hien snapshot cu neu flow bi mo lai.
+- `EndRunSummary.Capture()` lay wave reached qua `EnemySpawner.ReportWaveReached(won)` thay vi clamp `CurrentWave` tho, de thang luon bao full wave va thua truoc wave dau khong bi bao thanh wave 1.
+- EndScene stats van la snapshot tai luc ket thuc tran: enemies killed, energy collected, play time, mission va wave total khong phu thuoc object gameplay sau khi unload scene.
+
 ### Projectile effect content pass — 2026-06-23
 - Fix QA warning Level_05 completion reward bang cach quote YAML reward co dau `:`.
 - `Shooter` co `ProjectileHitEffect[] hitEffects`; khi ban se clone effect vao projectile de pooled bullet khong giu state cu.

@@ -78,6 +78,13 @@ public class EnemySpawner : MonoBehaviour
 
     public int CurrentWave => currentWave;
     public int WaveCount => waveCount;
+    public int ReportWaveReached(bool won)
+    {
+        int total = Mathf.Max(1, waveCount);
+        if (won) return total;
+        return currentWave > 0 ? Mathf.Clamp(currentWave, 1, total) : 0;
+    }
+
     public bool IsWaveWarning => (phase == Phase.PreStart && RemainingPhaseTime(startDelay) <= 3f) ||
                                  (phase == Phase.BetweenWaves && RemainingPhaseTime(timeBetweenWaves) <= 3f);
     public string DisplayText
